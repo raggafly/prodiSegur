@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLLoginController">
+   <children>
+      <MenuBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Cliente">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Consulta" />
+                  <MenuItem mnemonicParsing="false" text="Alta" />
+                  <MenuItem mnemonicParsing="false" text="Baja" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Seguro">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Consulta" />
+                  <MenuItem mnemonicParsing="false" text="Alta" />
+                  <MenuItem mnemonicParsing="false" text="Baja" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Ayuda">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Documentación" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Separator layoutY="205.0" prefHeight="3.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="205.0" />
+      <TableView id="tablaBusqueda" layoutY="208.0" onMouseClicked="#seleccionarElemento" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="208.0">
+        <columns>
+          <TableColumn editable="false" prefWidth="102.0" text="Nº Poliza" />
+          <TableColumn prefWidth="145.0" text="Nombre" />
+            <TableColumn prefWidth="352.0" text="Apellidos" />
+            <TableColumn minWidth="0.0" prefWidth="132.0" text="DNI/CIF" />
+            <TableColumn prefWidth="124.0" text="Teléfono" />
+            <TableColumn prefWidth="93.0" text="Tipo" />
+            <TableColumn prefWidth="72.0" text="Estado" />
+            <TableColumn prefWidth="177.0" text="Riesgo" />
+        </columns>
+      </TableView>
+      <GridPane fx:id="tf_dni" focusTraversable="true" layoutY="33.0" prefHeight="171.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="823.0" minWidth="10.0" prefWidth="91.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1010.0" minWidth="10.0" prefWidth="124.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1010.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1010.0" minWidth="10.0" prefWidth="90.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1010.0" minWidth="10.0" prefWidth="313.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="991.0" minWidth="10.0" prefWidth="30.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="991.0" minWidth="10.0" prefWidth="132.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="991.0" minWidth="10.0" prefWidth="357.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="991.0" minWidth="10.0" prefWidth="71.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="bt_buscar" mnemonicParsing="false" onAction="#actionBuscar" text="Buscar" GridPane.columnIndex="8" GridPane.rowIndex="3" />
+            <Label text="DNI/CIF:" />
+            <TextField id="tfdni" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="1" />
+            <Label text="POLIZA:" GridPane.rowIndex="1" />
+            <TextField id="tfPoliza" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="NOMBRE:" GridPane.columnIndex="3" />
+            <TextField id="tfNombre" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="4" />
+            <Label text="APELLIDOS:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField id="tfApellidos" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Label text="TELEFONO:" GridPane.rowIndex="2" />
+            <TextField id="tfTelefono" prefHeight="31.0" prefWidth="428.0" scaleShape="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="TIPO DE RIESGO:" GridPane.columnIndex="6" />
+            <ComboBox id="cbTipoSeguro" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" />
+            <ComboBox id="cbTipoUsuario" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+            <Label text="TIPO USUARIO:" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <Button fx:id="bt_alta" mnemonicParsing="false" onAction="#actionAlta" text="ALTA NUEVA POLIZA" textFill="#180deb" GridPane.columnIndex="4" GridPane.rowIndex="3">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+         </children>
+         <padding>
+            <Insets left="15.0" right="15.0" />
+         </padding>
+      </GridPane>
+   </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <cursor>
+      <Cursor fx:constant="DEFAULT" />
+   </cursor>
+</AnchorPane>

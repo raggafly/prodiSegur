@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="prodiSegur.jnlp">
+  <information>
+    <title>prodiSegur</title>
+    <vendor>LifeSoft</vendor>
+    <description>GestInsu</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="prodiSegur.jar" size="61738" download="eager" />
+    <jar href="libs\SimpleDialogFX-2.2.0.jar" size="28545" download="eager" />
+    <jar href="libs\antlr-2.7.7.jar" size="445288" download="eager" />
+    <jar href="libs\com.sun.tools.xjc_2.2.0.jar" size="3101294" download="eager" />
+    <jar href="libs\com.sun.xml.bind_2.2.0.v201004141950.jar" size="890453" download="eager" />
+    <jar href="libs\controlsfx-8.0.6_20.jar" size="856539" download="eager" />
+    <jar href="libs\dom4j-1.6.1.jar" size="313898" download="eager" />
+    <jar href="libs\eclipselink.jar" size="8632395" download="eager" />
+    <jar href="libs\hibernate-commons-annotations-4.0.5.Final.jar" size="75324" download="eager" />
+    <jar href="libs\hibernate-core-4.3.7.Final.jar" size="5269356" download="eager" />
+    <jar href="libs\hibernate-jpa-2.1-api-1.0.0.Final.jar" size="113371" download="eager" />
+    <jar href="libs\jandex-1.1.0.Final.jar" size="76551" download="eager" />
+    <jar href="libs\javassist-3.18.1-GA.jar" size="714194" download="eager" />
+    <jar href="libs\javax.activation_1.1.0.v201108011116.jar" size="55640" download="eager" />
+    <jar href="libs\javax.mail_1.4.0.v201005080615.jar" size="320960" download="eager" />
+    <jar href="libs\javax.persistence_2.1.0.v201304241213.jar" size="162126" download="eager" />
+    <jar href="libs\javax.xml.bind_2.2.0.v201105210648.jar" size="118144" download="eager" />
+    <jar href="libs\javax.xml.stream_1.0.1.v201004272200.jar" size="39697" download="eager" />
+    <jar href="libs\jboss-logging-3.1.3.GA.jar" size="57183" download="eager" />
+    <jar href="libs\jboss-logging-annotations-1.2.0.Beta1.jar" size="11558" download="eager" />
+    <jar href="libs\jboss-transaction-api_1.2_spec-1.0.0.Final.jar" size="27717" download="eager" />
+    <jar href="libs\mysql-connector-java-5.1.37-bin.jar" size="985603" download="eager" />
+    <jar href="libs\org.eclipse.persistence.jpa.modelgen_2.5.2.v20140319-9ad6abd.jar" size="45718" download="eager" />
+    <jar href="libs\org.eclipse.persistence.jpars_2.5.2.v20140319-9ad6abd.jar" size="15010" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="0" height="0" main-class="controller.FXMLLogin"  name="GestInsu" />
+  <update check="background"/>
+</jnlp>
