@@ -14,6 +14,8 @@ import javax.persistence.*;
 
 	@NamedQuery(name="IbMasterValue.findByType", query = "SELECT m.descripcion FROM IbMasterValue m WHERE m.tipoCodigo = :type"),
 	@NamedQuery(name="IbMasterValue.findAllByType", query = "SELECT m FROM IbMasterValue m WHERE m.tipoCodigo = :type"),
+	@NamedQuery(name="IbMasterValue.findAllByValor", query = "SELECT m FROM IbMasterValue m WHERE m.descripcion = :desc"),
+	@NamedQuery(name="IbMasterValue.findByValue", query = "SELECT m.descripcion FROM IbMasterValue m WHERE m.valor = :valor"),
 	@NamedQuery(name="IbMasterValue.findByDescription", query="SELECT m.descripcion2 FROM IbMasterValue m WHERE m.descripcion= :description"),
 	@NamedQuery(name="IbMasterValue.findAll", query="SELECT i FROM IbMasterValue i"),
 	@NamedQuery(name="IbMasterValue.findAllTypes", query="SELECT distinct i.tipoCodigo FROM IbMasterValue i"),
@@ -24,7 +26,7 @@ public class IbMasterValue implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="idib_master_values")
 	private int idibMasterValues;
 

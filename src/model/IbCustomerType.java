@@ -14,15 +14,15 @@ import java.util.List;
 @NamedQueries({
 
 	@NamedQuery(name = "IbCustomerType.findByType", query = "SELECT m.descripcion FROM IbCustomerType m"),
-	@NamedQuery(name="IbCustomerType.findAll", query="SELECT i FROM IbCustomerType i")
+	@NamedQuery(name = "IbCustomerType.findByDescription", query = "SELECT m FROM IbCustomerType m where m.descripcion =:desc"),
+	@NamedQuery(name = "IbCustomerType.findAll", query="SELECT i FROM IbCustomerType i")
 	
 })
-@NamedQuery(name="IbCustomerType.findAll", query="SELECT i FROM IbCustomerType i")
 public class IbCustomerType implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="idib_customer_type")
 	private int idibCustomerType;
 

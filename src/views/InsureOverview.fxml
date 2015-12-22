@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import util.NumberTextField?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="353.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InsureOverviewController">
    <children>
@@ -39,7 +40,7 @@
             <DatePicker fx:id="dpFechaFin" editable="false" prefHeight="31.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <Label text="Fecha Fin:" GridPane.rowIndex="7" />
             <Label text="Prima Neta:" GridPane.rowIndex="3" />
-            <TextField fx:id="tvPrimaNeta" promptText="Importe en €" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <NumberTextField fx:id="tvPrimaNeta" promptText="Importe en €" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label text="Duración:" GridPane.rowIndex="5" />
             <ComboBox fx:id="cbDuracion" onAction="#handleDuracionCB" prefHeight="31.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label fx:id="lbCliente" text="Cliente" textFill="#1e00ff" GridPane.columnIndex="1">

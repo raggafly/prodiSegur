@@ -22,7 +22,7 @@ public class IbCustomer implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="idib_customer")
 	private int idibCustomer;
 
@@ -57,7 +57,7 @@ public class IbCustomer implements Serializable {
 	private String telefono2;
 
 	//bi-directional one-to-one association to IbAccountBank
-	@OneToOne(mappedBy="ibCustomer")
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy="ibCustomer")
 	private IbAccountBank ibAccountBank1;
 
 	//bi-directional many-to-one association to IbAccountBank
@@ -67,7 +67,7 @@ public class IbCustomer implements Serializable {
 
 	//bi-directional one-to-one association to IbInsurance
 	@OneToOne
-	@JoinColumn(name="idib_customer",insertable =  false, updatable = false)
+	@JoinColumn(name="idib_customer",insertable =  true, updatable = true)
 	private IbInsurance ibInsurance;
 
 	//bi-directional many-to-one association to IbCustomerRelation

@@ -21,8 +21,10 @@ import com.github.daytron.simpledialogfx.dialog.DialogType;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
@@ -39,6 +41,7 @@ import util.DateUtil;
 import util.InsureCompleteVO;
 
 public class PersonOverviewController {
+	InsureCompleteVO icVO = new InsureCompleteVO();
 	int contTiposClientes = 3;
 	@FXML
 	private TableView<IbCustomer> personTable;
@@ -135,7 +138,9 @@ public class PersonOverviewController {
 		em = emf.createEntityManager();
 		Collection<IbCustomer> listClientes = findAllClientes(em);
 		ObservableList<IbCustomer> listaObservableCli = FXCollections.observableArrayList(listClientes);
-
+		if (null != icVO.getDatosCliente()) {
+			listaObservableCli.add(icVO.getDatosCliente());
+		}
 		firstNameColumn.setCellValueFactory(new PropertyValueFactory<IbCustomer, String>("nombre"));
 		lastNameColumn.setCellValueFactory(new PropertyValueFactory<IbCustomer, String>("apellidos"));
 
@@ -173,6 +178,8 @@ public class PersonOverviewController {
 				birthdayLabel.setText("");
 			}
 			DNILabel.setText(cliente.getDniCif());
+			
+			icVO.setDatosCliente(cliente);
 
 		} else {
 			// Person is null, remove all the text.
@@ -245,6 +252,7 @@ public class PersonOverviewController {
 		return datosClienteRelation;
 	}
 
+	@SuppressWarnings("static-access")
 	public boolean showPersonEditDialog(IbCustomer cliente, boolean isEdit) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
@@ -264,12 +272,12 @@ public class PersonOverviewController {
 			controller.setDialogStage(dialogStage);
 			controller.setPerson(cliente);
 			controller.setIsEdit(isEdit);
-
+			controller.setInsureComplete(icVO);
 			// Show the dialog and wait until the user closes it
 			dialogStage.showAndWait();
-
+			icVO = controller.getInsureComplete();
 			initialize();
-			showPersonDetails(cliente);
+			showPersonDetails(icVO.getDatosCliente());
 			return controller.isOkClicked();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -303,7 +311,7 @@ public class PersonOverviewController {
 	}
 
 	@FXML
-	private void handleSiguiente() {
+	private void handleSiguiente(ActionEvent event) {
 		Parent root;
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InsureOverview.fxml"));
 
@@ -316,12 +324,12 @@ public class PersonOverviewController {
 			stage.setScene(stage.getScene());
 			InsureOverviewController controller = (InsureOverviewController) loader.getController();
 
-			InsureCompleteVO icVO = new InsureCompleteVO();
 			icVO.setTipoSeguro(tipoSeguro);
 			icVO.setDatosClienteRelation(datosClienteRelation);
-			
+
 			controller.initData(icVO);
 			stage.show();
+			((Node) (event.getSource())).getScene().getWindow().hide();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

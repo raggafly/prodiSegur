@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import model.IbAccountBank;
 import model.IbCustomer;
 import model.IbInsurance;
+import model.IbInsuranceDetail;
 import model.TableInfoRelation;
 
 public class InsureCompleteVO {
@@ -12,6 +13,8 @@ public class InsureCompleteVO {
 	ObservableList<TableInfoRelation> datosClienteRelation;
 	
 	IbCustomer datosCliente;
+	
+	IbInsuranceDetail detalleSeguro;
 	
 	IbAccountBank datosBancarios;
 
@@ -75,6 +78,15 @@ public class InsureCompleteVO {
 
 	public void setTipoSeguro(String tipoSeguro) {
 		this.tipoSeguro = tipoSeguro;
+	}
+
+	public void setDatosDetalleSeguro(IbInsuranceDetail detalleSeguro) {
+		// TODO Auto-generated method stub
+		this.detalleSeguro = detalleSeguro;
+	}
+	
+	public IbInsuranceDetail getDatosDetalleSeguro (){
+		return detalleSeguro;
 	}
 
 }
