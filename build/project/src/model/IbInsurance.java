@@ -17,7 +17,7 @@ public class IbInsurance implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="idib_insurance")
 	private int idibInsurance;
 
@@ -65,7 +65,7 @@ public class IbInsurance implements Serializable {
 
 	//bi-directional one-to-one association to IbInsuranceDetail
 	@OneToOne
-	@PrimaryKeyJoinColumn(name="idib_insurance")
+	@JoinColumn(name="idib_insurance")
 	private IbInsuranceDetail ibInsuranceDetail;
 
 	public IbInsurance() {

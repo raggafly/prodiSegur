@@ -15,7 +15,7 @@ public class IbCustomerRelation implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="idib_customer_relation")
 	private int idibCustomerRelation;
 

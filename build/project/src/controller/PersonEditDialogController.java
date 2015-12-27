@@ -2,6 +2,7 @@ package controller;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -11,10 +12,12 @@ import javax.persistence.Persistence;
 import org.controlsfx.dialog.Dialogs;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.IbCustomer;
 import util.DateUtil;
+import util.InsureCompleteVO;
 
 /**
  * Dialog to edit details of a person.
@@ -36,7 +39,7 @@ public class PersonEditDialogController {
 	@FXML
 	private TextField postalCodeField;
 	@FXML
-	private TextField dateCardField;
+	private DatePicker dpFechaCarnet;
 	@FXML
 	private TextField dnicifField;
 	@FXML
@@ -44,7 +47,7 @@ public class PersonEditDialogController {
 	@FXML
 	private TextField telephone2Field;
 	@FXML
-	private TextField fechaNacimientoField;
+	private DatePicker dpFechaNacimiento;
 	@FXML
 	private TextField emailField;
 
@@ -52,6 +55,7 @@ public class PersonEditDialogController {
     private IbCustomer person;
     private boolean okClicked = false;
     private boolean isEdit =false;
+    private static InsureCompleteVO icVO = new InsureCompleteVO();
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -77,33 +81,29 @@ public class PersonEditDialogController {
      */
     public void setPerson(IbCustomer person) {
         this.person = person;
-
+        Date input = new Date();
+        LocalDate sysdate = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         firstNameField.setText(person.getNombre());
         lastNameField.setText(person.getApellidos());
         streetField.setText(person.getDireccion());
         townField.setText(person.getPoblacion());
         cityField.setText(person.getProvincia());
         postalCodeField.setText(person.getCodPostal());
-        if (null != person.getFechaCarnet()){
+        if (null != person.getFechaCarnet()){        	
         	LocalDate fechaCarnet =person.getFechaCarnet().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        	dateCardField.setText(DateUtil.format(fechaCarnet));
+        	dpFechaCarnet.setValue(fechaCarnet);
         }else{        	
-        	dateCardField.setText("");
+        	dpFechaCarnet.setValue(sysdate);
         }
-        dateCardField.setPromptText("dd.mm.yyyy");
-        
         dnicifField.setText(person.getDniCif());
         telephoneField.setText(person.getTelefono());
         telephone2Field.setText(person.getTelefono2());
         if (null != person.getFechaNacimiento()){
         	LocalDate fechaNacimiento =person.getFechaNacimiento().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        	fechaNacimientoField.setText(DateUtil.format(fechaNacimiento));
-        	
+        	dpFechaNacimiento.setValue(fechaNacimiento);        	
         }else{
-        	fechaNacimientoField.setText("");
+        	dpFechaNacimiento.setValue(sysdate);
         }
-        fechaNacimientoField.setPromptText("dd.mm.yyyy");
-        
         emailField.setText(person.getEmail());
     }
 
@@ -116,12 +116,21 @@ public class PersonEditDialogController {
         return okClicked;
     }
 
+    public void setInsureComplete (InsureCompleteVO icVO){
+    	this.icVO = icVO;
+    }
+    
+    public static InsureCompleteVO getInsureComplete (){
+    	return icVO;
+    }
     /**
      * Called when the user clicks ok.
      */
     @FXML
     private void handleOk() {
         if (isInputValid()) {
+        	Date input = new Date();
+            LocalDate sysdate = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         	EntityManagerFactory emf;
     		EntityManager em;
     		emf = Persistence.createEntityManagerFactory("prodiSegur");
@@ -137,20 +146,22 @@ public class PersonEditDialogController {
             person.setProvincia(cityField.getText());
             person.setCodPostal(postalCodeField.getText());
             
-            if(null!=dateCardField.getText() && !dateCardField.getText().isEmpty()){
-            	person.setFechaCarnet(DateUtil.String2utilDate(dateCardField.getText()));
+            if(null!=dpFechaCarnet.getValue()){
+            	Date fechaCarnet = Date.from(dpFechaCarnet.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            	person.setFechaCarnet(fechaCarnet);
             }else{
-            	dateCardField.setText("");
+            	dpFechaCarnet.setValue(sysdate);
             }
             
             person.setDniCif(dnicifField.getText());
             person.setTelefono(telephoneField.getText());
             person.setTelefono2(telephone2Field.getText());
             
-            if(null!=fechaNacimientoField.getText() && !fechaNacimientoField.getText().isEmpty()){
-            person.setFechaNacimiento(DateUtil.String2utilDate(fechaNacimientoField.getText()));
+            if(null!=dpFechaNacimiento.getValue()){
+            Date fechaNacimiento = Date.from(dpFechaNacimiento.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());	
+            person.setFechaNacimiento(fechaNacimiento);
             }else{
-            	fechaNacimientoField.setText("");
+            	dpFechaNacimiento.setValue(sysdate);
             }
             person.setEmail(emailField.getText());
             
@@ -158,10 +169,11 @@ public class PersonEditDialogController {
             if (isEdit){
     		em.find(IbCustomer.class, person.getIdibCustomer());
     		em.merge(person);
-            }else{
-            	em.persist(person);
-            }
     		tx.commit();
+            }else{
+//            	em.persist(person);
+            	icVO.setDatosCliente(person);
+            }
             okClicked = true;
             dialogStage.close();
         }
@@ -208,13 +220,13 @@ public class PersonEditDialogController {
             errorMessage += "No valid city!\n"; 
         }
 
-        if (fechaNacimientoField.getText() == null || fechaNacimientoField.getText().length() == 0) {
-            errorMessage += "No valid birthday!\n";
-        } else {
-            if (!DateUtil.validDate(fechaNacimientoField.getText())) {
-                errorMessage += "No valid birthday. Use the format dd.mm.yyyy!\n";
-            }
-        }
+//        if (fechaNacimientoField.getText() == null || fechaNacimientoField.getText().length() == 0) {
+//            errorMessage += "No valid birthday!\n";
+//        } else {
+//            if (!DateUtil.validDate(fechaNacimientoField.getText())) {
+//                errorMessage += "No valid birthday. Use the format dd.mm.yyyy!\n";
+//            }
+//        }
 
         if (errorMessage.length() == 0) {
             return true;

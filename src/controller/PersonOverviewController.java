@@ -19,8 +19,12 @@ import com.github.daytron.simpledialogfx.data.DialogResponse;
 import com.github.daytron.simpledialogfx.dialog.Dialog;
 import com.github.daytron.simpledialogfx.dialog.DialogType;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,11 +35,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.IbCustomer;
+import model.CustomersTypes;
 import model.TableInfoRelation;
 import util.DateUtil;
 import util.InsureCompleteVO;
@@ -43,6 +49,8 @@ import util.InsureCompleteVO;
 public class PersonOverviewController {
 	InsureCompleteVO icVO = new InsureCompleteVO();
 	int contTiposClientes = 3;
+	@FXML
+	private TextField filterField;
 	@FXML
 	private TableView<IbCustomer> personTable;
 
@@ -71,6 +79,8 @@ public class PersonOverviewController {
 	private CheckBox cbConductor;
 
 	private ObservableList<IbCustomer> datosCliente = FXCollections.observableArrayList();
+
+	private ObservableList<IbCustomer> filteredData = FXCollections.observableArrayList();
 
 	private ObservableList<TableInfoRelation> datosClienteRelation = FXCollections.observableArrayList();
 
@@ -118,6 +128,8 @@ public class PersonOverviewController {
 
 	public String tipoSeguro;
 
+	List<CustomersTypes> listaCustomerComplete = new ArrayList<CustomersTypes>();
+
 	/**
 	 * The constructor. The constructor is called before the initialize()
 	 * method.
@@ -149,6 +161,9 @@ public class PersonOverviewController {
 		personTable.getColumns().addAll(firstNameColumn);
 		personTable.getColumns().addAll(lastNameColumn);
 
+		datosCliente = listaObservableCli;
+		filteredData.addAll(datosCliente);
+
 		// Clear person details.
 		showPersonDetails(null);
 
@@ -156,6 +171,51 @@ public class PersonOverviewController {
 		// changed.
 		personTable.getSelectionModel().selectedItemProperty()
 				.addListener((observable, oldValue, newValue) -> showPersonDetails(newValue));
+
+		filterField.textProperty().addListener(new ChangeListener() {
+			@Override
+			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+				 updateFilteredData();
+			}
+		});
+
+	}
+
+	private void updateFilteredData() {
+		datosCliente.clear();
+
+		for (IbCustomer p : filteredData) {
+			if (matchesFilter(p)) {
+				datosCliente.add(p);
+			}
+		}
+
+		// Must re-sort table after items changed
+		reapplyTableSortOrder();
+	}
+
+	private boolean matchesFilter(IbCustomer person) {
+		String filterString = filterField.getText();
+		if (filterString == null || filterString.isEmpty()) {
+			// No filter --> Add all.
+			return true;
+		}
+
+		String lowerCaseFilterString = filterString.toLowerCase();
+
+		if (person.getNombre().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
+			return true;
+		} else if (person.getApellidos().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
+			return true;
+		}
+
+		return false; // Does not match
+	}
+
+	private void reapplyTableSortOrder() {
+		ArrayList<TableColumn<IbCustomer, ?>> sortOrder = new ArrayList<>(personTable.getSortOrder());
+		personTable.getSortOrder().clear();
+		personTable.getSortOrder().addAll(sortOrder);
 	}
 
 	public Collection<IbCustomer> findAllClientes(EntityManager em) {
@@ -178,8 +238,6 @@ public class PersonOverviewController {
 				birthdayLabel.setText("");
 			}
 			DNILabel.setText(cliente.getDniCif());
-			
-			icVO.setDatosCliente(cliente);
 
 		} else {
 			// Person is null, remove all the text.
@@ -239,7 +297,8 @@ public class PersonOverviewController {
 
 		boolean okClicked = showPersonEditDialog(tempPerson, false);
 		if (okClicked) {
-			getPersonData().add(tempPerson);
+			getPersonData().add(icVO.getDatosCliente());
+			personTable.setItems(getPersonData());
 		}
 		// initData(tipoSeguro);
 	}
@@ -294,10 +353,15 @@ public class PersonOverviewController {
 	private void handleEditPerson() {
 
 		IbCustomer selectedPerson = personTable.getSelectionModel().getSelectedItem();
+		boolean okClicked = false;
 		if (selectedPerson != null) {
-			boolean okClicked = showPersonEditDialog(selectedPerson, true);
+			if(selectedPerson.getIdibCustomer()!=0){
+			okClicked = showPersonEditDialog(selectedPerson, true);
+			}else{
+			okClicked = showPersonEditDialog(selectedPerson, false);
+			}
 			if (okClicked) {
-				showPersonDetails(selectedPerson);
+				showPersonDetails(icVO.getDatosCliente());
 				// initData(tipoSeguro);
 			}
 
@@ -326,6 +390,7 @@ public class PersonOverviewController {
 
 			icVO.setTipoSeguro(tipoSeguro);
 			icVO.setDatosClienteRelation(datosClienteRelation);
+			icVO.setListaCustomersType(listaCustomerComplete);
 
 			controller.initData(icVO);
 			stage.show();
@@ -385,6 +450,7 @@ public class PersonOverviewController {
 		if (!contieneTipo) {
 			int countItems = datosClienteRelation.size();
 			if (countItems < contTiposClientes && cont + countItems <= contTiposClientes) {
+
 				TableInfoRelation tempPersonRelation = new TableInfoRelation();
 				Iterator it = checksTipos.entrySet().iterator();
 				while (it.hasNext()) {
@@ -398,6 +464,20 @@ public class PersonOverviewController {
 							tempPersonRelation.setDni(DNILabel.getText());
 							tempPersonRelation.setTipo(pair.getKey().toString());
 							getPersonRelationData().add(tempPersonRelation);
+							IbCustomer icu = personTable.getSelectionModel().getSelectedItem();
+							CustomersTypes ctypes = new CustomersTypes();
+							ctypes.setIbCustomer(icu);
+							ctypes.setTipo(pair.getKey().toString());
+							if (0 == icu.getIdibCustomer()) {
+								ctypes.setInsertar(true);
+							} else {
+								ctypes.setInsertar(false);
+							}
+							listaCustomerComplete.add(ctypes);
+
+							if (pair.getKey().toString().equals("TITULAR")) {
+								icVO.setDatosCliente(icu);
+							}
 
 							tempPersonRelation = new TableInfoRelation();
 						} else {
@@ -446,14 +526,15 @@ public class PersonOverviewController {
 		emf = Persistence.createEntityManagerFactory("prodiSegur");
 		em = emf.createEntityManager();
 		Collection<IbCustomer> listClientes = findAllClientes(em);
-		ObservableList<IbCustomer> listaObservableCli = FXCollections.observableArrayList(listClientes);
+		datosCliente = FXCollections.observableArrayList(listClientes);
 
 		firstNameColumn.setCellValueFactory(new PropertyValueFactory<IbCustomer, String>("nombre"));
 		lastNameColumn.setCellValueFactory(new PropertyValueFactory<IbCustomer, String>("apellidos"));
 
 		personTable.getColumns().clear();
-		personTable.setItems(listaObservableCli);
+		personTable.setItems(datosCliente);
 		personTable.getColumns().addAll(firstNameColumn);
 		personTable.getColumns().addAll(lastNameColumn);
+		
 	}
 }

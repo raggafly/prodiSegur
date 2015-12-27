@@ -11,25 +11,30 @@ import java.util.List;
  */
 @Entity
 @Table(name="ib_account_bank")
-@NamedQuery(name="IbAccountBank.findAll", query="SELECT i FROM IbAccountBank i")
+@NamedQueries({
+
+	@NamedQuery(name="IbAccountBank.findAll", query="SELECT i FROM IbAccountBank i"),
+	@NamedQuery(name="IbAccountBank.findByPK", query = "SELECT m FROM IbAccountBank m WHERE m.idibAccountBank = :id"),
+	@NamedQuery(name="IbAccountBank.findByCustomer", query = "SELECT m FROM IbAccountBank m WHERE m.ibCustomer = :customer")
+})
 public class IbAccountBank implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="idib_account_bank")
 	private int idibAccountBank;
 
 	private String banco;
 
-	private int dc;
+	private String dc;
 
-	private int entidad;
+	private String entidad;
 
 	@Column(name="numero_cuenta")
-	private int numeroCuenta;
+	private String numeroCuenta;
 
-	private int oficina;
+	private String oficina;
 
 	//bi-directional one-to-one association to IbCustomer
 	@OneToOne
@@ -59,35 +64,35 @@ public class IbAccountBank implements Serializable {
 		this.banco = banco;
 	}
 
-	public int getDc() {
+	public String getDc() {
 		return this.dc;
 	}
 
-	public void setDc(int dc) {
+	public void setDc(String dc) {
 		this.dc = dc;
 	}
 
-	public int getEntidad() {
+	public String getEntidad() {
 		return this.entidad;
 	}
 
-	public void setEntidad(int entidad) {
+	public void setEntidad(String entidad) {
 		this.entidad = entidad;
 	}
 
-	public int getNumeroCuenta() {
+	public String getNumeroCuenta() {
 		return this.numeroCuenta;
 	}
 
-	public void setNumeroCuenta(int numeroCuenta) {
+	public void setNumeroCuenta(String numeroCuenta) {
 		this.numeroCuenta = numeroCuenta;
 	}
 
-	public int getOficina() {
+	public String getOficina() {
 		return this.oficina;
 	}
 
-	public void setOficina(int oficina) {
+	public void setOficina(String oficina) {
 		this.oficina = oficina;
 	}
 

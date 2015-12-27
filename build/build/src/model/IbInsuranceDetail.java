@@ -16,7 +16,7 @@ public class IbInsuranceDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="idib_insurance_detail")
 	private int idibInsuranceDetail;
 

@@ -195,7 +195,7 @@ public class FXMLLoginController {
 			choices.add(listTipoRiesgo.get(i));
 		}
 
-		ChoiceDialog<String> dialog = new ChoiceDialog<String>("", choices);
+		ChoiceDialog<String> dialog = new ChoiceDialog<String>(choices.get(0), choices);
 		dialog.setTitle("Eleccion Seguro");
 		dialog.setHeaderText("Tipo de Seguro");
 		dialog.setContentText("Elige tipo de seguro:");

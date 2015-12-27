@@ -38,21 +38,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
-import javax.persistence.metamodel.ListAttribute;
-
-import org.hibernate.Session;
-
-import com.mysql.jdbc.Connection;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -60,16 +52,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -78,55 +66,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.IbCustomer;
-import model.IbCustomerType;
-import model.IbInsurance;
-import model.IbInsuranceDetail;
-import model.IbMasterValue;
+import model.MasterTypes;
 import model.TableInfo;
 import util.JDBCConnection;
-import util.MasterTypes;
 
 public class FXMLLoginController {
 	@FXML
 	private Text actiontarget;
-
-	@FXML
-	protected void handleSubmitButtonAction(ActionEvent event) {
-		actiontarget.setText("Sign in button pressed");
-		
-		Parent root;
-		try {
-			EntityManagerFactory emf;
-			EntityManager em;
-			emf = Persistence.createEntityManagerFactory("prodiSegur");
-			em = emf.createEntityManager();
-			TypedQuery<IbMasterValue> query = em.createNamedQuery("IbMasterValue.findByType", IbMasterValue.class);
-			TypedQuery<IbCustomerType> queryCustomerType = em.createNamedQuery("IbCustomerType.findByType", IbCustomerType.class);
-			query.setParameter("type", "INEST00");
-			List<IbMasterValue> listEstados = query.getResultList();
-			List<IbCustomerType> listCustomerType = queryCustomerType.getResultList();
-			root = FXMLLoader.load(getClass().getResource("/views/parentLayout.fxml"));
-
-			Stage stage = new Stage();
-			stage.setTitle("Pantalla Principal");
-			stage.setScene(new Scene(root, 1500, 800));
-
-			stage.show();
-			ComboBox cbTipoSeguro = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoSeguro")));
-			ComboBox cbTipoUsuario = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoUsuario")));
-
-			ObservableList<IbMasterValue> listaObservable = FXCollections.observableArrayList(listEstados);
-			ObservableList<IbCustomerType> listaObservableTipoUsuario = FXCollections.observableArrayList(listCustomerType);
-			cbTipoSeguro.setItems(listaObservable);
-			cbTipoUsuario.setItems(listaObservableTipoUsuario);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		((Node) (event.getSource())).getScene().getWindow().hide();
-	}
-
 	@FXML
 	private TableColumn<TableInfo, String> columnaPoliza;
 	@FXML
@@ -143,45 +89,85 @@ public class FXMLLoginController {
 	private TableColumn<TableInfo, String> columnaEstado;
 	@FXML
 	private TableColumn<TableInfo, String> columnaTipoRiesgo;
-	
-	
+	@FXML
+	private TableView tablaBusqueda;
+
+	@FXML
+	protected void handleSubmitButtonAction(ActionEvent event) {
+		actiontarget.setText("Sign in button pressed");
+
+		Parent root;
+		try {
+			EntityManagerFactory emf;
+			EntityManager em;
+			emf = Persistence.createEntityManagerFactory("prodiSegur");
+			em = emf.createEntityManager();
+			TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByType", String.class);
+			TypedQuery<String> queryCustomerType = em.createNamedQuery("IbCustomerType.findByType", String.class);
+			query.setParameter("type", "INEST00");
+			List<String> listEstados = query.getResultList();
+			List<String> listCustomerType = queryCustomerType.getResultList();
+			root = FXMLLoader.load(getClass().getResource("/views/parentLayout.fxml"));
+
+			Stage stage = new Stage();
+			stage.setTitle("Pantalla Principal");
+			stage.setScene(new Scene(root, 1500, 800));
+
+			stage.show();
+			ComboBox cbTipoSeguro = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoSeguro")));
+			ComboBox cbTipoUsuario = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoUsuario")));
+
+			ObservableList<String> listaObservable = FXCollections.observableArrayList(listEstados);
+			ObservableList<String> listaObservableTipoUsuario = FXCollections.observableArrayList(listCustomerType);
+			cbTipoSeguro.setItems(listaObservable);
+			cbTipoUsuario.setItems(listaObservableTipoUsuario);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		((Node) (event.getSource())).getScene().getWindow().hide();
+	}
+
 	@FXML
 	protected void seleccionarElemento(MouseEvent event) {
-		TableView tb = (TableView) ((Node) (event.getSource())).getScene().lookup("#tablaBusqueda");
+
 		((Node) (event.getSource())).getScene().lookup("#tablaBusqueda")
 				.setOnMouseClicked(new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent mouseEvent) {
-						Parent root;
 
 						if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 							if (mouseEvent.getClickCount() == 2) {
 								System.out.println("Double clicked");
+								TableInfo tableInfo = (TableInfo) tablaBusqueda.getSelectionModel().getSelectedItem();
 								FXMLParentLayoutController parent = new FXMLParentLayoutController();
 								FXMLLoader loader = new FXMLLoader(
-										getClass().getResource("/views/detalleSeguroLayout.fxml"));								     
+										getClass().getResource("/views/detalleSeguroLayout.fxml"));
 
 								try {
-									root = (Parent)loader.load();
+									Parent root;
+									root = (Parent) loader.load();
 									Stage stage = new Stage();
 									stage.setTitle("Detalle de Poliza");
-									FXMLParentLayoutController controller = loader.<FXMLParentLayoutController>getController();
-									TableInfo tableInfo=(TableInfo) tb.getSelectionModel().getSelectedItem();
+									FXMLParentLayoutController controller = loader
+											.<FXMLParentLayoutController> getController();
+
 									stage.setScene(new Scene(root, 600, 600));
-									
-									stage.setScene(stage.getScene());    
+
+									stage.setScene(stage.getScene());
 									try {
 										controller.initData(tableInfo);
 									} catch (SQLException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
-									
-									stage.show();   	
+
+									stage.show();
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
-								}    
+								}
 							}
 						}
 					}
@@ -191,20 +177,22 @@ public class FXMLLoginController {
 
 	@FXML
 	protected void actionAlta(ActionEvent event) throws SQLException {
+		boolean isConductor = false;
 		List<String> choices = new ArrayList<>();
 		EntityManagerFactory emf;
 		EntityManager em;
 		emf = Persistence.createEntityManagerFactory("prodiSegur");
 		em = emf.createEntityManager();
-		TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByType", String.class);		
+
+		TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByType", String.class);
 		query.setParameter("type", MasterTypes.COD_GENERICO_TIPO_RIESGO);
 		List<String> listTipoRiesgo = query.getResultList();
-		
+
 		Parent root;
-	
-		int i=0;
-		for (i=0;i<listTipoRiesgo.size();i++){		
-		choices.add(listTipoRiesgo.get(i));		
+
+		int i = 0;
+		for (i = 0; i < listTipoRiesgo.size(); i++) {
+			choices.add(listTipoRiesgo.get(i));
 		}
 
 		ChoiceDialog<String> dialog = new ChoiceDialog<String>("", choices);
@@ -214,32 +202,36 @@ public class FXMLLoginController {
 
 		// Traditional way to get the response value.
 		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent()){
-		    System.out.println("Your choice: " + result.get());
+		if (result.isPresent()) {
+			System.out.println("Your choice: " + result.get());
+			TypedQuery<String> queryByDescription = em.createNamedQuery("IbMasterValue.findByDescription",
+					String.class);
+			queryByDescription.setParameter("description", result.get().toString());
+			List<String> listTipoDescripcionRiesgo = queryByDescription.getResultList();
+			if (null != listTipoDescripcionRiesgo.get(0)
+					&& listTipoDescripcionRiesgo.get(0).toString().equals("CONDUCTOR")) {
+				isConductor = true;
+			}
 		}
-		
-		FXMLLoader loader = new FXMLLoader(
-				getClass().getResource("/views/PersonOverview.fxml"));
+
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/PersonOverview.fxml"));
 
 		try {
-			root = (Parent)loader.load();
+			root = (Parent) loader.load();
 			Stage stage = new Stage();
-			if(result.isPresent()){
-			stage.setTitle("Alta de un seguro de tipo : "+result.get());
-			stage.setScene(new Scene(root, 600, 600));			
-			stage.setScene(stage.getScene());
-			PersonOverviewController controller = (PersonOverviewController)loader.getController();
-			controller.initData(result.get());
-			stage.show();   	
+			if (result.isPresent()) {
+				stage.setTitle("Alta de un seguro de tipo : " + result.get());
+				stage.setScene(new Scene(root, 800, 600));
+				stage.setScene(stage.getScene());
+				PersonOverviewController controller = (PersonOverviewController) loader.getController();
+				controller.initData(result.get(), isConductor);
+				stage.show();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}    
-	
-		
-		result.ifPresent(letter -> System.out.println("Your choice: " + letter));
+		}
 	}
-	
+
 	@FXML
 	protected void actionBuscar(ActionEvent event) throws SQLException {
 
@@ -259,7 +251,7 @@ public class FXMLLoginController {
 		columnaTelefono = new TableColumn("Teléfono");
 		columnaTipoRiesgo = new TableColumn("Tipo Riesgo");
 		columnaEstado = new TableColumn("Estado");
-	    columnaTipo = new TableColumn("Tipo");
+		columnaTipo = new TableColumn("Tipo");
 
 		columnaNombre.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("nombre"));
 		columnaApellidos.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("apellidos"));
@@ -269,7 +261,7 @@ public class FXMLLoginController {
 		columnaTipoRiesgo.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("tipoRiesgo"));
 		columnaEstado.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("estado"));
 		columnaTipo.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("tipo"));
-		
+
 		tb.setItems(listaObservable);
 		tb.getColumns().addAll(columnaPoliza);
 		tb.getColumns().addAll(columnaNombre);
@@ -294,17 +286,13 @@ public class FXMLLoginController {
 		TextField tfApellidos = (TextField) ((Node) (event.getSource())).getScene().lookup("#tfApellidos");
 		ComboBox<String> cbTipoSeguro = (ComboBox<String>) ((Node) (event.getSource())).getScene()
 				.lookup("#cbTipoSeguro");
-		ComboBox cbTipoUsuario = (ComboBox<String>) ((Node) (event.getSource())).getScene()
-				.lookup("#cbTipoUsuario");
+		ComboBox cbTipoUsuario = (ComboBox<String>) ((Node) (event.getSource())).getScene().lookup("#cbTipoUsuario");
 		TableInfo ti;
 		Statement stmt = null;
 		String query = "select ins.numero_poliza,cu.nombre,cu.apellidos,cu.dni_cif,cu.telefono,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.tipo_riesgo = MV2.VALOR) AS tipo_riesgo,mv.descripcion as estado,(select ty.descripcion from ib_customer_type ty where re.id_tipo = ty.idib_customer_type)as tipo "
-				+ " from ib_customer_type type,ib_customer cu, ib_insurance ins, ib_customer_relation re,ib_insurance_detail de, ib_master_values mv "
-				+ " where "
-				+ "cu.idib_customer = re.id_cliente and de.id_seguro = ins.idib_insurance and mv.valor = ins.estado "
-				+ " and re.id_tipo = type.idib_customer_type ";
-
-
+				+ " from ib_customer_type type,ib_customer cu, ib_insurance ins, ib_customer_relation re, ib_master_values mv "
+				+ " where " + "cu.idib_customer = re.id_cliente and mv.valor = ins.estado "
+				+ " and re.id_tipo = type.idib_customer_type and re.id_seguro = ins.idib_insurance ";
 
 		if (null != tfDni.getText() && !tfDni.getText().isEmpty()) {
 			query += (" and cu.dni_cif = '" + tfDni.getText() + "'");
@@ -321,7 +309,7 @@ public class FXMLLoginController {
 		if (null != cbTipoSeguro.getValue() && !cbTipoSeguro.getValue().toString().isEmpty()) {
 			query += (" and mv.descripcion = '" + cbTipoSeguro.getValue().toString() + "'");
 		}
-		
+
 		if (null != cbTipoUsuario.getValue() && !cbTipoUsuario.getValue().toString().isEmpty()) {
 			query += (" and type.descripcion = '" + cbTipoUsuario.getValue().toString() + "'");
 		}
@@ -343,7 +331,7 @@ public class FXMLLoginController {
 				lti.add(ti);
 			}
 		} catch (SQLException e) {
-			 e.printStackTrace();
+			e.printStackTrace();
 		} finally {
 			if (stmt != null) {
 				stmt.close();

@@ -16,9 +16,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import model.IbCustomer;
+import model.MasterTypes;
 import model.TableInfo;
 import util.JDBCConnection;
-import util.MasterTypes;
 
 public class FXMLParentLayoutController implements Initializable {
 	@FXML
@@ -231,7 +231,7 @@ public class FXMLParentLayoutController implements Initializable {
 		return lbAccesorios;
 	}
 
-	TableInfo datosInfo;
+	
 	public String particular = "PARTICULAR";
 	public String publico = "PÚBLICO";
 
@@ -244,23 +244,11 @@ public class FXMLParentLayoutController implements Initializable {
 	}
 
 	public void initData(TableInfo tableInfo) throws SQLException {
-		datosInfo = tableInfo;
 		Statement stmt = null;
 		try {
 			JDBCConnection con = new JDBCConnection();
-			String query = "select CONCAT(c.nombre, ' ', c.Apellidos) As Nombre, t.descripcion as tipoUsuario , t.cod_tipo as codigo, "
-					+ " i.numero_poliza,compania,fecha_inicio,fecha_fin,(select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,prima_neta,fecha_entrada_vigor,(select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision,"
-					+ " (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo, "
-					+ " (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo, "
-					+ " (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago, "
-					+ " (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura,"
-					+ " marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula,pma_kgs,remolque,accesorios "
-					+ " FROM ib_customer c, ib_customer_relation r, ib_insurance i,ib_insurance_detail d, ib_customer_type t "
-					+ " where i.numero_poliza='" + tableInfo.getNumeroPoliza() + "'"
-					+ " and c.idib_customer = r.id_cliente and i.idib_insurance = r.id_seguro"
-					+ " and d.id_seguro = i.idib_insurance and t.idib_customer_type = r.id_tipo"
-					+ " order by t.cod_tipo";
-
+			String query = "select CONCAT(c.nombre, ' ', c.Apellidos) As Nombre, t.descripcion as tipoUsuario , t.cod_tipo as codigo,  i.numero_poliza,compania,fecha_inicio,fecha_fin, (select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,prima_neta,fecha_entrada_vigor, (select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision, (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo,   (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo,  (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago,   (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura, marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula, pma_kgs,remolque,accesorios   FROM ib_insurance i LEFT OUTER JOIN ib_insurance_detail d ON d.id_seguro  = i.idib_insurance, ib_customer c, ib_customer_relation r, ib_customer_type t   where i.numero_poliza='" + tableInfo.getNumeroPoliza() + "'and  c.idib_customer = r.id_cliente and i.idib_insurance = r.id_seguro   and t.idib_customer_type = r.id_tipo order by t.cod_tipo";
+			
 			stmt = con.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			int cont = 0;

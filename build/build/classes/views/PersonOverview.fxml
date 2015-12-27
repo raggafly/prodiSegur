@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="631.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PersonOverviewController">
 	<children>
@@ -71,11 +71,12 @@
                   <CheckBox fx:id="cbTitular" layoutX="5.0" layoutY="255.0" mnemonicParsing="false" text="Titular" />
                   <CheckBox fx:id="cbConductor" layoutX="184.0" layoutY="255.0" mnemonicParsing="false" text="Conductor" />
                   <CheckBox fx:id="cbTomador" layoutX="85.0" layoutY="255.0" mnemonicParsing="false" text="Tomador" />
-                  <TableView layoutX="5.0" layoutY="352.0" prefHeight="178.0" prefWidth="371.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                  <TableView fx:id="personRelationTable" layoutX="5.0" layoutY="352.0" prefHeight="178.0" prefWidth="371.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="Nombre" />
-                      <TableColumn prefWidth="75.0" text="Apellidos" />
-                        <TableColumn prefWidth="75.0" text="DNI" />
+                      <TableColumn fx:id="nombreRelationColumn" prefWidth="75.0" text="Nombre" />
+                      <TableColumn fx:id="apellidosRelationColumn" prefWidth="75.0" text="Apellidos" />
+                        <TableColumn fx:id="dniRelationColumn" prefWidth="75.0" text="DNI" />
+                        <TableColumn fx:id="tipoRelationColumn" prefWidth="75.0" text="TIPO" />
                     </columns>
                   </TableView>
                   <Button layoutX="8.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleAnadir" text="Añadir" />

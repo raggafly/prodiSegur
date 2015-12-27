@@ -85,7 +85,7 @@ public class InsureDetailOverviewController {
 				&& null != cbVehiculo.getSelectionModel().getSelectedItem() && null != dpFechaMatricula.getValue()) {
 
 			if (!cbCobertura.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-				IbMasterValue imv = util.masterValueUtil.getMasterValueByValor(cobertura);
+				IbMasterValue imv = util.masterValueUtil.getMasterValueByValor(cbCobertura.getSelectionModel().getSelectedItem().toString());
 				cobertura = imv.getValor();
 			}
 

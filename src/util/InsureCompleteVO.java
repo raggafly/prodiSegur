@@ -1,8 +1,11 @@
 package util;
 
+import java.util.List;
+
 import javafx.collections.ObservableList;
 import model.IbAccountBank;
 import model.IbCustomer;
+import model.CustomersTypes;
 import model.IbInsurance;
 import model.IbInsuranceDetail;
 import model.TableInfoRelation;
@@ -22,6 +25,24 @@ public class InsureCompleteVO {
 	
 	String dniTitular="";
 	
+	List <CustomersTypes> listaCustomersType;
+	
+	public IbInsuranceDetail getDetalleSeguro() {
+		return detalleSeguro;
+	}
+
+	public void setDetalleSeguro(IbInsuranceDetail detalleSeguro) {
+		this.detalleSeguro = detalleSeguro;
+	}
+
+	public List<CustomersTypes> getListaCustomersType() {
+		return listaCustomersType;
+	}
+
+	public void setListaCustomersType(List<CustomersTypes> listaCustomersType) {
+		this.listaCustomersType = listaCustomersType;
+	}
+
 	public String getNombreCompletoTitular() {
 		return nombreCompletoTitular;
 	}
