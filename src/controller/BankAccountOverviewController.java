@@ -28,9 +28,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.CustomersTypes;
 import model.IbAccountBank;
+import model.IbCuotesInsure;
 import model.IbCustomer;
 import model.IbCustomerRelation;
 import model.IbCustomerType;
@@ -144,6 +146,8 @@ public class BankAccountOverviewController {
 			btFinalizar.setDisable(false);
 		} else {
 			Dialog dialog = new Dialog(DialogType.ERROR, "INFORMACIÓN", "El número de cuenta no es correcto.");
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
 	}
@@ -156,7 +160,7 @@ public class BankAccountOverviewController {
 			setDatosBancarios();
 		}
 		// guarda
-		saveInsureComplete();
+		saveInsureComplete(event);
 		((Node) (event.getSource())).getScene().getWindow().hide();
 	}
 
@@ -177,7 +181,7 @@ public class BankAccountOverviewController {
 		icVO.getDatosCliente().setIbAccountBank2(datosBancarios);
 	}
 
-	private void saveInsureComplete() {
+	private void saveInsureComplete(ActionEvent event) {
 
 		EntityManagerFactory emf;
 		EntityManager em;
@@ -198,14 +202,13 @@ public class BankAccountOverviewController {
 		listaRelacionCliente = getRelation();
 		icVO.getDatosCliente().setIbCustomerRelations(listaRelacionCliente);
 
-		List <CustomersTypes> lisct =icVO.getListaCustomersType();
-		
+		List<CustomersTypes> lisct = icVO.getListaCustomersType();
+
 		for (int i = 0; i < lisct.size(); i++) {
-			if(lisct.get(i).isInsertar()){
+			if (lisct.get(i).isInsertar()) {
 				em.persist(lisct.get(i).getIbCustomer());
 			}
 		}
-		
 
 		em.persist(icVO.getDatosSeguro());
 		em.flush();
@@ -220,8 +223,13 @@ public class BankAccountOverviewController {
 			em.flush();
 		}
 
+		for (int i = 0; i < icVO.getListCuotesInsure().size(); i++) {
+			IbCuotesInsure ici = icVO.getListCuotesInsure().get(i);
+			ici.setIbInsurance(icVO.getDatosSeguro());
+			em.persist(ici);
+			em.flush();
+		}
 		tx.commit();
-
 		/*
 		 * Iniciamos la pantalla para ver el detalle del seguro.
 		 */
@@ -249,7 +257,11 @@ public class BankAccountOverviewController {
 				stage.show();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				Dialog dialog = new Dialog(DialogType.ERROR, "ERROR",
+						"El proceso ha fallado a la hora de guardar los datos. Puede ser que la que haya algún problema con la base de datos.");
+				dialog.initModality(Modality.WINDOW_MODAL);
+				dialog.initOwner(((Node)event.getSource()).getScene().getWindow());
+				dialog.showAndWait();
 			}
 		}
 	}

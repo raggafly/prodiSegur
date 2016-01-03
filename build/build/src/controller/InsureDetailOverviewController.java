@@ -82,10 +82,10 @@ public class InsureDetailOverviewController {
 		String cobertura = "";
 
 		if (null != cbCobertura.getSelectionModel().getSelectedItem()
-				&& null != cbVehiculo.getSelectionModel().getSelectedItem() && null != dpFechaMatricula.getValue()) {
+				&& null != cbVehiculo.getSelectionModel().getSelectedItem() && null != dpFechaMatricula.getValue() && !tfMarca.getText().isEmpty() && !tfModelo.getText().isEmpty() && !tfMatricula.getText().isEmpty()) {
 
 			if (!cbCobertura.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-				IbMasterValue imv = util.masterValueUtil.getMasterValueByValor(cobertura);
+				IbMasterValue imv = util.masterValueUtil.getMasterValueByValor(cbCobertura.getSelectionModel().getSelectedItem().toString());
 				cobertura = imv.getValor();
 			}
 

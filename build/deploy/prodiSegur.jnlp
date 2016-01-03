@@ -2,13 +2,13 @@
 <jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="prodiSegur.jnlp">
   <information>
     <title>prodiSegur</title>
-    <vendor>LifeSoft</vendor>
+    <vendor>Shark Soft.</vendor>
     <description>GestInsu</description>
     <offline-allowed/>
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="prodiSegur.jar" size="115262" download="eager" />
+    <jar href="prodiSegur.jar" size="176374" download="eager" />
     <jar href="libs\SimpleDialogFX-2.2.0.jar" size="28545" download="eager" />
     <jar href="libs\antlr-2.7.7.jar" size="445288" download="eager" />
     <jar href="libs\com.sun.tools.xjc_2.2.0.jar" size="3101294" download="eager" />
@@ -38,7 +38,8 @@
     <jar href="libs\ojdbc7.jar" size="3698857" download="eager" />
     <jar href="libs\org.eclipse.persistence.jpa.modelgen_2.5.2.v20140319-9ad6abd.jar" size="45718" download="eager" />
     <jar href="libs\org.eclipse.persistence.jpars_2.5.2.v20140319-9ad6abd.jar" size="15010" download="eager" />
+    <jar href="libs\prodiSegur-preloader.jar" size="350" download="eager" />
   </resources>
-  <jfx:javafx-desc  width="0" height="0" main-class="controller.FXMLLogin"  name="GestInsu" />
+  <jfx:javafx-desc  width="0" height="0" main-class="controller.FXMLLogin"  name="GestInsu"  preloader-class=""/>
   <update check="background"/>
 </jnlp>

@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import model.CustomersTypes;
 import model.IbAccountBank;
 import model.IbCustomer;
 import model.IbCustomerRelation;
@@ -154,7 +156,8 @@ public class BankAccountOverviewController {
 			setDatosBancarios();
 		}
 		// guarda
-		saveInsueComplete();
+		saveInsureComplete();
+		((Node) (event.getSource())).getScene().getWindow().hide();
 	}
 
 	public void setDatosBancarios() {
@@ -174,7 +177,7 @@ public class BankAccountOverviewController {
 		icVO.getDatosCliente().setIbAccountBank2(datosBancarios);
 	}
 
-	private void saveInsueComplete() {
+	private void saveInsureComplete() {
 
 		EntityManagerFactory emf;
 		EntityManager em;
@@ -195,9 +198,14 @@ public class BankAccountOverviewController {
 		listaRelacionCliente = getRelation();
 		icVO.getDatosCliente().setIbCustomerRelations(listaRelacionCliente);
 
-		if (saveBank) {
-			em.persist(icVO.getDatosCliente());
+		List <CustomersTypes> lisct =icVO.getListaCustomersType();
+		
+		for (int i = 0; i < lisct.size(); i++) {
+			if(lisct.get(i).isInsertar()){
+				em.persist(lisct.get(i).getIbCustomer());
+			}
 		}
+		
 
 		em.persist(icVO.getDatosSeguro());
 		em.flush();
@@ -249,17 +257,33 @@ public class BankAccountOverviewController {
 	private List<IbCustomerRelation> getRelation() {
 		// TODO Auto-generated method stub
 		List<IbCustomerRelation> licr = new ArrayList<IbCustomerRelation>();
-		Iterator itr = icVO.getDatosClienteRelation().iterator();
-		while (itr.hasNext()) {
+		// lo viejo
+		// Iterator itr = icVO.getDatosClienteRelation().iterator();
+		// while (itr.hasNext()) {
+		// IbCustomerRelation icr = new IbCustomerRelation();
+		// TableInfoRelation element = (TableInfoRelation) itr.next();
+		// IbCustomerType ctype = new IbCustomerType();
+		//
+		// icr.setIbInsurance(icVO.getDatosSeguro());
+		// icr.setIbCustomer(icVO.getDatosCliente());
+		// ctype = getCodeByDescription(element.getTipo());
+		// icr.setIbCustomerType1(ctype);
+		//
+		// if (icr != null) {
+		// licr.add(icr);
+		// }
+		// }
+		// fin de lo viejo
+
+		List<CustomersTypes> listct = icVO.getListaCustomersType();
+		for (int i = 0; i < listct.size(); i++) {
 			IbCustomerRelation icr = new IbCustomerRelation();
-			TableInfoRelation element = (TableInfoRelation) itr.next();
 			IbCustomerType ctype = new IbCustomerType();
-
 			icr.setIbInsurance(icVO.getDatosSeguro());
-			icr.setIbCustomer(icVO.getDatosCliente());
-			ctype = getCodeByDescription(element.getTipo());
-			icr.setIbCustomerType1(ctype);
+			icr.setIbCustomer(listct.get(i).getIbCustomer());
+			ctype = getCodeByDescription(listct.get(i).getTipo());
 
+			icr.setIbCustomerType1(ctype);
 			if (icr != null) {
 				licr.add(icr);
 			}

@@ -19,7 +19,8 @@ import javax.persistence.*;
 	@NamedQuery(name="IbMasterValue.findByDescription", query="SELECT m.descripcion2 FROM IbMasterValue m WHERE m.descripcion= :description"),
 	@NamedQuery(name="IbMasterValue.findAll", query="SELECT i FROM IbMasterValue i"),
 	@NamedQuery(name="IbMasterValue.findAllTypes", query="SELECT distinct i.tipoCodigo FROM IbMasterValue i"),
-	@NamedQuery(name="IbMasterValue.findMaxValorByType", query="select max(m.valor) from IbMasterValue m where m.tipoCodigo = :type")
+	@NamedQuery(name="IbMasterValue.findMaxValorByType", query="select max(m.valor) from IbMasterValue m where m.tipoCodigo = :type"),
+	@NamedQuery(name="IbMasterValue.findAllByValorAndTipo", query = "SELECT m FROM IbMasterValue m WHERE m.descripcion = :desc and m.tipoCodigo = :tipo")
 	
 })
 public class IbMasterValue implements Serializable {

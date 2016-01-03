@@ -195,7 +195,7 @@ public class FXMLLoginController {
 			choices.add(listTipoRiesgo.get(i));
 		}
 
-		ChoiceDialog<String> dialog = new ChoiceDialog<String>("", choices);
+		ChoiceDialog<String> dialog = new ChoiceDialog<String>(choices.get(0), choices);
 		dialog.setTitle("Eleccion Seguro");
 		dialog.setHeaderText("Tipo de Seguro");
 		dialog.setContentText("Elige tipo de seguro:");
@@ -312,6 +312,14 @@ public class FXMLLoginController {
 
 		if (null != cbTipoUsuario.getValue() && !cbTipoUsuario.getValue().toString().isEmpty()) {
 			query += (" and type.descripcion = '" + cbTipoUsuario.getValue().toString() + "'");
+		}
+		
+		if (null != tfNombre.getText() && !tfNombre.getText().toString().isEmpty()) {
+			query += (" and cu.nombre = '" + tfNombre.getText().toString() + "'");
+		}
+		
+		if (null != tfApellidos.getText() && !tfApellidos.getText().toString().isEmpty()) {
+			query += (" and cu.apellidos = '" + tfApellidos.getText().toString() + "'");
 		}
 
 		List<TableInfo> lti = new ArrayList<TableInfo>();

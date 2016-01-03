@@ -71,10 +71,10 @@
 						</GridPane>
 						<HBox layoutX="-2.0" layoutY="453.0" prefHeight="132.0" prefWidth="372.0" spacing="5.0" AnchorPane.bottomAnchor="11.0" AnchorPane.rightAnchor="11.0">
 							<children>
-								<Button layoutX="112.1875" layoutY="259.0" mnemonicParsing="false" onAction="#handleNewPerson" prefWidth="90.0" text="Nuevo..." />
-								<Button layoutX="167.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleEditPerson" prefWidth="90.0" text="Editar..." />
-								<Button layoutX="221.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleDeletePerson" prefWidth="90.0" text="Borrar" />
-                        <Button mnemonicParsing="false" onAction="#handleSiguiente" text="Siguiente" textFill="#1e00ff">
+								<Button fx:id="btNuevo" layoutX="112.1875" layoutY="259.0" mnemonicParsing="false" onAction="#handleNewPerson" prefWidth="90.0" text="Nuevo..." />
+								<Button fx:id="btEditar" layoutX="167.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleEditPerson" prefWidth="90.0" text="Editar..." />
+								<Button fx:id="btBorrar" layoutX="221.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleDeletePerson" prefWidth="90.0" text="Borrar" />
+                        <Button fx:id="btSiguiente" mnemonicParsing="false" onAction="#handleSiguiente" text="Siguiente" textFill="#1e00ff">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -92,8 +92,8 @@
                         <TableColumn fx:id="tipoRelationColumn" prefWidth="75.0" text="TIPO" />
                     </columns>
                   </TableView>
-                  <Button layoutX="8.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleAnadir" text="Añadir" />
-                  <Button layoutX="81.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleBorrar" text="Borrar" />
+                  <Button fx:id="btAnadir" layoutX="8.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleAnadir" text="Añadir" />
+                  <Button fx:id="btBorrarRelation" layoutX="81.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleBorrar" text="Borrar" />
                   <Separator layoutX="-2.0" layoutY="296.0" prefHeight="0.0" prefWidth="381.0" AnchorPane.leftAnchor="-2.0" AnchorPane.rightAnchor="2.0" />
                   <Separator layoutX="-4.0" layoutY="540.0" prefHeight="3.0" prefWidth="381.0" AnchorPane.leftAnchor="-4.0" AnchorPane.rightAnchor="4.0" />
 					</children>

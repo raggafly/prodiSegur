@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -65,6 +66,16 @@ public class DateUtil {
     	System.out.println(date);
     	return date;
     }
+    
+    public static LocalDate dateToLocalDate (Date fecha){
+    	LocalDate date = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    	return date;
+    }
+   
+    public static Date LocalDateToDate (LocalDate fecha){
+    	Date date = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    	return date;
+    }
 
     /**
      * Checks the String whether it is a valid date.
@@ -76,4 +87,8 @@ public class DateUtil {
     	// Try to parse the String.
     	return DateUtil.parse(dateString) != null;
     }
+    
+    public static boolean isNumeric(String s) {  
+        return s.matches("[-+]?\\d*\\.?\\d+");  
+    }  
 }

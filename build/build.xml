@@ -106,6 +106,11 @@
 				<include name="src/**" />
 			</fileset>
 		</copy>
+		<copy todir="project">
+			<fileset dir="C:\Users\RUBEN\git\prodiSegur">
+				<include name="image/**" />
+			</fileset>
+		</copy>
 	
 		<mkdir dir="projectRefs" />
 	</target>
@@ -141,6 +146,11 @@
 	
 		<!-- Copy project sources itself -->
 		<copy todir="build/src">
+			<fileset dir="project/image">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="build/src">
 			<fileset dir="project/src">
 				<include name="**/*"/>
 			</fileset>
@@ -156,6 +166,9 @@
 	
 		<!-- Copy over none Java-Files -->
 		<copy todir="build/classes">
+		<fileset dir="project/image">
+			<exclude name="**/*.java"/>
+		</fileset>
 		<fileset dir="project/src">
 			<exclude name="**/*.java"/>
 		</fileset>
@@ -176,8 +189,15 @@
 			</fileset>
 		</copy>
 	
+		<jar destfile="dist/libs/prodiSegur-preloader.jar">
+			<fileset dir="build/classes">
+				<include name=".class"/>
+			</fileset>
+		</jar>
 	
 		<fx:resources id="appRes">
+			<fx:fileset dir="dist" requiredFor="preloader"
+				includes="prodiSegur-preloader.jar"/>
 			<fx:fileset dir="dist" includes="prodiSegur.jar"/>
 			<fx:fileset dir="dist" includes="libs/*"/>
 		</fx:resources>
@@ -185,6 +205,7 @@
 		<fx:application id="fxApplication"
 			name="GestInsu"
 			mainClass="controller.FXMLLogin"
+			preloaderClass=""
 			toolkit="fx"
 		/>
 	
@@ -195,13 +216,15 @@
 		<fx:jar destfile="dist/prodiSegur.jar">
 			<fx:application refid="fxApplication"/>
 			<fileset dir="build/classes">
+			<exclude name=".class" />
 			</fileset>
 			<fx:resources refid="appRes"/>
 	
 			<manifest>
-				<attribute name="Implementation-Vendor" value="LifeSoft"/>
+				<attribute name="Implementation-Vendor" value="Shark Soft."/>
 				<attribute name="Implementation-Title" value="GestInsu"/>
 				<attribute name="Implementation-Version" value="1.0"/>
+				<attribute name="SplashScreen-Image" value="Library_Folder.png"/>
 				<attribute name="JavaFX-Feature-Proxy" value="None"/>
 			</manifest>
 		</fx:jar>
@@ -219,7 +242,7 @@
 			updatemode="background" >
 	
 			<fx:platform basedir="${java.home}"/>
-			<fx:info title="prodiSegur" vendor="LifeSoft"/>
+			<fx:info title="prodiSegur" vendor="Shark Soft."/>
 	
 			<fx:application refId="fxApplication"/>
 			<fx:resources refid="appRes"/>

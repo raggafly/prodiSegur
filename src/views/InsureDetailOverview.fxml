@@ -52,7 +52,8 @@
             <Label text="Cobertura:" GridPane.rowIndex="1" />
             <ComboBox fx:id="cbCobertura" prefHeight="31.0" prefWidth="286.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <ComboBox fx:id="cbVehiculo" prefHeight="31.0" prefWidth="300.0" GridPane.columnIndex="1" />
-            <Button mnemonicParsing="false" text="Añadir..." GridPane.columnIndex="3" />
+            <Button fx:id="btnAnadirTipoVehiculo" mnemonicParsing="false" onAction="#handleAnadirTipVehiculo" text="Añadir..." GridPane.columnIndex="3" />
+            <Button fx:id="btnAnadirCobertura" mnemonicParsing="false" onAction="#handleAnadirCobertura" text="Añadir..." GridPane.columnIndex="3" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <Button fx:id="btSiguiente" layoutX="465.0" layoutY="437.0" mnemonicParsing="false" onAction="#handleSiguiente" text="Siguiente" textFill="#1e00ff">

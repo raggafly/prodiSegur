@@ -13,4 +13,14 @@ public static final String TYPE_VEHICULO ="INDTV00";
 public static final String TYPE_COBERTURA ="INDCO00";
 public static final String TYPE_COMPANIA ="INTCS00";
 
+public static final String DESCRIPTION_FP_ANUAL ="ANUAL";
+public static final String DESCRIPTION_FP_SEMESTRAL ="SEMESTRAL";
+public static final String DESCRIPTION_FP_TRIMESTRAL ="TRIMESTRAL";
+public static final String DESCRIPTION_FP_MENSUAL ="MENSUAL";
+
+public static final String DESCRIPTION_DU_ANUAL ="ANUAL";
+public static final String DESCRIPTION_DU_SEMESTRAL ="SEMESTRAL";
+public static final String DESCRIPTION_DU_TRIMESTRAL ="TRIMESTRAL";
+public static final String DESCRIPTION_DU_MENSUAL ="MENSUAL";
+
 }

@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 
 import com.github.daytron.simpledialogfx.data.DialogResponse;
 import com.github.daytron.simpledialogfx.dialog.Dialog;
@@ -26,11 +28,13 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -41,6 +45,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.IbCustomer;
+import model.IbCustomerRelation;
 import model.CustomersTypes;
 import model.TableInfoRelation;
 import util.DateUtil;
@@ -122,13 +127,27 @@ public class PersonOverviewController {
 	@FXML
 	private Label birthdayLabel;
 	@FXML
-	private Label DNILabel;
+	private Label DNILabel;	
+	@FXML
+	private Button btAnadir;
+	@FXML
+	private Button btBorrarRelation;
+	@FXML
+	private Button btNuevo;
+	@FXML
+	private Button btEditar;
+	@FXML
+	private Button btBorrar;
+	@FXML
+	private Button btSiguiente;
 
 	// Reference to the main application.
 
 	public String tipoSeguro;
 
 	List<CustomersTypes> listaCustomerComplete = new ArrayList<CustomersTypes>();
+	
+	
 
 	/**
 	 * The constructor. The constructor is called before the initialize()
@@ -175,7 +194,7 @@ public class PersonOverviewController {
 		filterField.textProperty().addListener(new ChangeListener() {
 			@Override
 			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				 updateFilteredData();
+				updateFilteredData();
 			}
 		});
 
@@ -197,7 +216,6 @@ public class PersonOverviewController {
 	private boolean matchesFilter(IbCustomer person) {
 		String filterString = filterField.getText();
 		if (filterString == null || filterString.isEmpty()) {
-			// No filter --> Add all.
 			return true;
 		}
 
@@ -255,34 +273,52 @@ public class PersonOverviewController {
 	 * Called when the user clicks on the delete button.
 	 */
 	@FXML
-	private void handleDeletePerson() {
-
+	private void handleDeletePerson(Event event) {
+		int selectedIndex = personTable.getSelectionModel().getSelectedIndex();
 		EntityManagerFactory emf;
 		EntityManager em;
 		emf = Persistence.createEntityManagerFactory("prodiSegur");
 		em = emf.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
-		int selectedIndex = personTable.getSelectionModel().getSelectedIndex();
-		IbCustomer clienteSeleccionado = personTable.getSelectionModel().getSelectedItem();
 		if (selectedIndex >= 0) {
-			Dialog dialog = new Dialog(DialogType.CONFIRMATION, "INFORMACIÓN",
-					"¿Estás seguro qué desear eliminar el cliente " + clienteSeleccionado.getNombre() + " "
-							+ clienteSeleccionado.getApellidos() + "?");
-			dialog.showAndWait();
-			if (dialog.getResponse() == DialogResponse.YES) {
-				// Rest of the code
+			EntityTransaction tx = em.getTransaction();
 
-				personTable.getItems().remove(selectedIndex);
-				IbCustomer cliente = em.find(IbCustomer.class, clienteSeleccionado.getIdibCustomer());
-				em.getTransaction().begin();
-				em.remove(cliente);
-				em.getTransaction().commit();
-				em.close();
+			IbCustomer clienteSeleccionado = personTable.getSelectionModel().getSelectedItem();
+			IbCustomer cliente = em.find(IbCustomer.class, clienteSeleccionado.getIdibCustomer());
+
+			TypedQuery<IbCustomerRelation> query = em.createNamedQuery("IbCustomerRelation.findCliente",
+					IbCustomerRelation.class);
+			query.setParameter("idcliente", clienteSeleccionado);
+			List<IbCustomerRelation> listClienteRelation = query.getResultList();
+
+			if (listClienteRelation.size() == 0) {
+
+				Dialog dialog = new Dialog(DialogType.CONFIRMATION, "INFORMACIÓN",
+						"¿Estás seguro qué desear eliminar el cliente " + clienteSeleccionado.getNombre() + " "
+								+ clienteSeleccionado.getApellidos() + "?");
+				dialog.initModality(Modality.WINDOW_MODAL);
+				dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
+				dialog.showAndWait();
+				if (dialog.getResponse() == DialogResponse.YES) {
+					// Rest of the code
+					personTable.getItems().remove(selectedIndex);
+					em.getTransaction().begin();
+					em.remove(cliente);
+					em.getTransaction().commit();
+					em.close();
+				}
+			} else {
+				Dialog dialog = new Dialog(DialogType.ERROR, "INFORMACIÓN",
+						"Este cliente tiene seguros contratados, en la parte de alta de seguros no se permite este tipo de acciones.");
+				dialog.initModality(Modality.WINDOW_MODAL);
+				dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
+				dialog.showAndWait();
 			}
 		} else {
 			// Nothing selected.
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
 					"Debes de seleccionar un cliente de la tabla para poder borrar.");
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
 	}
@@ -296,10 +332,10 @@ public class PersonOverviewController {
 		IbCustomer tempPerson = new IbCustomer();
 
 		boolean okClicked = showPersonEditDialog(tempPerson, false);
-		if (okClicked) {
-			getPersonData().add(icVO.getDatosCliente());
-			personTable.setItems(getPersonData());
-		}
+//		if (okClicked) {
+//			getPersonData().add(icVO.getDatosCliente());
+//			personTable.setItems(getPersonData());
+//		}
 		// initData(tipoSeguro);
 	}
 
@@ -336,7 +372,7 @@ public class PersonOverviewController {
 			dialogStage.showAndWait();
 			icVO = controller.getInsureComplete();
 			initialize();
-			showPersonDetails(icVO.getDatosCliente());
+			// showPersonDetails(icVO.getDatosCliente());
 			return controller.isOkClicked();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -350,25 +386,24 @@ public class PersonOverviewController {
 	 */
 
 	@FXML
-	private void handleEditPerson() {
+	private void handleEditPerson(Event event) {
 
 		IbCustomer selectedPerson = personTable.getSelectionModel().getSelectedItem();
 		boolean okClicked = false;
 		if (selectedPerson != null) {
-			if(selectedPerson.getIdibCustomer()!=0){
-			okClicked = showPersonEditDialog(selectedPerson, true);
-			}else{
-			okClicked = showPersonEditDialog(selectedPerson, false);
+			if (selectedPerson.getIdibCustomer() != 0) {
+				okClicked = showPersonEditDialog(selectedPerson, true);
 			}
 			if (okClicked) {
 				showPersonDetails(icVO.getDatosCliente());
-				// initData(tipoSeguro);
 			}
 
 		} else {
 			// Nothing selected.
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
 					"Debes de seleccionar un cliente de la tabla para poder editar.");
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 
 		}
@@ -376,28 +411,36 @@ public class PersonOverviewController {
 
 	@FXML
 	private void handleSiguiente(ActionEvent event) {
-		Parent root;
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InsureOverview.fxml"));
+		if (personRelationTable.getItems().size() == contTiposClientes) {
+			Parent root;
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InsureOverview.fxml"));
 
-		try {
-			root = (Parent) loader.load();
-			Stage stage = new Stage();
+			try {
+				root = (Parent) loader.load();
+				Stage stage = new Stage();
 
-			stage.setTitle("Alta nueva Poliza.");
-			stage.setScene(new Scene(root, 600, 600));
-			stage.setScene(stage.getScene());
-			InsureOverviewController controller = (InsureOverviewController) loader.getController();
+				stage.setTitle("Alta nueva Poliza.");
+				stage.setScene(new Scene(root, 1157, 823));
+				stage.setScene(stage.getScene());
+				InsureOverviewController controller = (InsureOverviewController) loader.getController();
 
-			icVO.setTipoSeguro(tipoSeguro);
-			icVO.setDatosClienteRelation(datosClienteRelation);
-			icVO.setListaCustomersType(listaCustomerComplete);
+				icVO.setTipoSeguro(tipoSeguro);
+				icVO.setDatosClienteRelation(datosClienteRelation);
+				icVO.setListaCustomersType(listaCustomerComplete);
 
-			controller.initData(icVO);
-			stage.show();
-			((Node) (event.getSource())).getScene().getWindow().hide();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				controller.initData(icVO);
+				stage.show();
+				((Node) (event.getSource())).getScene().getWindow().hide();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
+					"Para pasar al siguiente paso se deben añadir los datos necesarios en la tabla relación cliente.");
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
+			dialog.showAndWait();
 		}
 
 	}
@@ -409,7 +452,7 @@ public class PersonOverviewController {
 	// }
 
 	@FXML
-	private void handleAnadir() {
+	private void handleAnadir(Event event) {
 		HashMap<String, Boolean> checksTipos = new HashMap<String, Boolean>();
 		int cont = 0;
 		boolean contieneTipo = false;
@@ -483,6 +526,8 @@ public class PersonOverviewController {
 						} else {
 							Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
 									"No hay seleccionado ningún cliente.");
+							dialog.initModality(Modality.WINDOW_MODAL);
+							dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 							dialog.showAndWait();
 						}
 					}
@@ -498,11 +543,15 @@ public class PersonOverviewController {
 			} else {
 				Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
 						"Por favor, revisa los datos de entrada para los clientes a utilizar.");
+				dialog.initModality(Modality.WINDOW_MODAL);
+				dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 				dialog.showAndWait();
 			}
 		} else {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
 					"Se ha detectado que se está intentando duplicar el tipo de cliente para una misma poliza.");
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
 	}
@@ -514,12 +563,21 @@ public class PersonOverviewController {
 
 	}
 
-	public void initData(String tipoSeguro, boolean isConductor) {
+	public void initData(String tipoSeguro, boolean isConductor, boolean isHandleAlta) {
 		// TODO Auto-generated method stub
-		this.tipoSeguro = tipoSeguro;
-		if (!isConductor) {
-			contTiposClientes = 2;
-			cbConductor.setVisible(false);
+		if (isHandleAlta) {
+			this.tipoSeguro = tipoSeguro;
+			if (!isConductor) {
+				contTiposClientes = 2;
+				cbConductor.setVisible(false);
+			}
+		} else {
+			btAnadir.setDisable(true);
+			btBorrarRelation.setDisable(true);
+			btSiguiente.setDisable(true);
+			cbConductor.setDisable(true);
+			cbTomador.setDisable(true);
+			cbTitular.setDisable(true);
 		}
 		EntityManagerFactory emf;
 		EntityManager em;
@@ -535,6 +593,6 @@ public class PersonOverviewController {
 		personTable.setItems(datosCliente);
 		personTable.getColumns().addAll(firstNameColumn);
 		personTable.getColumns().addAll(lastNameColumn);
-		
+
 	}
 }

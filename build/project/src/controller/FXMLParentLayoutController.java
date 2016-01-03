@@ -237,9 +237,6 @@ public class FXMLParentLayoutController implements Initializable {
 
 	@Override
 	public void initialize(java.net.URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
-		// System.out.println(datosInfo.getNombre()+"
-		// "+datosInfo.getApellidos());
 
 	}
 
@@ -297,6 +294,7 @@ public class FXMLParentLayoutController implements Initializable {
 					lbRemolque.setText(rs.getString("remolque"));
 					lbTipoVehiculo.setText(rs.getString("tipo_vehiculo"));
 					lbCobertura.setText(rs.getString("cobertura"));
+					lbPMA.setText(rs.getString("pma_kgs"));
 				}
 				cont++;
 			}

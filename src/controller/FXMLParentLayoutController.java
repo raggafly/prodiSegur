@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,11 +11,16 @@ import javax.print.DocFlavor.URL;
 import com.sun.javafx.tk.quantum.MasterTimer;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
 import model.IbCustomer;
 import model.MasterTypes;
 import model.TableInfo;
@@ -237,9 +243,6 @@ public class FXMLParentLayoutController implements Initializable {
 
 	@Override
 	public void initialize(java.net.URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
-		// System.out.println(datosInfo.getNombre()+"
-		// "+datosInfo.getApellidos());
 
 	}
 
@@ -274,7 +277,7 @@ public class FXMLParentLayoutController implements Initializable {
 					lbMatricula.setText(rs.getString("matricula"));
 					lbFechaInicio.setText(String.valueOf(rs.getDate("fecha_inicio")));
 					lbFechaFin.setText(String.valueOf(rs.getDate("fecha_fin")));
-					lbFechaEntradaVigor.setText(String.valueOf(rs.getDate("fecha_fin")));
+					lbFechaEntradaVigor.setText(String.valueOf(rs.getDate("fecha_entrada_vigor")));
 					lbDuracion.setText(rs.getString("duracion"));
 					if (rs.getInt("particular_publico") == 0) {
 						lbParticularPublico.setText(particular);
@@ -297,6 +300,7 @@ public class FXMLParentLayoutController implements Initializable {
 					lbRemolque.setText(rs.getString("remolque"));
 					lbTipoVehiculo.setText(rs.getString("tipo_vehiculo"));
 					lbCobertura.setText(rs.getString("cobertura"));
+					lbPMA.setText(rs.getString("pma_kgs"));
 				}
 				cont++;
 			}
@@ -308,5 +312,4 @@ public class FXMLParentLayoutController implements Initializable {
 			}
 		}
 	}
-
 }

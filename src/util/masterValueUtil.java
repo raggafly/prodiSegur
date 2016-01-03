@@ -31,4 +31,24 @@ public class masterValueUtil {
 		
 	}
 	
+	public static IbMasterValue getMasterValueByValorAndTipo (String desc, String tipo){
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		TypedQuery<IbMasterValue> query = em.createNamedQuery("IbMasterValue.findAllByValorAndTipo", IbMasterValue.class);
+		query.setParameter("desc", desc);
+		query.setParameter("tipo", tipo);
+		List<IbMasterValue> listMasterValueByType = query.getResultList();
+		IbMasterValue mv = new IbMasterValue();
+		if (listMasterValueByType.size()>0){
+			mv = listMasterValueByType.get(0);
+		}
+		
+		emf.close();
+		return mv;
+		
+	}
+	
 }

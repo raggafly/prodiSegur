@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class IbInsurance implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="fecha_entrada_vigor")
 	private Date fechaEntradaVigor;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="fecha_fin_entrada_vigor")
+	private Date fechaFinEntradaVigor;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="fecha_fin")
@@ -41,7 +46,7 @@ public class IbInsurance implements Serializable {
 	@Column(name="fecha_inicio")
 	private Date fechaInicio;
 
-	@Column(name="forma_pago")
+	@Column(name="forma_pago")	
 	private String formaPago;
 
 	private double liquidez;
@@ -67,6 +72,10 @@ public class IbInsurance implements Serializable {
 	@OneToOne
 	@JoinColumn(name="idib_insurance")
 	private IbInsuranceDetail ibInsuranceDetail;
+	
+	//bi-directional many-to-one association to IbCuotesInsure
+	@OneToMany(mappedBy="ibInsurance")
+	private List<IbCuotesInsure> ibCuotesInsures;
 
 	public IbInsurance() {
 	}
@@ -109,6 +118,14 @@ public class IbInsurance implements Serializable {
 
 	public void setFechaEntradaVigor(Date fechaEntradaVigor) {
 		this.fechaEntradaVigor = fechaEntradaVigor;
+	}
+	
+	public Date getFechaFinEntradaVigor() {
+		return this.fechaFinEntradaVigor;
+	}
+
+	public void setFechaFinEntradaVigor(Date fechaFinEntradaVigor) {
+		this.fechaFinEntradaVigor = fechaFinEntradaVigor;
 	}
 
 	public Date getFechaFin() {
@@ -212,5 +229,25 @@ public class IbInsurance implements Serializable {
 	public void setDuracion(String duracion) {
 		this.duracion = duracion;
 	}
+	public List<IbCuotesInsure> getIbCuotesInsures() {
+		return this.ibCuotesInsures;
+	}
 
+	public void setIbCuotesInsures(List<IbCuotesInsure> ibCuotesInsures) {
+		this.ibCuotesInsures = ibCuotesInsures;
+	}
+
+	public IbCuotesInsure addIbCuotesInsure(IbCuotesInsure ibCuotesInsure) {
+		getIbCuotesInsures().add(ibCuotesInsure);
+		ibCuotesInsure.setIbInsurance(this);
+
+		return ibCuotesInsure;
+	}
+
+	public IbCuotesInsure removeIbCuotesInsure(IbCuotesInsure ibCuotesInsure) {
+		getIbCuotesInsures().remove(ibCuotesInsure);
+		ibCuotesInsure.setIbInsurance(null);
+
+		return ibCuotesInsure;
+	}
 }

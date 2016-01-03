@@ -11,9 +11,15 @@ import javax.persistence.Persistence;
 
 import org.controlsfx.dialog.Dialogs;
 
+import com.github.daytron.simpledialogfx.dialog.Dialog;
+import com.github.daytron.simpledialogfx.dialog.DialogType;
+
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.IbCustomer;
 import util.DateUtil;
@@ -127,8 +133,9 @@ public class PersonEditDialogController {
      * Called when the user clicks ok.
      */
     @FXML
-    private void handleOk() {
-        if (isInputValid()) {
+    private void handleOk(Event event) {
+    	
+        if (isInputValid(event)) {
         	Date input = new Date();
             LocalDate sysdate = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         	EntityManagerFactory emf;
@@ -168,14 +175,16 @@ public class PersonEditDialogController {
             tx.begin();
             if (isEdit){
     		em.find(IbCustomer.class, person.getIdibCustomer());
-    		em.merge(person);
-    		tx.commit();
+    		em.merge(person);    		
             }else{
-//            	em.persist(person);
-            	icVO.setDatosCliente(person);
+            	em.persist(person);
+//            	icVO.setDatosCliente(person);
             }
+            tx.commit();
             okClicked = true;
             dialogStage.close();
+        }else{
+        	
         }
     }
 
@@ -189,35 +198,36 @@ public class PersonEditDialogController {
 
     /**
      * Validates the user input in the text fields.
+     * @param event 
      * 
      * @return true if the input is valid
      */
-    private boolean isInputValid() {
+    private boolean isInputValid(Event event) {
         String errorMessage = "";
 
         if (firstNameField.getText() == null || firstNameField.getText().length() == 0) {
-            errorMessage += "No valid first name!\n"; 
+            errorMessage += "Nombre no válido\n"; 
         }
-        if (lastNameField.getText() == null || lastNameField.getText().length() == 0) {
-            errorMessage += "No valid last name!\n"; 
-        }
+//        if (lastNameField.getText() == null || lastNameField.getText().length() == 0) {
+//            errorMessage += "Apellidos no validos\n"; 
+//        }
         if (streetField.getText() == null || streetField.getText().length() == 0) {
-            errorMessage += "No valid street!\n"; 
+            errorMessage += "Calle no válida\n"; 
         }
 
         if (postalCodeField.getText() == null || postalCodeField.getText().length() == 0) {
-            errorMessage += "No valid postal code!\n"; 
+            errorMessage += "Código postal no válido.\n"; 
         } else {
             // try to parse the postal code into an int.
             try {
                 Integer.parseInt(postalCodeField.getText());
             } catch (NumberFormatException e) {
-                errorMessage += "No valid postal code (must be an integer)!\n"; 
+                errorMessage += "Código postal no es un número\n"; 
             }
         }
 
         if (cityField.getText() == null || cityField.getText().length() == 0) {
-            errorMessage += "No valid city!\n"; 
+            errorMessage += "Ciudad no válida\n"; 
         }
 
 //        if (fechaNacimientoField.getText() == null || fechaNacimientoField.getText().length() == 0) {
@@ -232,11 +242,11 @@ public class PersonEditDialogController {
             return true;
         } else {
             // Show the error message.
-        	Dialogs.create()
-		        .title("Invalid Fields")
-		        .masthead("Please correct invalid fields")
-		        .message(errorMessage)
-		        .showError();
+        	Dialog dialog = new Dialog(DialogType.ERROR, "INFORMACIÓN",
+					errorMessage);
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node)event.getSource()).getScene().getWindow());
+			dialog.showAndWait();
             return false;
         }
     }

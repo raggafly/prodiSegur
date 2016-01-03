@@ -10,7 +10,14 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="ib_customer_relation")
-@NamedQuery(name="IbCustomerRelation.findAll", query="SELECT i FROM IbCustomerRelation i")
+@NamedQueries({
+
+	@NamedQuery(name="IbCustomerRelation.findAll", query="SELECT i FROM IbCustomerRelation i"),
+	@NamedQuery(name="IbCustomerRelation.findByPK", query = "SELECT m FROM IbCustomerRelation m WHERE m.idibCustomerRelation = :id"),
+	@NamedQuery(name="IbCustomerRelation.findCliente", query = "SELECT m FROM IbCustomerRelation m WHERE m.ibCustomer = :idcliente"),
+	@NamedQuery(name="IbCustomerRelation.findSeguro", query = "SELECT m FROM IbCustomerRelation m WHERE m.ibInsurance = :idseguro")
+})
+
 public class IbCustomerRelation implements Serializable {
 	private static final long serialVersionUID = 1L;
 

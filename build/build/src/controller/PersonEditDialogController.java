@@ -168,12 +168,12 @@ public class PersonEditDialogController {
             tx.begin();
             if (isEdit){
     		em.find(IbCustomer.class, person.getIdibCustomer());
-    		em.merge(person);
-    		tx.commit();
+    		em.merge(person);    		
             }else{
-//            	em.persist(person);
-            	icVO.setDatosCliente(person);
+            	em.persist(person);
+//            	icVO.setDatosCliente(person);
             }
+            tx.commit();
             okClicked = true;
             dialogStage.close();
         }
