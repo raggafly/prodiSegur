@@ -1,0 +1,77 @@
+package model;
+
+import java.util.Date;
+
+public class TableInfoInsures {
+	String numeroPoliza;
+	String dni;
+	String tipo;
+	String compania;
+	Double primaNeta;
+	Date fechaVigor;
+	Date fechaFinVigor;
+	Date fechaInicioPago;
+	Date fechaFinPago;
+	String estado;
+	
+	public String getNumeroPoliza() {
+		return numeroPoliza;
+	}
+	public void setNumeroPoliza(String numeroPoliza) {
+		this.numeroPoliza = numeroPoliza;
+	}
+	public String getDni() {
+		return dni;
+	}
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
+	public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	public String getCompania() {
+		return compania;
+	}
+	public void setCompania(String compania) {
+		this.compania = compania;
+	}
+	public Double getPrimaNeta() {
+		return primaNeta;
+	}
+	public void setPrimaNeta(Double primaNeta) {
+		this.primaNeta = primaNeta;
+	}
+	public Date getFechaVigor() {
+		return fechaVigor;
+	}
+	public void setFechaVigor(Date fechaVigor) {
+		this.fechaVigor = fechaVigor;
+	}
+	public Date getFechaFinVigor() {
+		return fechaFinVigor;
+	}
+	public void setFechaFinVigor(Date fechaFinVigor) {
+		this.fechaFinVigor = fechaFinVigor;
+	}
+	public Date getFechaInicioPago() {
+		return fechaInicioPago;
+	}
+	public void setFechaInicioPago(Date fechaInicioPago) {
+		this.fechaInicioPago = fechaInicioPago;
+	}
+	public Date getFechaFinPago() {
+		return fechaFinPago;
+	}
+	public void setFechaFinPago(Date fechaFinPago) {
+		this.fechaFinPago = fechaFinPago;
+	}
+	public String getEstado() {
+		return estado;
+	}
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+}

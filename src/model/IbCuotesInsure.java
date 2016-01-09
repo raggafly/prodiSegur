@@ -13,7 +13,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="ib_cuotes_insure")
-@NamedQuery(name="IbCuotesInsure.findAll", query="SELECT i FROM IbCuotesInsure i")
+@NamedQueries({
+	@NamedQuery(name="IbCuotesInsure.findAll", query="SELECT i FROM IbCuotesInsure i"),
+	@NamedQuery(name="IbCuotesInsure.findPayCoutes", query="SELECT i FROM IbCuotesInsure i where i.ibInsurance = :seguro and i.pagado = :pagado"),
+	@NamedQuery(name="IbCuotesInsure.findCoutesByInsure", query="SELECT i FROM IbCuotesInsure i where i.ibInsurance = :seguro")
+})
+
 public class IbCuotesInsure implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -51,4 +51,23 @@ public class masterValueUtil {
 		
 	}
 	
+	public static String getMasterFindDescriptionByValor(String valor){
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByValue", String.class);
+		query.setParameter("valor", valor);
+		List<String> listMasterValueByType = query.getResultList();
+		String mv = "";
+		if (listMasterValueByType.size()>0){
+			mv = listMasterValueByType.get(0);
+		}
+		
+		emf.close();
+		return mv;
+		
+	}
+	
 }

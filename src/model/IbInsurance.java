@@ -13,7 +13,12 @@ import java.util.List;
  */
 @Entity
 @Table(name="ib_insurance")
-@NamedQuery(name="IbInsurance.findAll", query="SELECT i FROM IbInsurance i")
+@NamedQueries({
+
+	@NamedQuery(name="IbInsurance.findAll", query="SELECT i FROM IbInsurance i"),
+	@NamedQuery(name="IbInsurance.findByPoliza", query = "SELECT m FROM IbInsurance m WHERE m.numeroPoliza = :poliza")
+})
+
 public class IbInsurance implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -90,5 +91,20 @@ public class DateUtil {
     
     public static boolean isNumeric(String s) {  
         return s.matches("[-+]?\\d*\\.?\\d+");  
-    }  
+    }
+    
+    public static String formatUtilDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+     // Get the date today using Calendar object.
+     date = Calendar.getInstance().getTime();        
+     // Using DateFormat format method we can create a string 
+     // representation of a date with the defined format.
+     String fechaFormateada = df.format(date);
+
+        return fechaFormateada;
+    }
 }

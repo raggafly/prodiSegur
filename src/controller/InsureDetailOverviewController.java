@@ -134,7 +134,7 @@ public class InsureDetailOverviewController {
 				&& null != cbVehiculo.getSelectionModel().getSelectedItem() && null != dpFechaMatricula.getValue()
 				&& !tfMarca.getText().isEmpty() && !tfModelo.getText().isEmpty() && !tfMatricula.getText().isEmpty()) {
 
-			if (DateUtil.isNumeric(tfPMA.getText())) {
+			if (tfPMA.getText().isEmpty() || DateUtil.isNumeric(tfPMA.getText())) {
 
 				if (!cbCobertura.getSelectionModel().getSelectedItem().toString().isEmpty()) {
 					IbMasterValue imv = util.masterValueUtil

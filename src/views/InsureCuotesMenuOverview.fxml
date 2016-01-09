@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="823.0" prefWidth="1157.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InsureOverviewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="848.0" prefWidth="1157.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InsureCuotesMenuOverviewController">
    <children>
       <GridPane layoutX="19.0" layoutY="1.0" prefHeight="334.0" prefWidth="562.0">
         <columnConstraints>
@@ -27,15 +27,11 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ComboBox fx:id="cbCompania" prefHeight="31.0" prefWidth="258.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Poliza:" GridPane.rowIndex="1" />
-            <TextField fx:id="tvPoliza" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Compañia:" GridPane.rowIndex="2" />
-            <Button fx:id="btnAnadirDuracion" mnemonicParsing="false" onAction="#handleAnadirFormaPago" text="Añadir..." visible="false" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <Button mnemonicParsing="false" onAction="#handleAnadirCompania" text="Añadir..." GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <ComboBox fx:id="cbFormaPago" onAction="#handleFormaPagoCB" prefHeight="31.0" prefWidth="256.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Label text="Forma Pago:" GridPane.rowIndex="6" />
-            <DatePicker fx:id="dpFechaInicio" disable="true" editable="false" prefHeight="31.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <DatePicker fx:id="dpFechaInicio" editable="false" prefHeight="31.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <Label text="Fecha Inicio Pago:" GridPane.rowIndex="7" />
             <DatePicker fx:id="dpFechaFin" disable="true" editable="false" prefHeight="31.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <Label text="Fecha Fin Pago:" GridPane.rowIndex="8" />
@@ -48,19 +44,13 @@
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label text="Alta para:" />
+            <Label text="Cuotas del cliente" />
             <Label text="Fecha Entrada en vigor:" GridPane.rowIndex="5" />
             <DatePicker fx:id="dpFechaEntradaVigor" editable="false" prefHeight="31.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label fx:id="lbPoliza" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="lbCompania" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
-      <Button layoutX="1056.0" layoutY="778.0" mnemonicParsing="false" onAction="#handleSiguiente" text="Siguiente" textFill="#1e00ff">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </Button>
       <TableView fx:id="tbCuotes" editable="true" layoutX="277.0" layoutY="367.0" prefHeight="411.0" prefWidth="608.0" AnchorPane.leftAnchor="277.0" AnchorPane.rightAnchor="272.0">
         <columns>
             <TableColumn fx:id="ColumnNumCuota" prefWidth="73.0" text="Nº Cuota" />
@@ -107,6 +97,16 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
       </GridPane>
-      <Separator layoutY="353.0" prefHeight="4.0" prefWidth="1157.0" />
+      <Separator layoutY="353.0" prefHeight="4.0" prefWidth="1157.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <Button fx:id="btAceptarCambios" layoutX="973.0" layoutY="803.0" mnemonicParsing="false" onAction="#handleAceptarCambios" text="ACEPTAR CAMBIOS" textFill="#1e00ff">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Button>
+      <Button fx:id="btDeshacer" layoutX="837.0" layoutY="803.0" mnemonicParsing="false" onAction="#handleDeshacerCambios" text="DESHACER">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
