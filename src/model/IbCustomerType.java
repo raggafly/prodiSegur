@@ -1,8 +1,17 @@
 package model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 
 /**
@@ -32,26 +41,8 @@ public class IbCustomerType implements Serializable {
 	private String descripcion;
 
 	//bi-directional many-to-one association to IbCustomerRelation
-	@OneToMany(mappedBy="ibCustomerType1")
+	@OneToMany(mappedBy="ibCustomerType")
 	private List<IbCustomerRelation> ibCustomerRelations;
-
-	//bi-directional many-to-many association to IbCustomer
-	@ManyToMany
-	@JoinTable(
-		name="ib_customer_relation"
-		, joinColumns={
-			@JoinColumn(name="id_tipo")
-			}
-		, inverseJoinColumns={
-			@JoinColumn(name="id_cliente")
-			}
-		)
-	private List<IbCustomer> ibCustomers;
-
-	//bi-directional one-to-one association to IbCustomerRelation
-	@OneToOne
-	@JoinColumn(name="idib_customer_type",insertable =  false, updatable = false)
-	private IbCustomerRelation ibCustomerRelation;
 
 	public IbCustomerType() {
 	}
@@ -90,32 +81,16 @@ public class IbCustomerType implements Serializable {
 
 	public IbCustomerRelation addIbCustomerRelation(IbCustomerRelation ibCustomerRelation) {
 		getIbCustomerRelations().add(ibCustomerRelation);
-		ibCustomerRelation.setIbCustomerType1(this);
+		ibCustomerRelation.setIbCustomerType(this);
 
 		return ibCustomerRelation;
 	}
 
 	public IbCustomerRelation removeIbCustomerRelation(IbCustomerRelation ibCustomerRelation) {
 		getIbCustomerRelations().remove(ibCustomerRelation);
-		ibCustomerRelation.setIbCustomerType1(null);
+		ibCustomerRelation.setIbCustomerType(null);
 
 		return ibCustomerRelation;
-	}
-
-	public List<IbCustomer> getIbCustomers() {
-		return this.ibCustomers;
-	}
-
-	public void setIbCustomers(List<IbCustomer> ibCustomers) {
-		this.ibCustomers = ibCustomers;
-	}
-
-	public IbCustomerRelation getIbCustomerRelation() {
-		return this.ibCustomerRelation;
-	}
-
-	public void setIbCustomerRelation(IbCustomerRelation ibCustomerRelation) {
-		this.ibCustomerRelation = ibCustomerRelation;
 	}
 
 }

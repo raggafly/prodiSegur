@@ -491,7 +491,7 @@ public class InsureCuotesMenuOverviewController {
 				// recorremos todas las cuotas que estan en la
 				// tabla nueva
 				// ACTUALIZAMOS LA ENTIDAD SEGURO
-				datosSeguro = actualizarSeguro(datosSeguro, duracion, formaDePago);
+				datosSeguro = actualizarSeguro(datosSeguro, duracion, formaDePago,MasterTypes.DESCRIPTION_ESTADO_VIGENTE);
 				em.getTransaction().begin();
 				em.merge(datosSeguro);
 				em.getTransaction().commit();
@@ -524,7 +524,7 @@ public class InsureCuotesMenuOverviewController {
 				if (!cuotaConPagosRealizados()) {
 					// * 3ºBA Guardar cambios del seguro y sus cuotas.
 					// borrar cuotas
-					datosSeguro = actualizarSeguro(datosSeguro, duracion, formaDePago);
+					datosSeguro = actualizarSeguro(datosSeguro, duracion, formaDePago,MasterTypes.DESCRIPTION_ESTADO_VIGENTE);
 					em.getTransaction().begin();
 					em.merge(datosSeguro);
 					em.getTransaction().commit();
@@ -552,7 +552,6 @@ public class InsureCuotesMenuOverviewController {
 			}
 
 		} // si el mensaje no va vacío
-		em.close();
 		if (!messageInfo.isEmpty()) {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN", messageInfo);
 			dialog.initModality(Modality.WINDOW_MODAL);
@@ -565,9 +564,28 @@ public class InsureCuotesMenuOverviewController {
 			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
+
+		// ESTADO FINALIZADO
+		/*
+		 * Realizamos las comprobaciones necesarias para ver si están todas las
+		 * cuotas pagadas, si esto es así ponemos el estado del pago del seguro
+		 * en finalizado.
+		 */
+		if(comprobarFinalizadoPagos()){
+			Dialog dialog = new Dialog(DialogType.GENERIC_OK, "INFORMACIÓN", "Se procede a dar por finalizado el pago del seguro, ya que todas sus cuotas están pagadas.");
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
+			dialog.showAndWait();
+			actualizarSeguro(datosSeguro, duracion, formaDePago, MasterTypes.DESCRIPTION_ESTADO_FINALIZADO);
+			em.getTransaction().begin();
+			em.merge(datosSeguro);
+			em.getTransaction().commit();
+		}
+		em.close();
+
 	}
 
-	private IbInsurance actualizarSeguro(IbInsurance datosSeguro, String duracion, String formaDePago) {
+	private IbInsurance actualizarSeguro(IbInsurance datosSeguro, String duracion, String formaDePago, String estado) {
 		// datosSeguro.setCompania(cbCompania.getSelectionModel().getSelectedItem().toString());
 		LocalDate dateIniVigor = dpFechaEntradaVigor.getValue();
 		LocalDate dateFinVigor = LocalDate.now(ZoneId.of(ZoneId.systemDefault().toString()));
@@ -609,7 +627,7 @@ public class InsureCuotesMenuOverviewController {
 		datosSeguro.setFormaPago(formaDePago);
 
 		// INEST01-->Vigente
-		datosSeguro.setEstado(MasterTypes.DESCRIPTION_ESTADO_VIGENTE);
+		datosSeguro.setEstado(estado);
 
 		return datosSeguro;
 	}
@@ -630,6 +648,27 @@ public class InsureCuotesMenuOverviewController {
 		if (listCuotesPagadas.size() > 0) {
 			cuotaConPagosRealizados = true;
 		}
+		em.close();
+		return cuotaConPagosRealizados;
+	}
+
+	private boolean comprobarFinalizadoPagos() {
+		// saber si tiene cuotas anteriores pagadas.
+		boolean cuotaConPagosRealizados = false;
+		EntityManagerFactory emf;
+		EntityManager em;
+		Byte pagado = 1;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		TypedQuery<IbCuotesInsure> query = em.createNamedQuery("IbCuotesInsure.findPayCoutes", IbCuotesInsure.class);
+		query.setParameter("seguro", this.seguro);
+		query.setParameter("pagado", pagado);
+		List<IbCuotesInsure> listCuotesPagadas = query.getResultList();
+
+		if (listCuotesPagadas.size() == tbCuotes.getItems().size()) {
+			cuotaConPagosRealizados = true;
+		}
+
 		em.close();
 		return cuotaConPagosRealizados;
 	}
@@ -680,11 +719,11 @@ public class InsureCuotesMenuOverviewController {
 		return isValid;
 	}
 
-	
 	@FXML
 	public void handleDeshacerCambios(ActionEvent event) {
-		initData(getInsurance(this.seguro.getNumeroPoliza()), getCustomer(this.cliente.getDniCif()),true);
+		initData(getInsurance(this.seguro.getNumeroPoliza()), getCustomer(this.cliente.getDniCif()), true);
 	}
+
 	private boolean cambiaDuracionFP(String formaDePago, String duracion, Event event, IbInsurance seguro) {
 		boolean change = false;
 		if (!seguro.getFormaPago().equals(formaDePago)
@@ -733,9 +772,9 @@ public class InsureCuotesMenuOverviewController {
 		query.setParameter("dni", dni);
 		List<IbCustomer> listCustomer = query.getResultList();
 		IbCustomer cus = null;
-		if(listCustomer.size()>0){
+		if (listCustomer.size() > 0) {
 			cus = listCustomer.get(0);
-		}		
+		}
 		return cus;
 	}
 }

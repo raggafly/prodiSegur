@@ -295,7 +295,7 @@ public class BankAccountOverviewController {
 			icr.setIbCustomer(listct.get(i).getIbCustomer());
 			ctype = getCodeByDescription(listct.get(i).getTipo());
 
-			icr.setIbCustomerType1(ctype);
+			icr.setIbCustomerType(ctype);
 			if (icr != null) {
 				licr.add(icr);
 			}

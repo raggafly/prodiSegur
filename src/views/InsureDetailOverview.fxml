@@ -38,7 +38,7 @@
             <Label text="PMA:" GridPane.rowIndex="8" />
             <Label text="Remolque:" GridPane.rowIndex="9" />
             <Label text="Accesorios:" GridPane.rowIndex="10" />
-            <Label text="Fehca primera matrícula:" GridPane.rowIndex="5" />
+            <Label text="Fecha primera matrícula:" GridPane.rowIndex="5" />
             <TextField fx:id="tfMarca" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="tfModelo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="tfMatricula" GridPane.columnIndex="1" GridPane.rowIndex="4" />

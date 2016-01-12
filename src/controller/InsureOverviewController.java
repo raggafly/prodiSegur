@@ -153,11 +153,6 @@ public class InsureOverviewController {
 		if (null != cbDuracion.getSelectionModel().getSelectedItem()) {
 			duracion = cbDuracion.getSelectionModel().getSelectedItem().toString();
 		}
-
-		LocalDate dateInicio = dpFechaInicio.getValue();
-		LocalDate dateInicioAux = dpFechaInicio.getValue();
-		LocalDate dateFin = dpFechaFin.getValue();
-		LocalDate dateImpuestaFin;
 		LocalDate dateIniVigor = dpFechaEntradaVigor.getValue();
 		LocalDate dateFinVigor = LocalDate.now(ZoneId.of(ZoneId.systemDefault().toString()));
 		String formaDePago = "";
@@ -167,139 +162,151 @@ public class InsureOverviewController {
 			formaDePago = cbFormaPago.getSelectionModel().getSelectedItem().toString();
 		}
 
-		boolean aviso = false;
+		if (null == getInsurance(tvPoliza.getText())) {
+			if (DateUtil.isNumeric(tvPrimaNeta.getText())) {
 
-		if (DateUtil.isNumeric(tvPrimaNeta.getText())) {
+				if (showNextWindow) {
+					ObservableList<IbCuotesInsure> obsCuotesInsure = tbCuotes.getItems();
 
-			if (showNextWindow) {
-				ObservableList<IbCuotesInsure> obsCuotesInsure = tbCuotes.getItems();
+					if (!tvPoliza.getText().isEmpty() && cbCompania.getSelectionModel().getSelectedItem() != null
+							&& cbDuracion.getSelectionModel().getSelectedItem() != null
+							&& cbFormaPago.getSelectionModel().getSelectedItem() != null
+							&& !tvPrimaNeta.getText().isEmpty()) {
 
-				if (!tvPoliza.getText().isEmpty() && cbCompania.getSelectionModel().getSelectedItem() != null
-						&& cbDuracion.getSelectionModel().getSelectedItem() != null
-						&& cbFormaPago.getSelectionModel().getSelectedItem() != null
-						&& !tvPrimaNeta.getText().isEmpty()) {
+						if (algoNumber.comprobarTotal(Double.parseDouble(tvPrimaNeta.getText()), obsCuotesInsure)) {
+							if (algoNumber.comprobarFechas(dpFechaInicio.getValue(), dpFechaFin.getValue(),
+									obsCuotesInsure, cbFormaPago.getSelectionModel().getSelectedItem().toString())) {
 
-					if (algoNumber.comprobarTotal(Double.parseDouble(tvPrimaNeta.getText()), obsCuotesInsure)) {
-						if (algoNumber.comprobarFechas(dpFechaInicio.getValue(), dpFechaFin.getValue(), obsCuotesInsure,
-								cbFormaPago.getSelectionModel().getSelectedItem().toString())) {
+								try {
+									IbInsurance datosSeguro = new IbInsurance();
+									datosSeguro
+											.setCompania(cbCompania.getSelectionModel().getSelectedItem().toString());
+									Date utilDateInicio = Date.from(
+											dpFechaInicio.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+									Date utilDateFin = Date.from(
+											dpFechaFin.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+									Date utilDateFechaEntradaVigor = Date.from(dpFechaEntradaVigor.getValue()
+											.atStartOfDay(ZoneId.systemDefault()).toInstant());
+									datosSeguro.setFechaEntradaVigor(utilDateInicio);
+									datosSeguro.setFechaInicio(utilDateInicio);
+									datosSeguro.setFechaFin(utilDateFin);
+									datosSeguro.setFechaEntradaVigor(utilDateFechaEntradaVigor);
 
-							try {
-								IbInsurance datosSeguro = new IbInsurance();
-								datosSeguro.setCompania(cbCompania.getSelectionModel().getSelectedItem().toString());
-								Date utilDateInicio = Date.from(
-										dpFechaInicio.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-								Date utilDateFin = Date
-										.from(dpFechaFin.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-								Date utilDateFechaEntradaVigor = Date.from(dpFechaEntradaVigor.getValue()
-										.atStartOfDay(ZoneId.systemDefault()).toInstant());
-								datosSeguro.setFechaEntradaVigor(utilDateInicio);
-								datosSeguro.setFechaInicio(utilDateInicio);
-								datosSeguro.setFechaFin(utilDateFin);
-								datosSeguro.setFechaEntradaVigor(utilDateFechaEntradaVigor);
+									switch (duracion) {
+									case "ANUAL":
+										dateFinVigor = dateIniVigor.plusYears(1);
+										break;
+									case "SEMESTRAL":
+										dateFinVigor = dateIniVigor.plusMonths(6);
+										break;
+									case "TRIMESTRAL":
+										dateFinVigor = dateIniVigor.plusMonths(3);
+										break;
+									default:
+										break;
+									}
 
-								switch (duracion) {
-								case "ANUAL":
-									dateFinVigor = dateIniVigor.plusYears(1);
-									break;
-								case "SEMESTRAL":
-									dateFinVigor = dateIniVigor.plusMonths(6);
-									break;
-								case "TRIMESTRAL":
-									dateFinVigor = dateIniVigor.plusMonths(3);
-									break;
-								default:
-									break;
+									datosSeguro.setFechaFinEntradaVigor(
+											Date.from(dateFinVigor.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+									double primaNeta = 0;
+									if (null != tvPrimaNeta.getText() && !tvPrimaNeta.getText().isEmpty()) {
+										primaNeta = Double.parseDouble(tvPrimaNeta.getText().replace(",", "."));
+									}
+									datosSeguro.setPrimaNeta(primaNeta);
+
+									if (!cbDuracion.getSelectionModel().getSelectedItem().toString().isEmpty()) {
+										IbMasterValue imv = util.masterValueUtil
+												.getMasterValueByValorAndTipo(formaDePago, MasterTypes.TYPE_DURACION);
+										duracion = imv.getValor();
+									}
+									datosSeguro.setDuracion(duracion);
+
+									if (!formaDePago.isEmpty()) {
+										IbMasterValue imv = util.masterValueUtil
+												.getMasterValueByValorAndTipo(formaDePago, MasterTypes.TYPE_FORMA_PAGO);
+										formaDePago = imv.getValor();
+									}
+									datosSeguro.setFormaPago(formaDePago);
+
+									IbMasterValue imv = util.masterValueUtil
+											.getMasterValueByValor(icVO.getTipoSeguro());
+									tipoDeRiesgo = imv.getValor();
+									datosSeguro.setTipoRiesgo(tipoDeRiesgo);
+
+									// INEST01-->Vigente
+									datosSeguro.setEstado(MasterTypes.DESCRIPTION_ESTADO_VIGENTE);
+									// mostrar error al no insertar poliza
+									datosSeguro.setNumeroPoliza(tvPoliza.getText());
+									icVO.setDatosSeguro(datosSeguro);
+									/*
+									 * Guardamos lista de cuotas generadas
+									 */
+									List<IbCuotesInsure> listCuotesInsure = obsCuotesInsure;
+									icVO.setListCuotesInsure(listCuotesInsure);
+									/*
+									 * Fin de guardar cuotas
+									 */
+									Parent root;
+									Stage stage = new Stage();
+									if (null == imv.getDescripcion2() || imv.getDescripcion2().isEmpty()) {
+										FXMLLoader loader = new FXMLLoader(
+												getClass().getResource("/views/BankAccountOverview.fxml"));
+										root = (Parent) loader.load();
+
+										stage.setTitle("Datos Cuenta Bancaria.");
+										stage.initModality(Modality.APPLICATION_MODAL);
+										stage.setScene(new Scene(root, 550, 370));
+										stage.setScene(stage.getScene());
+										BankAccountOverviewController controller = (BankAccountOverviewController) loader
+												.getController();
+										controller.initData(icVO);
+									} else {
+										FXMLLoader loader = new FXMLLoader(
+												getClass().getResource("/views/InsureDetailOverview.fxml"));
+										root = (Parent) loader.load();
+										stage.setTitle("Detalle Seguro Vehículo.");
+										stage.initModality(Modality.APPLICATION_MODAL);
+										stage.setScene(new Scene(root, 563, 485));
+										stage.setScene(stage.getScene());
+										InsureDetailOverviewController controller = (InsureDetailOverviewController) loader
+												.getController();
+										controller.initData(icVO);
+									}
+
+									stage.show();
+									((Node) (event.getSource())).getScene().getWindow().hide();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
-
-								datosSeguro.setFechaFinEntradaVigor(
-										Date.from(dateFinVigor.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-								double primaNeta = 0;
-								if (null != tvPrimaNeta.getText() && !tvPrimaNeta.getText().isEmpty()) {
-									primaNeta = Double.parseDouble(tvPrimaNeta.getText().replace(",", "."));
-								}
-								datosSeguro.setPrimaNeta(primaNeta);
-
-								if (!cbDuracion.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-									IbMasterValue imv = util.masterValueUtil.getMasterValueByValorAndTipo(formaDePago,
-											MasterTypes.TYPE_DURACION);
-									duracion = imv.getValor();
-								}
-								datosSeguro.setDuracion(duracion);
-
-								if (!formaDePago.isEmpty()) {
-									IbMasterValue imv = util.masterValueUtil.getMasterValueByValorAndTipo(formaDePago,
-											MasterTypes.TYPE_FORMA_PAGO);
-									formaDePago = imv.getValor();
-								}
-								datosSeguro.setFormaPago(formaDePago);
-
-								IbMasterValue imv = util.masterValueUtil.getMasterValueByValor(icVO.getTipoSeguro());
-								tipoDeRiesgo = imv.getValor();
-								datosSeguro.setTipoRiesgo(tipoDeRiesgo);
-
-								// INEST01-->Vigente
-								datosSeguro.setEstado(MasterTypes.DESCRIPTION_ESTADO_VIGENTE);
-								// mostrar error al no insertar poliza
-								datosSeguro.setNumeroPoliza(tvPoliza.getText());
-								icVO.setDatosSeguro(datosSeguro);
-								/*
-								 * Guardamos lista de cuotas generadas
-								 */
-								List<IbCuotesInsure> listCuotesInsure = obsCuotesInsure;
-								icVO.setListCuotesInsure(listCuotesInsure);
-								/*
-								 * Fin de guardar cuotas
-								 */
-								Parent root;
-								Stage stage = new Stage();
-								if (null == imv.getDescripcion2() || imv.getDescripcion2().isEmpty()) {
-									FXMLLoader loader = new FXMLLoader(
-											getClass().getResource("/views/BankAccountOverview.fxml"));
-									root = (Parent) loader.load();
-
-									stage.setTitle("Datos Cuenta Bancaria.");
-									stage.setScene(new Scene(root, 550, 370));
-									stage.setScene(stage.getScene());
-									BankAccountOverviewController controller = (BankAccountOverviewController) loader
-											.getController();
-									controller.initData(icVO);
-								} else {
-									FXMLLoader loader = new FXMLLoader(
-											getClass().getResource("/views/InsureDetailOverview.fxml"));
-									root = (Parent) loader.load();
-									stage.setTitle("Detalle Seguro Vehículo.");
-									stage.setScene(new Scene(root, 563, 485));
-									stage.setScene(stage.getScene());
-									InsureDetailOverviewController controller = (InsureDetailOverviewController) loader
-											.getController();
-									controller.initData(icVO);
-								}
-
-								stage.show();
-								((Node) (event.getSource())).getScene().getWindow().hide();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							} else {
+								messageError = "La fecha inicio y fin no correspondan a las indicadas en los parámetros de entrada.\n";
 							}
 						} else {
-							messageError = "La fecha inicio y fin no correspondan a las indicadas en los parámetros de entrada.\n";
+							messageError = "Las sumas parciales de las cuotas no son iguales al total de la poliza.\n";
 						}
 					} else {
-						messageError = "Las sumas parciales de las cuotas no son iguales al total de la poliza.\n";
+						messageError = "Existe algún campo que no está completo. Revísalos y vuelve a hacer click en siguiente.\n";
 					}
-				} else {
-					messageError = "Existe algún campo que no está completo. Revísalos y vuelve a hacer click en siguiente.\n";
 				}
+			} else {
+				messageError = "La prima neta no es un valor numérico\n";
 			}
 		} else {
-			messageError = "La prima neta no es un valor numérico\n";
+			messageError = "La poliza indicada ya existe";
 		}
 		if (!messageError.isEmpty()) {
-			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN", messageError);
+			Dialog dialog = new Dialog(DialogType.ERROR, "INFORMACIÓN", messageError);
 			dialog.initModality(Modality.WINDOW_MODAL);
 			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
+	}
+
+	private boolean existsPoliza() {
+		boolean exists= false;
+		
+		return exists;
 	}
 
 	@FXML
@@ -612,5 +619,20 @@ public class InsureOverviewController {
 			dpFechaPago.setValue(null);
 		}
 		return cuoteSelected;
+	}
+	private IbInsurance getInsurance(String numeroPoliza) {
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		TypedQuery<IbInsurance> query = em.createNamedQuery("IbInsurance.findByPoliza", IbInsurance.class);
+		query.setParameter("poliza", numeroPoliza);
+		List<IbInsurance> listInsurance = query.getResultList();
+		IbInsurance insurance = null;
+		if (listInsurance.size() > 0) {
+			insurance = listInsurance.get(0);
+		}
+		em.close();
+		return insurance;
 	}
 }

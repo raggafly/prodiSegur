@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="511.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane prefHeight="455.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="tabDatosSeguro" text="Datos Seguro">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="447.0" prefWidth="600.0">
+                     <children>
+                        <GridPane layoutX="24.0" layoutY="22.0" prefHeight="244.0" prefWidth="392.0">
+                           <children>
+                              <Label text="Titular:" />
+                              <Label fx:id="lbTitular" text="titular" textFill="#1e00ff" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Poliza:" GridPane.rowIndex="1" />
+                              <Label fx:id="lbPoliza" text="poliza" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label text="Tipo de Riesgo:" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="cbTipoRiesgo" prefHeight="31.0" prefWidth="297.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label text="Companía:" GridPane.rowIndex="3" />
+                              <Label text="Liquidez:" GridPane.rowIndex="4" />
+                              <Label text="Comisión:" GridPane.rowIndex="5" />
+                              <TextField fx:id="tfComision" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <TextField fx:id="tfLiquidez" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <ComboBox fx:id="cbCompania" prefHeight="31.0" prefWidth="306.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label text="Estado:" GridPane.rowIndex="6" />
+                              <ComboBox fx:id="cbEstado" prefHeight="31.0" prefWidth="319.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.0" minWidth="10.0" prefWidth="121.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="440.0" minWidth="10.0" prefWidth="271.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="tabDetalleSeguro" disable="true" text="Detalle Seguro">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="494.0" prefWidth="600.0">
+                     <children>
+                        <GridPane layoutX="24.0" layoutY="21.0" prefHeight="393.0" prefWidth="532.0">
+                           <children>
+                              <Label text="Tipo Vehículo:" />
+                              <Label text="Marca:" GridPane.rowIndex="2" />
+                              <Label text="Modelo:" GridPane.rowIndex="3" />
+                              <Label text="Matrícula:" GridPane.rowIndex="4" />
+                              <Label text="Caballos:" GridPane.rowIndex="6" />
+                              <Label text="Cilindrada:" GridPane.rowIndex="7" />
+                              <Label text="PMA:" GridPane.rowIndex="8" />
+                              <Label text="Remolque:" GridPane.rowIndex="9" />
+                              <Label text="Accesorios:" GridPane.rowIndex="10" />
+                              <Label text="Fecha primera matrícula:" GridPane.rowIndex="5" />
+                              <TextField fx:id="tfMarca" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <TextField fx:id="tfModelo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <TextField fx:id="tfMatricula" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <TextField fx:id="tfCaballos" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <TextField fx:id="tfCilindrada" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <TextField fx:id="tfPMA" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <TextField fx:id="tfRemolque" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <TextField fx:id="tfAccesorios" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <DatePicker fx:id="dpFechaMatricula" editable="false" prefHeight="31.0" prefWidth="277.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <CheckBox fx:id="chkPublico" mnemonicParsing="false" text="Público" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <Label text="Cobertura:" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="cbCobertura" prefHeight="31.0" prefWidth="286.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="cbVehiculo" prefHeight="31.0" prefWidth="300.0" GridPane.columnIndex="1" />
+                              <Button fx:id="btnAnadirTipoVehiculo" mnemonicParsing="false" onAction="#handleAnadirTipVehiculo" text="Añadir..." GridPane.columnIndex="3" />
+                              <Button fx:id="btnAnadirCobertura" mnemonicParsing="false" onAction="#handleAnadirCobertura" text="Añadir..." GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="169.0" minWidth="10.0" prefWidth="169.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.0" minWidth="10.0" prefWidth="252.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="191.0" minWidth="10.0" prefWidth="26.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="191.0" minWidth="10.0" prefWidth="101.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <Button fx:id="btActualizar" layoutX="474.0" layoutY="467.0" mnemonicParsing="false" onAction="#handleActualizar" text="ACTUALIZAR" textFill="#1e00ff">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

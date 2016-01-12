@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -49,5 +51,10 @@
         </columns>
       </TableView>
       <Button fx:id="btVerCuotas" layoutX="1193.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleVerCuotas" text="Ver Cuotas" />
+      <Button fx:id="btEliminarSeguro" layoutX="14.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleEliminar" text="ELIMINAR SEGURO" textFill="RED">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

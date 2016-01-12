@@ -25,5 +25,6 @@ public static final String DESCRIPTION_DU_MENSUAL ="MENSUAL";
 
 public static final String DESCRIPTION_ESTADO_VIGENTE = "INEST01";
 public static final String DESCRIPTION_ESTADO_BAJA = "INEST02";
+public static final String DESCRIPTION_ESTADO_FINALIZADO = "INEST03";
 
 }

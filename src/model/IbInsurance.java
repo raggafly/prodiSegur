@@ -6,25 +6,23 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * The persistent class for the ib_insurance database table.
  * 
  */
 @Entity
-@Table(name="ib_insurance")
+@Table(name = "ib_insurance")
 @NamedQueries({
 
-	@NamedQuery(name="IbInsurance.findAll", query="SELECT i FROM IbInsurance i"),
-	@NamedQuery(name="IbInsurance.findByPoliza", query = "SELECT m FROM IbInsurance m WHERE m.numeroPoliza = :poliza")
-})
+		@NamedQuery(name = "IbInsurance.findAll", query = "SELECT i FROM IbInsurance i"),
+		@NamedQuery(name = "IbInsurance.findByPoliza", query = "SELECT m FROM IbInsurance m WHERE m.numeroPoliza = :poliza") })
 
 public class IbInsurance implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="idib_insurance")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "idib_insurance")
 	private int idibInsurance;
 
 	private double comision;
@@ -32,54 +30,54 @@ public class IbInsurance implements Serializable {
 	private String compania;
 
 	private String estado;
-	
+
 	private String duracion;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="fecha_entrada_vigor")
+	@Column(name = "fecha_entrada_vigor")
 	private Date fechaEntradaVigor;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="fecha_fin_entrada_vigor")
+	@Column(name = "fecha_fin_entrada_vigor")
 	private Date fechaFinEntradaVigor;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="fecha_fin")
+	@Column(name = "fecha_fin")
 	private Date fechaFin;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="fecha_inicio")
+	@Column(name = "fecha_inicio")
 	private Date fechaInicio;
 
-	@Column(name="forma_pago")	
+	@Column(name = "forma_pago")
 	private String formaPago;
 
 	private double liquidez;
 
-	@Column(name="numero_poliza")
+	@Column(name = "numero_poliza")
 	private String numeroPoliza;
 
-	@Column(name="prima_neta")
+	@Column(name = "prima_neta")
 	private double primaNeta;
 
-	@Column(name="tipo_riesgo")
+	@Column(name = "tipo_riesgo")
 	private String tipoRiesgo;
 
-	//bi-directional one-to-one association to IbCustomer
-	@OneToOne(mappedBy="ibInsurance")
+	// bi-directional one-to-one association to IbCustomer
+	@OneToOne(mappedBy = "ibInsurance")
 	private IbCustomer ibCustomer;
 
-	//bi-directional many-to-one association to IbCustomerRelation
-	@OneToMany(mappedBy="ibInsurance")
+	// bi-directional many-to-one association to IbCustomerRelation
+	@OneToMany(mappedBy = "ibInsurance")
 	private List<IbCustomerRelation> ibCustomerRelations;
 
-	//bi-directional one-to-one association to IbInsuranceDetail
+	// bi-directional one-to-one association to IbInsuranceDetail
 	@OneToOne
-	@JoinColumn(name="idib_insurance")
+	@JoinColumn(name = "idib_insurance")
 	private IbInsuranceDetail ibInsuranceDetail;
-	
-	//bi-directional many-to-one association to IbCuotesInsure
-	@OneToMany(mappedBy="ibInsurance")
+
+	// bi-directional many-to-one association to IbCuotesInsure
+	@OneToMany(mappedBy = "ibInsurance", fetch = FetchType.EAGER, orphanRemoval=true, cascade=CascadeType.ALL)
 	private List<IbCuotesInsure> ibCuotesInsures;
 
 	public IbInsurance() {
@@ -124,7 +122,7 @@ public class IbInsurance implements Serializable {
 	public void setFechaEntradaVigor(Date fechaEntradaVigor) {
 		this.fechaEntradaVigor = fechaEntradaVigor;
 	}
-	
+
 	public Date getFechaFinEntradaVigor() {
 		return this.fechaFinEntradaVigor;
 	}
@@ -226,7 +224,7 @@ public class IbInsurance implements Serializable {
 	public void setIbInsuranceDetail(IbInsuranceDetail ibInsuranceDetail) {
 		this.ibInsuranceDetail = ibInsuranceDetail;
 	}
-	
+
 	public String getDuracion() {
 		return this.duracion;
 	}
@@ -234,6 +232,7 @@ public class IbInsurance implements Serializable {
 	public void setDuracion(String duracion) {
 		this.duracion = duracion;
 	}
+
 	public List<IbCuotesInsure> getIbCuotesInsures() {
 		return this.ibCuotesInsures;
 	}

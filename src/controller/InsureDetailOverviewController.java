@@ -184,6 +184,7 @@ public class InsureDetailOverviewController {
 				try {
 					root = (Parent) loader.load();
 					stage.setTitle("Datos Cuenta Bancaria.");
+					stage.initModality(Modality.APPLICATION_MODAL);
 					stage.setScene(new Scene(root, 550, 370));
 					stage.setScene(stage.getScene());
 					BankAccountOverviewController controller = (BankAccountOverviewController) loader.getController();

@@ -420,6 +420,7 @@ public class PersonOverviewController {
 				Stage stage = new Stage();
 
 				stage.setTitle("Alta nueva Poliza.");
+		        stage.initModality(Modality.APPLICATION_MODAL);
 				stage.setScene(new Scene(root, 1157, 823));
 				stage.setScene(stage.getScene());
 				InsureOverviewController controller = (InsureOverviewController) loader.getController();
@@ -444,12 +445,6 @@ public class PersonOverviewController {
 		}
 
 	}
-
-	// private List<TableInfoRelation> getDataTableRelation() {
-	// // TODO Auto-generated method stub
-	// personRelationTable.getItems();
-	// return null;
-	// }
 
 	@FXML
 	private void handleAnadir(Event event) {

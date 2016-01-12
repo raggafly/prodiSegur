@@ -35,7 +35,7 @@
             <Button mnemonicParsing="false" onAction="#handleAnadirCompania" text="Añadir..." GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <ComboBox fx:id="cbFormaPago" onAction="#handleFormaPagoCB" prefHeight="31.0" prefWidth="256.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Label text="Forma Pago:" GridPane.rowIndex="6" />
-            <DatePicker fx:id="dpFechaInicio" disable="true" editable="false" prefHeight="31.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <DatePicker fx:id="dpFechaInicio" editable="false" prefHeight="31.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <Label text="Fecha Inicio Pago:" GridPane.rowIndex="7" />
             <DatePicker fx:id="dpFechaFin" disable="true" editable="false" prefHeight="31.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <Label text="Fecha Fin Pago:" GridPane.rowIndex="8" />
