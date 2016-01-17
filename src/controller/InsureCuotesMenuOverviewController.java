@@ -14,7 +14,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
-import com.github.daytron.simpledialogfx.data.DialogResponse;
+import org.hibernate.Query;
+
 import com.github.daytron.simpledialogfx.dialog.Dialog;
 import com.github.daytron.simpledialogfx.dialog.DialogType;
 
@@ -48,7 +49,7 @@ import model.IbMasterValue;
 import model.MasterTypes;
 import util.CalculateCuotes;
 import util.DateUtil;
-import util.masterValueUtil;
+import util.MasterValueUtil;
 
 public class InsureCuotesMenuOverviewController {
 	IbInsurance seguro;
@@ -214,11 +215,12 @@ public class InsureCuotesMenuOverviewController {
 		this.cliente = cliente;
 		this.seguro = seguro;
 		getlbCliente().setText(cliente.getNombre() + " " + cliente.getApellidos());
-		getlbCompania().setText(seguro.getCompania());
+		String compania = MasterValueUtil.getMasterFindDescriptionByValor(seguro.getCompania());
+		getlbCompania().setText(compania);
 		getlbPoliza().setText(seguro.getNumeroPoliza());
-		String formaPago = masterValueUtil.getMasterFindDescriptionByValor(seguro.getFormaPago());
+		String formaPago = MasterValueUtil.getMasterFindDescriptionByValor(seguro.getFormaPago());
 
-		String duracion = masterValueUtil.getMasterFindDescriptionByValor(seguro.getDuracion());
+		String duracion = MasterValueUtil.getMasterFindDescriptionByValor(seguro.getDuracion());
 
 		EntityManagerFactory emf;
 		EntityManager em;
@@ -460,19 +462,22 @@ public class InsureCuotesMenuOverviewController {
 
 		insuOfficialCopy = datosSeguro;
 		if (!formaDePago.isEmpty()) {
-			IbMasterValue imv = util.masterValueUtil.getMasterValueByValorAndTipo(formaDePago,
+			IbMasterValue imv = util.MasterValueUtil.getMasterValueByValorAndTipo(formaDePago,
 					MasterTypes.TYPE_FORMA_PAGO);
 			formaDePago = imv.getValor();
 		}
 
 		if (!cbDuracion.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-			IbMasterValue imv = util.masterValueUtil.getMasterValueByValorAndTipo(duracion, MasterTypes.TYPE_DURACION);
+			IbMasterValue imv = util.MasterValueUtil.getMasterValueByValorAndTipo(duracion, MasterTypes.TYPE_DURACION);
 			duracion = imv.getValor();
 		}
 
 		/*
-		 * 1º Si está bien la suma 2º si está bien la fecha inicio y fin
+		 * 1º si no es baja
+		 * 2º Si está bien la suma 3º si está bien la fecha inicio y fin
+		 * 
 		 */
+		if (!datosSeguro.getEstado().equals(MasterTypes.DESCRIPTION_ESTADO_BAJA)){
 		if (isValidCuotes(event, dateIniVigor, dateFinVigor, duracion, formaDePago, obsCuotesInsure)) {
 			// * 3º RETURN si hay cambios en duracion y forma de pago.
 			// si no cambia quiere decir que es la misma cuota
@@ -531,10 +536,13 @@ public class InsureCuotesMenuOverviewController {
 					for (int i = 0; i < listOfficialCuotes.size(); i++) {
 						em.getTransaction().begin();
 						ci = listOfficialCuotes.get(i);
-						em.remove(ci);
+						ci.setIbInsurance(datosSeguro);
+//						em.remove(ci);
+						javax.persistence.Query query = em.createNativeQuery("DELETE FROM ib_cuotes_insure WHERE idib_cuotes_insure = " + ci.getIdibCuotesInsure());
+						query.executeUpdate();
+//						em.flush();
 						em.getTransaction().commit();
 					}
-
 					// añadimos nuevas cuotas
 					for (int i = 0; i < listCuotesInsure.size(); i++) {
 						em.getTransaction().begin();
@@ -552,6 +560,9 @@ public class InsureCuotesMenuOverviewController {
 			}
 
 		} // si el mensaje no va vacío
+		}else{
+			messageError ="La poliza está en estado: Baja. No se puede actualizar.";
+		}
 		if (!messageInfo.isEmpty()) {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN", messageInfo);
 			dialog.initModality(Modality.WINDOW_MODAL);
@@ -582,7 +593,7 @@ public class InsureCuotesMenuOverviewController {
 			em.getTransaction().commit();
 		}
 		em.close();
-
+		
 	}
 
 	private IbInsurance actualizarSeguro(IbInsurance datosSeguro, String duracion, String formaDePago, String estado) {

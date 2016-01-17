@@ -3,6 +3,8 @@ package model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import model.IbCustomerType;
+
 
 /**
  * The persistent class for the ib_customer_relation database table.
@@ -10,7 +12,14 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="ib_customer_relation")
-@NamedQuery(name="IbCustomerRelation.findAll", query="SELECT i FROM IbCustomerRelation i")
+@NamedQueries({
+
+	@NamedQuery(name="IbCustomerRelation.findAll", query="SELECT i FROM IbCustomerRelation i"),
+	@NamedQuery(name="IbCustomerRelation.findByPK", query = "SELECT m FROM IbCustomerRelation m WHERE m.idibCustomerRelation = :id"),
+	@NamedQuery(name="IbCustomerRelation.findCliente", query = "SELECT m FROM IbCustomerRelation m WHERE m.ibCustomer = :idcliente"),
+	@NamedQuery(name="IbCustomerRelation.findSeguro", query = "SELECT m FROM IbCustomerRelation m WHERE m.ibInsurance = :idseguro")
+})
+
 public class IbCustomerRelation implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -27,16 +36,12 @@ public class IbCustomerRelation implements Serializable {
 	//bi-directional many-to-one association to IbCustomerType
 	@ManyToOne
 	@JoinColumn(name="id_tipo")
-	private IbCustomerType ibCustomerType1;
+	private IbCustomerType ibCustomerType;
 
 	//bi-directional many-to-one association to IbInsurance
 	@ManyToOne
 	@JoinColumn(name="id_seguro")
 	private IbInsurance ibInsurance;
-
-	//bi-directional one-to-one association to IbCustomerType
-	@OneToOne(mappedBy="ibCustomerRelation")
-	private IbCustomerType ibCustomerType2;
 
 	public IbCustomerRelation() {
 	}
@@ -57,14 +62,6 @@ public class IbCustomerRelation implements Serializable {
 		this.ibCustomer = ibCustomer;
 	}
 
-	public IbCustomerType getIbCustomerType1() {
-		return this.ibCustomerType1;
-	}
-
-	public void setIbCustomerType1(IbCustomerType ibCustomerType1) {
-		this.ibCustomerType1 = ibCustomerType1;
-	}
-
 	public IbInsurance getIbInsurance() {
 		return this.ibInsurance;
 	}
@@ -73,12 +70,11 @@ public class IbCustomerRelation implements Serializable {
 		this.ibInsurance = ibInsurance;
 	}
 
-	public IbCustomerType getIbCustomerType2() {
-		return this.ibCustomerType2;
+	public IbCustomerType getIbCustomerType() {
+		return this.ibCustomerType;
 	}
 
-	public void setIbCustomerType2(IbCustomerType ibCustomerType2) {
-		this.ibCustomerType2 = ibCustomerType2;
+	public void setIbCustomerType(IbCustomerType ibCustomerType) {
+		this.ibCustomerType = ibCustomerType;
 	}
-
 }

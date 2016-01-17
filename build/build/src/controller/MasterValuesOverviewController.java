@@ -1,14 +1,18 @@
 package controller;
 
 import javafx.fxml.FXML;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.IbCustomer;
 import model.IbMasterValue;
+import util.InsureCompleteVO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,22 +40,31 @@ public class MasterValuesOverviewController {
 	@FXML
 	private Button btnAlta;
 	@FXML
+	private Button btnCerrar;
+	@FXML
 	private TextField tfSiguienteCodigo;
 	@FXML
 	private TableColumn<IbMasterValue, String> codeColumn;
+
 	public TableColumn getcodeColumn() {
 		return codeColumn;
 	}
+
 	@FXML
 	private TableColumn<IbMasterValue, String> descriptionColumn;
+
 	public TableColumn getdescriptionColumn() {
 		return descriptionColumn;
 	}
+
 	@FXML
 	private TableColumn<IbMasterValue, String> typeColumn;
+
 	public TableColumn gettypeColumn() {
 		return typeColumn;
 	}
+
+	private InsureCompleteVO icVO = new InsureCompleteVO();
 	// Event Listener on Button[#btnAlta].onAction
 	@FXML
 	public void handleAlta(ActionEvent event) {
@@ -61,19 +74,20 @@ public class MasterValuesOverviewController {
 		emf = Persistence.createEntityManagerFactory("prodiSegur");
 		em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
-		IbMasterValue imv= new IbMasterValue();
-		
+		IbMasterValue imv = new IbMasterValue();
+
 		imv.setTipoCodigo(cbTipoCodigo.getSelectionModel().getSelectedItem().toString());
 		imv.setDescripcion(tfDescripcion.getText().toUpperCase().trim());
 		imv.setValor(tfSiguienteCodigo.getText());
 		tx.begin();
-    	em.persist(imv);
-    	tx.commit();
-    	
-    	initData(cbTipoCodigo.getSelectionModel().getSelectedItem().toString());
+		em.persist(imv);
+		tx.commit();
+
+		initData(cbTipoCodigo.getSelectionModel().getSelectedItem().toString(),this.icVO);
 	}
 
-	public void initData(String tipo) {
+	public void initData(String tipo, InsureCompleteVO icVO) {
+		this.icVO = icVO;
 		EntityManagerFactory emf;
 		EntityManager em;
 		emf = Persistence.createEntityManagerFactory("prodiSegur");
@@ -82,7 +96,7 @@ public class MasterValuesOverviewController {
 		TypedQuery<IbMasterValue> query = em.createNamedQuery("IbMasterValue.findAllByType", IbMasterValue.class);
 		query.setParameter("type", tipo);
 		List<IbMasterValue> listFormaPago = query.getResultList();
-		List<String> listType= new ArrayList<String>();
+		List<String> listType = new ArrayList<String>();
 
 		IbMasterValue mv = new IbMasterValue();
 		mv.setTipoCodigo(tipo);
@@ -100,23 +114,23 @@ public class MasterValuesOverviewController {
 		tablePrincipal.getColumns().addAll(typeColumn);
 		tablePrincipal.getColumns().addAll(codeColumn);
 		tablePrincipal.getColumns().addAll(descriptionColumn);
-		
+
 		TypedQuery<String> queryMax = em.createNamedQuery("IbMasterValue.findMaxValorByType", String.class);
 		queryMax.setParameter("type", tipo);
 		List<String> listMaxValor = queryMax.getResultList();
-		String code =listMaxValor.get(0).toString();
-		int enteroCode = Integer.parseInt(code.substring(code.length()-2, code.length()));
-		enteroCode+=1;
+		String code = listMaxValor.get(0).toString();
+		int enteroCode = Integer.parseInt(code.substring(code.length() - 2, code.length()));
+		enteroCode += 1;
 		String enteroCodeString = String.valueOf(enteroCode);
-		if(enteroCodeString.length()==1){
-			enteroCodeString ="0"+enteroCodeString;
+		if (enteroCodeString.length() == 1) {
+			enteroCodeString = "0" + enteroCodeString;
 		}
-		String tipoCode = code.substring(0,code.length()-2);
-		tfSiguienteCodigo.setText(tipoCode+enteroCodeString);
+		String tipoCode = code.substring(0, code.length() - 2);
+		tfSiguienteCodigo.setText(tipoCode + enteroCodeString);
 
-		
 	}
-	//para sacar todos los tipos en el comboBox
+
+	// para sacar todos los tipos en el comboBox
 	public void initData() {
 		EntityManagerFactory emf;
 		EntityManager em;
@@ -128,11 +142,12 @@ public class MasterValuesOverviewController {
 		ObservableList<IbMasterValue> listaObservableFormaPago = FXCollections.observableArrayList(listFormaPago);
 		cbTipoCodigo.setItems(listaObservableFormaPago);
 
-		
 	}
-	
-	
-	public void actualizarTabla(){
-		
+
+	// Event Listener on Button[#btnAlta].onAction
+	@FXML
+	public void handleCerrar(ActionEvent event) {
+		((Node)(event.getSource())).getScene().getWindow().hide();		
 	}
+
 }

@@ -14,12 +14,12 @@
           <Menu mnemonicParsing="false" text="Cliente">
             <items>
               <MenuItem fx:id="mClienteGestion" mnemonicParsing="false" onAction="#handleClienteGestion" text="Gestión" />
+                  <MenuItem fx:id="mRelacionCliente" mnemonicParsing="false" onAction="#handleRelacionCliente" text="Poliza Cliente" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Seguro">
             <items>
               <MenuItem fx:id="mSeguroGestion" mnemonicParsing="false" onAction="#handleSeguroGestion" text="Gestión" />
-                  <MenuItem fx:id="mSeguroBaja" mnemonicParsing="false" onAction="#handleSeguroBaja" text="Baja" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Cuotas">
@@ -77,15 +77,17 @@
             <TextField id="tfApellidos" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="TELEFONO:" GridPane.rowIndex="2" />
             <TextField id="tfTelefono" prefHeight="31.0" prefWidth="428.0" scaleShape="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="TIPO DE RIESGO:" GridPane.columnIndex="6" />
-            <ComboBox id="cbTipoSeguro" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" />
-            <ComboBox id="cbTipoUsuario" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
-            <Label text="TIPO USUARIO:" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <Label text="ESTADO:" visible="false" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+            <ComboBox id="cbTipoSeguro" prefHeight="31.0" prefWidth="291.0" visible="false" GridPane.columnIndex="7" GridPane.rowIndex="2" />
+            <ComboBox id="cbTipoUsuario" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" />
+            <Label text="TIPO USUARIO:" GridPane.columnIndex="6" />
             <Button fx:id="bt_alta" mnemonicParsing="false" onAction="#actionAlta" text="ALTA NUEVA POLIZA" textFill="#180deb" GridPane.columnIndex="4" GridPane.rowIndex="3">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Button>
+            <ComboBox id="cbTipoRiesgo" fx:id="cbTipoRiesgo" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+            <Label text="TIPO DE RIESGO:" GridPane.columnIndex="6" GridPane.rowIndex="1" />
          </children>
          <padding>
             <Insets left="15.0" right="15.0" />

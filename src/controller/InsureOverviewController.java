@@ -53,6 +53,7 @@ import model.TableInfoRelation;
 import util.CalculateCuotes;
 import util.DateUtil;
 import util.InsureCompleteVO;
+import util.MasterValueUtil;
 
 public class InsureOverviewController {
 
@@ -179,8 +180,9 @@ public class InsureOverviewController {
 
 								try {
 									IbInsurance datosSeguro = new IbInsurance();
+									IbMasterValue imvCompania = MasterValueUtil.getMasterValueByValorAndTipo(cbCompania.getSelectionModel().getSelectedItem().toString(), MasterTypes.TYPE_COMPANIA);
 									datosSeguro
-											.setCompania(cbCompania.getSelectionModel().getSelectedItem().toString());
+											.setCompania(imvCompania.getValor());
 									Date utilDateInicio = Date.from(
 											dpFechaInicio.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 									Date utilDateFin = Date.from(
@@ -215,20 +217,20 @@ public class InsureOverviewController {
 									datosSeguro.setPrimaNeta(primaNeta);
 
 									if (!cbDuracion.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-										IbMasterValue imv = util.masterValueUtil
+										IbMasterValue imv = util.MasterValueUtil
 												.getMasterValueByValorAndTipo(formaDePago, MasterTypes.TYPE_DURACION);
 										duracion = imv.getValor();
 									}
 									datosSeguro.setDuracion(duracion);
 
 									if (!formaDePago.isEmpty()) {
-										IbMasterValue imv = util.masterValueUtil
+										IbMasterValue imv = util.MasterValueUtil
 												.getMasterValueByValorAndTipo(formaDePago, MasterTypes.TYPE_FORMA_PAGO);
 										formaDePago = imv.getValor();
 									}
 									datosSeguro.setFormaPago(formaDePago);
 
-									IbMasterValue imv = util.masterValueUtil
+									IbMasterValue imv = util.MasterValueUtil
 											.getMasterValueByValor(icVO.getTipoSeguro());
 									tipoDeRiesgo = imv.getValor();
 									datosSeguro.setTipoRiesgo(tipoDeRiesgo);
@@ -449,62 +451,6 @@ public class InsureOverviewController {
 					}
 				};
 			});
-			//
-			//
-			// ColumnFechaPagoCuota.setCellFactory(column -> {
-			// return new TableCell<IbCuotesInsure, Date>() {
-			// @Override
-			// protected void updateItem(Date item, boolean empty) {
-			// super.updateItem(item, empty);
-			//
-			// if (item != null || !empty) {
-			//
-			// DatePicker ck = new DatePicker();
-			// ck.setEditable(false);
-			// ck.setValue(item.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-			// setGraphic(ck);
-			// }
-			// }
-			// };
-			// });
-			//
-			// ColumnFechaPago.setCellFactory(column -> {
-			// return new TableCell<IbCuotesInsure, Date>() {
-			// @Override
-			// protected void updateItem(Date item, boolean empty) {
-			// super.updateItem(item, empty);
-			//
-			// if (item != null || !empty) {
-			//
-			// DatePicker ck = new DatePicker();
-			// ck.setEditable(false);
-			// ck.setValue(item.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-			// setGraphic(ck);
-			// } else {
-			//
-			// }
-			// }
-			// };
-			// });
-			//
-			// ColumnTotal.setCellFactory(column -> {
-			// return new TableCell<IbCuotesInsure, Double>() {
-			// @Override
-			// protected void updateItem(Double item, boolean empty) {
-			// super.updateItem(item, empty);
-			//
-			// if (item != null || !empty) {
-			//
-			// TextField ck = new TextField();
-			//
-			// ck.setText(String.valueOf(item));
-			// setGraphic(ck);
-			// } else {
-			//
-			// }
-			// }
-			// };
-			// });
 
 		} else {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
@@ -551,7 +497,7 @@ public class InsureOverviewController {
 		String dni = "";
 		while (itr.hasNext()) {
 			TableInfoRelation element = (TableInfoRelation) itr.next();
-			if (element.getTipo().equals("TITULAR")) {
+			if (element.getTipo().equals("PROPIETARIO")) {
 				lbCliente.setText(element.getNombre() + " " + element.getApellidos());
 				dni = element.getDni();
 				icVO.setNombreCompletoTitular(lbCliente.getText());

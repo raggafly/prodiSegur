@@ -12,6 +12,7 @@ public static final String TYPE_DURACION ="INDUR00";
 public static final String TYPE_VEHICULO ="INDTV00";
 public static final String TYPE_COBERTURA ="INDCO00";
 public static final String TYPE_COMPANIA ="INTCS00";
+public static final String TYPE_BANCO = "BANKA00";
 
 public static final String DESCRIPTION_FP_ANUAL ="ANUAL";
 public static final String DESCRIPTION_FP_SEMESTRAL ="SEMESTRAL";
@@ -26,5 +27,9 @@ public static final String DESCRIPTION_DU_MENSUAL ="MENSUAL";
 public static final String DESCRIPTION_ESTADO_VIGENTE = "INEST01";
 public static final String DESCRIPTION_ESTADO_BAJA = "INEST02";
 public static final String DESCRIPTION_ESTADO_FINALIZADO = "INEST03";
+
+public static final String DESCRIPTION_VIGENTE = "VIGENTE";
+public static final String DESCRIPTION_BAJA = "BAJA";
+public static final String DESCRIPTION_FINALIZADO = "FINALIZADO";
 
 }

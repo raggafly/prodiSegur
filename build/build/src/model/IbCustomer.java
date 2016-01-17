@@ -74,9 +74,7 @@ public class IbCustomer implements Serializable {
 	@OneToMany(mappedBy="ibCustomer")
 	private List<IbCustomerRelation> ibCustomerRelations;
 
-	//bi-directional many-to-many association to IbCustomerType
-	@ManyToMany(mappedBy="ibCustomers")
-	private List<IbCustomerType> ibCustomerTypes;
+
 
 	public IbCustomer() {
 	}
@@ -230,13 +228,4 @@ public class IbCustomer implements Serializable {
 
 		return ibCustomerRelation;
 	}
-
-	public List<IbCustomerType> getIbCustomerTypes() {
-		return this.ibCustomerTypes;
-	}
-
-	public void setIbCustomerTypes(List<IbCustomerType> ibCustomerTypes) {
-		this.ibCustomerTypes = ibCustomerTypes;
-	}
-
 }

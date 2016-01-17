@@ -11,7 +11,12 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name="ib_insurance_detail")
-@NamedQuery(name="IbInsuranceDetail.findAll", query="SELECT i FROM IbInsuranceDetail i")
+@NamedQueries({
+
+	@NamedQuery(name="IbInsuranceDetail.findAll", query="SELECT i FROM IbInsuranceDetail i"),
+	@NamedQuery(name = "IbInsuranceDetail.findBySeguro", query = "SELECT i FROM IbInsuranceDetail i WHERE i.idSeguro= :idseguro") }
+)
+
 public class IbInsuranceDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 

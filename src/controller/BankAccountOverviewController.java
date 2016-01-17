@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.crypto.spec.IvParameterSpec;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -168,7 +169,7 @@ public class BankAccountOverviewController {
 		IbAccountBank datosBancarios = new IbAccountBank();
 		if (null != cbBanco.getSelectionModel().getSelectedItem()) {
 			String ab = (String) cbBanco.getSelectionModel().getSelectedItem();
-			IbMasterValue mv = util.masterValueUtil.getMasterValueByValor(ab);
+			IbMasterValue mv = util.MasterValueUtil.getMasterValueByValor(ab);
 			datosBancarios.setBanco(mv.getValor());
 			// datosBancarios.setBanco(cbBanco.getSelectionModel().getSelectedItem().toString());
 		}
@@ -178,7 +179,14 @@ public class BankAccountOverviewController {
 		datosBancarios.setNumeroCuenta(tfCuenta.getText());
 
 		icVO.setDatosBancarios(datosBancarios);
+		if (null != icVO.getDatosCliente() && null != icVO.getDatosCliente().getIbAccountBank2()){
 		icVO.getDatosCliente().setIbAccountBank2(datosBancarios);
+		}else{
+//			datosBancarios.setIbCustomer(icVO.getDatosCliente());
+			icVO.getDatosCliente().setIbAccountBank2(datosBancarios);
+//			datosBancarios.addIbCustomer(icVO.getDatosCliente());
+			icVO.setDatosBancarios(datosBancarios);
+		}
 	}
 
 	private void saveInsureComplete(ActionEvent event) {
@@ -196,7 +204,12 @@ public class BankAccountOverviewController {
 		// em.persist(icVO.getDatosBancarios());
 		// em.persist(iab);
 		if (saveBank) {
-			em.persist(icVO.getDatosCliente().getIbAccountBank2());
+			em.persist(icVO.getDatosBancarios());
+			em.flush();
+			em.merge(icVO.getDatosCliente());
+			em.flush();
+		}else{
+			em.merge(icVO.getDatosCliente().getIbAccountBank2());
 			em.flush();
 		}
 		listaRelacionCliente = getRelation();
@@ -249,7 +262,7 @@ public class BankAccountOverviewController {
 
 				stage.setScene(stage.getScene());
 				try {
-					controller.initData(tableInfo);
+					controller.initData(tableInfo.getNumeroPoliza());
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -396,5 +409,26 @@ public class BankAccountOverviewController {
 		List<String> listBancos = query.getResultList();
 		ObservableList<String> listaObservableBancos = FXCollections.observableArrayList(listBancos);
 		return listaObservableBancos;
+	}
+	
+	@FXML
+	public void handleAnadirBanco(ActionEvent event) {
+		Parent root;
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MasterValuesOverview.fxml"));
+
+		try {
+			root = (Parent) loader.load();
+			Stage stage = new Stage();
+			stage.setTitle("Información maestro de valores.");
+			MasterValuesOverviewController controller = loader.<MasterValuesOverviewController> getController();
+			stage.setScene(new Scene(root, 750, 480));
+			stage.setScene(stage.getScene());
+			controller.initData(MasterTypes.TYPE_BANCO, null);
+			stage.showAndWait();
+			rellenarBancos();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

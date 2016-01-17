@@ -15,6 +15,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+import com.github.daytron.simpledialogfx.data.DialogResponse;
 import com.github.daytron.simpledialogfx.dialog.Dialog;
 import com.github.daytron.simpledialogfx.dialog.DialogType;
 
@@ -23,6 +24,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -33,6 +36,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -55,7 +60,7 @@ public class InsureMenuOverviewController {
 	@FXML
 	private TextField tfApellidos;
 	@FXML
-	private TableView tbInsures;
+	private TableView<TableInfoInsures> tbInsures;
 	@FXML
 	private TableColumn ColumnNumeroPoliza;
 	@FXML
@@ -82,11 +87,15 @@ public class InsureMenuOverviewController {
 	// Event Listener on Button[#btBuscar].onAction
 	@FXML
 	public void handleBuscar(ActionEvent event) {
+		buscar();
+	}
+
+	public void buscar() {
 		List<TableInfoInsures> lti = new ArrayList<TableInfoInsures>();
 		Statement stmt = null;
 		JDBCConnection con = new JDBCConnection();
 		TableInfoInsures tiInsure = new TableInfoInsures();
-		String query = "select numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =10  ";
+		String query = "select cus.nombre, cus.apellidos,numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,(select descripcion from ib_master_values mv where ins.compania = mv.valor) as compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =10  ";
 		if (null != tfDNITitular.getText() && !tfDNITitular.getText().isEmpty()) {
 			query += (" and cus.dni_cif = '" + tfDNITitular.getText() + "'");
 		}
@@ -114,6 +123,7 @@ public class InsureMenuOverviewController {
 				tiInsure.setFechaFinVigor(rs.getDate("fecha_fin_entrada_vigor"));
 				tiInsure.setFechaInicioPago(rs.getDate("fecha_inicio"));
 				tiInsure.setFechaFinPago(rs.getDate("fecha_fin"));
+				tiInsure.setNombre(rs.getString("nombre") + " " + rs.getString("apellidos"));
 				lti.add(tiInsure);
 			}
 		} catch (SQLException e) {
@@ -214,8 +224,11 @@ public class InsureMenuOverviewController {
 			stage.setScene(new Scene(root, 1157, 870));
 			stage.setScene(stage.getScene());
 			InsureCuotesMenuOverviewController controller = (InsureCuotesMenuOverviewController) loader.getController();
+			if(ti != null && !ti.getNumeroPoliza().isEmpty()){
 			controller.initData(getInsurance(ti.getNumeroPoliza()), getCustomer(ti.getDni()), false);
-			stage.show();
+			stage.showAndWait();
+			buscar();
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -227,88 +240,103 @@ public class InsureMenuOverviewController {
 		IbCuotesInsure ci = new IbCuotesInsure();
 		String message = "";
 		TableInfoInsures ti = (TableInfoInsures) tbInsures.getSelectionModel().getSelectedItem();
-		IbInsurance seguro = getInsurance(ti.getNumeroPoliza());
-		EntityManagerFactory emf;
-		EntityManager em;
-		emf = Persistence.createEntityManagerFactory("prodiSegur");
-		em = emf.createEntityManager();
+
 		/*
 		 * Se procede ha eliminar el seguro siempre y cuando: 1º No tenga cuotas
 		 * pagadas. 2º Esté en estado vigente ¿finalizado?
 		 */
-		if (!seguro.getEstado().equals(MasterTypes.DESCRIPTION_ESTADO_BAJA)) {
-			if (!cuotasPagadas(seguro)) {
-				// borramos todo lo que tiene que ver con el seguro.
-
-				TypedQuery<IbCuotesInsure> queryCuotes = em.createNamedQuery("IbCuotesInsure.findCoutesByInsure",
-						IbCuotesInsure.class);
-				queryCuotes.setParameter("seguro", seguro);
-				List<IbCuotesInsure> listOfficialCuotes = queryCuotes.getResultList();
-				// borramos las cuotas
-				// for (int i = 0; i < listOfficialCuotes.size(); i++) {
-				// em.getTransaction().begin();
-				// ci = listOfficialCuotes.get(i);
-				// em.remove(ci);
-				// em.getTransaction().commit();
-				// }
-
-				// borramos la relacion de seguros con clientes.
-				List<IbCustomerRelation> lcr = new ArrayList<IbCustomerRelation>();
-				TypedQuery<IbCustomerRelation> query = em.createNamedQuery("IbCustomerRelation.findSeguro",
-						IbCustomerRelation.class);
-				query.setParameter("idseguro", seguro);
-				lcr = query.getResultList();
-				IbCustomerRelation cr = new IbCustomerRelation();
-
-				em.getTransaction().begin();
-				for (int i = 0; i < lcr.size(); i++) {
-					cr = lcr.get(i);
-					em.remove(cr);
-					// em.getTransaction().commit();
-					em.flush();
-				}
-
-				// Borramos el seguro.
-				// em.getTransaction().begin();
-				// em.remove(seguro);
-				// em.getTransaction().commit();
-				List<IbInsuranceDetail> lid = null;
-				TypedQuery<IbInsuranceDetail> query2 = em.createNamedQuery("IbInsuranceDetail.findBySeguro",
-						IbInsuranceDetail.class);
-				query2.setParameter("idseguro", seguro.getIdibInsurance());
-				lid = query2.getResultList();
-
-				if (null != lid && lid.size() > 0) {
-					// em.getTransaction().begin();
-					em.remove(lid.get(0));
-					// em.getTransaction().commit();
-					em.flush();
-				}
-
-//				 em.getTransaction().begin();
-				seguro = em.find(IbInsurance.class, seguro.getIdibInsurance());
-				// seguro = em.merge(seguro);
-				em.remove(seguro);
-				em.flush();
-//				 em.getTransaction().commit();
-				em.getTransaction().commit();
-
-				em.close();
-
-				message = "Se ha eliminado la poliza: " + seguro.getNumeroPoliza();
-			} else {
-				message = "Existen cuotas con pagos abonados.";
-			}
-
-		} else {
-			message = "No se puede eliminar una poliza dado de Baja.";
-		}
-
-		if (!message.isEmpty()) {
-			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN", message);
+		if (ti != null) {
+			IbInsurance seguro = getInsurance(ti.getNumeroPoliza());
+			Dialog dialog = new Dialog(DialogType.CONFIRMATION, "INFORMACIÓN",
+					"¿Estás seguro qué desear eliminar la poliza: " + ti.getNumeroPoliza() + "\n Perteneciente a: "
+							+ ti.getNombre() + "?");
 			dialog.initModality(Modality.WINDOW_MODAL);
 			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
+			if (dialog.getResponse() == DialogResponse.YES) {
+				EntityManagerFactory emf;
+				EntityManager em;
+				emf = Persistence.createEntityManagerFactory("prodiSegur");
+				em = emf.createEntityManager();
+				if (!seguro.getEstado().equals(MasterTypes.DESCRIPTION_ESTADO_BAJA)) {
+					if (!cuotasPagadas(seguro)) {
+						// borramos todo lo que tiene que ver con el seguro.
+
+						TypedQuery<IbCuotesInsure> queryCuotes = em
+								.createNamedQuery("IbCuotesInsure.findCoutesByInsure", IbCuotesInsure.class);
+						queryCuotes.setParameter("seguro", seguro);
+						List<IbCuotesInsure> listOfficialCuotes = queryCuotes.getResultList();
+						// borramos las cuotas
+						// for (int i = 0; i < listOfficialCuotes.size(); i++) {
+						// em.getTransaction().begin();
+						// ci = listOfficialCuotes.get(i);
+						// em.remove(ci);
+						// em.getTransaction().commit();
+						// }
+
+						// borramos la relacion de seguros con clientes.
+						List<IbCustomerRelation> lcr = new ArrayList<IbCustomerRelation>();
+						TypedQuery<IbCustomerRelation> query = em.createNamedQuery("IbCustomerRelation.findSeguro",
+								IbCustomerRelation.class);
+						query.setParameter("idseguro", seguro);
+						lcr = query.getResultList();
+						IbCustomerRelation cr = new IbCustomerRelation();
+
+						em.getTransaction().begin();
+						for (int i = 0; i < lcr.size(); i++) {
+							cr = lcr.get(i);
+							em.remove(cr);
+							// em.getTransaction().commit();
+							em.flush();
+						}
+
+						// Borramos el seguro.
+						// em.getTransaction().begin();
+						// em.remove(seguro);
+						// em.getTransaction().commit();
+						List<IbInsuranceDetail> lid = null;
+						TypedQuery<IbInsuranceDetail> query2 = em.createNamedQuery("IbInsuranceDetail.findBySeguro",
+								IbInsuranceDetail.class);
+						query2.setParameter("idseguro", seguro.getIdibInsurance());
+						lid = query2.getResultList();
+
+						if (null != lid && lid.size() > 0) {
+							// em.getTransaction().begin();
+							em.remove(lid.get(0));
+							// em.getTransaction().commit();
+							em.flush();
+						}
+
+						// em.getTransaction().begin();
+						seguro = em.find(IbInsurance.class, seguro.getIdibInsurance());
+						// seguro = em.merge(seguro);
+						em.remove(seguro);
+						em.flush();
+						// em.getTransaction().commit();
+						em.getTransaction().commit();
+
+						em.close();
+						buscar();
+						message = "Se ha eliminado la poliza: " + seguro.getNumeroPoliza();
+					} else {
+						message = "Existen cuotas con pagos abonados.";
+					}
+
+				} else {
+					message = "No se puede eliminar una poliza dado de Baja.";
+				}
+
+			}
+
+		} else {
+			message = "No has seleccionado ninguna poliza.";
+		}
+
+		if (!message.isEmpty()) {
+			Dialog dialogError = new Dialog(DialogType.INFORMATION, "INFORMACIÓN", message);
+			dialogError.initModality(Modality.WINDOW_MODAL);
+			dialogError.initOwner(((Node) event.getSource()).getScene().getWindow());
+			dialogError.showAndWait();
 		}
 
 	}
@@ -372,5 +400,79 @@ public class InsureMenuOverviewController {
 		datosSeguro.setEstado(estado);
 
 		return datosSeguro;
+	}
+
+	@FXML
+	public void handleSeleccionarElemento(MouseEvent event) {
+		((Node) (event.getSource())).getScene().lookup("#tbInsures").setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+
+				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+					if (mouseEvent.getClickCount() == 2) {
+						System.out.println("Double clicked");
+						TableInfoInsures tableInfo = (TableInfoInsures) tbInsures.getSelectionModel().getSelectedItem();
+						if (tableInfo != null) {
+							InsuranceManagementMenuOverviewController parent = new InsuranceManagementMenuOverviewController();
+							FXMLLoader loader = new FXMLLoader(
+									getClass().getResource("/views/InsuranceManagementMenuOverview.fxml"));
+
+							try {
+								Parent root;
+								root = (Parent) loader.load();
+								Stage stage = new Stage();
+								stage.setTitle("Detalle de Poliza");
+								InsuranceManagementMenuOverviewController controller = loader
+										.<InsuranceManagementMenuOverviewController> getController();
+								stage.initModality(Modality.APPLICATION_MODAL);
+								stage.setScene(new Scene(root, 600, 511));
+
+								stage.setScene(stage.getScene());
+								controller.initData(getInsurance(tableInfo.getNumeroPoliza()),
+										getCustomer(tableInfo.getDni()));
+
+								stage.show();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+	@FXML
+	public void handleBaja(Event event) {
+		TableInfoInsures tableInfo = (TableInfoInsures) tbInsures.getSelectionModel().getSelectedItem();
+		DetalleSeguroAltaBajaOverviewController parent = new DetalleSeguroAltaBajaOverviewController();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/DetalleSeguroAltaBajaOverview.fxml"));
+
+		try {
+			Parent root;
+			root = (Parent) loader.load();
+			Stage stage = new Stage();
+			stage.setTitle("Detalle de Poliza");
+			DetalleSeguroAltaBajaOverviewController controller = loader
+					.<DetalleSeguroAltaBajaOverviewController> getController();
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setScene(new Scene(root, 600, 511));
+
+			stage.setScene(stage.getScene());
+			try {
+				controller.initData(tableInfo.getNumeroPoliza());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			stage.showAndWait();
+			buscar();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javafx.collections.ObservableList;
 import model.IbAccountBank;
+import model.IbCuotesInsure;
 import model.IbCustomer;
 import model.CustomersTypes;
 import model.IbInsurance;
@@ -27,6 +28,26 @@ public class InsureCompleteVO {
 	
 	List <CustomersTypes> listaCustomersType;
 	
+	List <IbCuotesInsure> listCuotesInsure;
+	
+	boolean isHandleAlta;
+	
+	public boolean isHandleAlta() {
+		return isHandleAlta;
+	}
+
+	public void setHandleAlta(boolean isHandleAlta) {
+		this.isHandleAlta = isHandleAlta;
+	}
+
+	public List<IbCuotesInsure> getListCuotesInsure() {
+		return listCuotesInsure;
+	}
+
+	public void setListCuotesInsure(List<IbCuotesInsure> listCuotesInsure) {
+		this.listCuotesInsure = listCuotesInsure;
+	}
+
 	public IbInsuranceDetail getDetalleSeguro() {
 		return detalleSeguro;
 	}

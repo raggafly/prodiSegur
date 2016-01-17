@@ -68,9 +68,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.IbCustomer;
+import model.IbInsurance;
+import model.IbInsuranceDetail;
 import model.MasterTypes;
 import model.TableInfo;
 import util.JDBCConnection;
+import util.MasterValueUtil;
 
 public class FXMLLoginController {
 	@FXML
@@ -103,6 +106,8 @@ public class FXMLLoginController {
 	private MenuItem mCuotasGestion;
 	@FXML
 	private MenuItem mAyudaDocumentacion;
+	@FXML
+	private ComboBox cbTipoRiesgo;
 
 	@FXML
 	protected void handleSubmitButtonAction(ActionEvent event) {
@@ -118,7 +123,14 @@ public class FXMLLoginController {
 			TypedQuery<String> queryCustomerType = em.createNamedQuery("IbCustomerType.findByType", String.class);
 			query.setParameter("type", "INEST00");
 			List<String> listEstados = query.getResultList();
+			listEstados.add(0, "");
 			List<String> listCustomerType = queryCustomerType.getResultList();
+			listCustomerType.add(0, "");
+			TypedQuery<String> queryRiesgo = em.createNamedQuery("IbMasterValue.findByType", String.class);
+			queryRiesgo.setParameter("type", MasterTypes.TYPE_RIESGO);
+			List<String> listTipoRiesgo = queryRiesgo.getResultList();
+			listTipoRiesgo.add(0, "");
+
 			root = FXMLLoader.load(getClass().getResource("/views/parentLayout.fxml"));
 
 			Stage stage = new Stage();
@@ -128,15 +140,19 @@ public class FXMLLoginController {
 			stage.show();
 			ComboBox cbTipoSeguro = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoSeguro")));
 			ComboBox cbTipoUsuario = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoUsuario")));
+			ComboBox cbTipoRiesgo = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoRiesgo")));
 
 			ObservableList<String> listaObservable = FXCollections.observableArrayList(listEstados);
 			ObservableList<String> listaObservableTipoUsuario = FXCollections.observableArrayList(listCustomerType);
+			ObservableList<String> listaObservableTipoRiesgo = FXCollections.observableArrayList(listTipoRiesgo);
 			cbTipoSeguro.setItems(listaObservable);
 			cbTipoUsuario.setItems(listaObservableTipoUsuario);
+			cbTipoRiesgo.setItems(listaObservableTipoRiesgo);
+
 			stage.setOnCloseRequest(e -> {
-				e.consume();
-				stage.close();
+				System.exit(-1);
 			});
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -155,12 +171,10 @@ public class FXMLLoginController {
 
 						if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 							if (mouseEvent.getClickCount() == 2) {
-								System.out.println("Double clicked");
 								TableInfo tableInfo = (TableInfo) tablaBusqueda.getSelectionModel().getSelectedItem();
 								FXMLParentLayoutController parent = new FXMLParentLayoutController();
 								FXMLLoader loader = new FXMLLoader(
 										getClass().getResource("/views/detalleSeguroLayout.fxml"));
-
 								try {
 									Parent root;
 									root = (Parent) loader.load();
@@ -168,12 +182,12 @@ public class FXMLLoginController {
 									stage.setTitle("Detalle de Poliza");
 									FXMLParentLayoutController controller = loader
 											.<FXMLParentLayoutController> getController();
-
+									stage.initModality(Modality.APPLICATION_MODAL);
 									stage.setScene(new Scene(root, 600, 600));
 
 									stage.setScene(stage.getScene());
 									try {
-										controller.initData(tableInfo);
+										controller.initData(tableInfo.getNumeroPoliza());
 									} catch (SQLException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -304,12 +318,15 @@ public class FXMLLoginController {
 		TextField tfApellidos = (TextField) ((Node) (event.getSource())).getScene().lookup("#tfApellidos");
 		ComboBox<String> cbTipoSeguro = (ComboBox<String>) ((Node) (event.getSource())).getScene()
 				.lookup("#cbTipoSeguro");
+		ComboBox<String> cbTipoRiesgo = (ComboBox<String>) ((Node) (event.getSource())).getScene()
+				.lookup("#cbTipoRiesgo");
+
 		ComboBox cbTipoUsuario = (ComboBox<String>) ((Node) (event.getSource())).getScene().lookup("#cbTipoUsuario");
 		TableInfo ti;
 		Statement stmt = null;
-		String query = "select ins.numero_poliza,cu.nombre,cu.apellidos,cu.dni_cif,cu.telefono,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.tipo_riesgo = MV2.VALOR) AS tipo_riesgo,mv.descripcion as estado,(select ty.descripcion from ib_customer_type ty where re.id_tipo = ty.idib_customer_type)as tipo "
+		String query = "select DISTINCT ins.numero_poliza,cu.nombre,cu.apellidos,cu.dni_cif,cu.telefono,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.tipo_riesgo = MV2.VALOR) AS tipo_riesgo,(SELECT MV3.DESCRIPCION FROM ib_master_values mv3 WHERE ins.estado = MV3.VALOR) as estado,(select ty.descripcion from ib_customer_type ty where re.id_tipo = ty.idib_customer_type)as tipo "
 				+ " from ib_customer_type type,ib_customer cu, ib_insurance ins, ib_customer_relation re, ib_master_values mv "
-				+ " where " + "cu.idib_customer = re.id_cliente and mv.valor = ins.estado "
+				+ " where " + "cu.idib_customer = re.id_cliente  "
 				+ " and re.id_tipo = type.idib_customer_type and re.id_seguro = ins.idib_insurance ";
 
 		if (null != tfDni.getText() && !tfDni.getText().isEmpty()) {
@@ -325,11 +342,16 @@ public class FXMLLoginController {
 		}
 
 		if (null != cbTipoSeguro.getValue() && !cbTipoSeguro.getValue().toString().isEmpty()) {
-			query += (" and mv.descripcion = '" + cbTipoSeguro.getValue().toString() + "'");
+			query += (" and mv.valor = ins.estado and mv.descripcion = '" + cbTipoSeguro.getValue().toString() + "'");
 		}
 
 		if (null != cbTipoUsuario.getValue() && !cbTipoUsuario.getValue().toString().isEmpty()) {
 			query += (" and type.descripcion = '" + cbTipoUsuario.getValue().toString() + "'");
+		}
+
+		if (null != cbTipoRiesgo.getValue() && !cbTipoRiesgo.getValue().toString().isEmpty()) {
+			query += (" and mv.valor = ins.tipo_riesgo and mv.descripcion = '" + cbTipoRiesgo.getValue().toString()
+					+ "'");
 		}
 
 		if (null != tfNombre.getText() && !tfNombre.getText().toString().isEmpty()) {
@@ -409,12 +431,6 @@ public class FXMLLoginController {
 		}
 	}
 
-	// Event Listener on MenuItem[#mSeguroBaja].onAction
-	@FXML
-	public void handleSeguroBaja(ActionEvent event) {
-		// TODO Autogenerated
-	}
-
 	// Event Listener on MenuItem[#mCuotasGestion].onAction
 	@FXML
 	public void handleCuotasGestion(ActionEvent event) {
@@ -441,5 +457,26 @@ public class FXMLLoginController {
 	@FXML
 	public void handleAyudaDocumentacion(ActionEvent event) {
 		// TODO Autogenerated
+	}
+
+	@FXML
+	public void handleRelacionCliente(ActionEvent event) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/PersonManagementOverview.fxml"));
+		Parent root;
+		try {
+			root = (Parent) loader.load();
+			Stage stage = new Stage();
+			stage.setTitle("Gestión Cliente-Poliza");
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setScene(new Scene(root, 941, 775));
+			stage.setScene(stage.getScene());
+			// InsureMenuOverviewController controller =
+			// (InsureMenuOverviewController) loader.getController();
+			// controller.initData(null, false, false);
+			stage.show();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

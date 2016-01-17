@@ -50,6 +50,7 @@ import model.CustomersTypes;
 import model.TableInfoRelation;
 import util.DateUtil;
 import util.InsureCompleteVO;
+import util.MasterValueUtil;
 
 public class PersonOverviewController {
 	InsureCompleteVO icVO = new InsureCompleteVO();
@@ -429,6 +430,19 @@ public class PersonOverviewController {
 				icVO.setDatosClienteRelation(datosClienteRelation);
 				icVO.setListaCustomersType(listaCustomerComplete);
 
+				Iterator itr = icVO.getDatosClienteRelation().iterator();
+				String dni = "";
+				while (itr.hasNext()) {
+					TableInfoRelation element = (TableInfoRelation) itr.next();
+					if (element.getTipo().equals("PROPIETARIO")) {
+						
+						dni = element.getDni();
+						IbCustomer cus = MasterValueUtil.getCustomer(dni);
+						icVO.setDatosCliente(cus);
+						
+					}
+				}
+				
 				controller.initData(icVO);
 				stage.show();
 				((Node) (event.getSource())).getScene().getWindow().hide();

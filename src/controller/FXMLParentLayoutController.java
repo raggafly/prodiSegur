@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 import javax.print.DocFlavor.URL;
 
 import com.sun.javafx.tk.quantum.MasterTimer;
@@ -19,12 +24,16 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import model.IbCustomer;
+import model.IbInsurance;
+import model.IbInsuranceDetail;
 import model.MasterTypes;
 import model.TableInfo;
 import util.JDBCConnection;
+import util.MasterValueUtil;
 
 public class FXMLParentLayoutController implements Initializable {
 	@FXML
@@ -236,7 +245,15 @@ public class FXMLParentLayoutController implements Initializable {
 	public Label getlbAccesorios() {
 		return lbAccesorios;
 	}
-
+	@FXML
+	private Tab tabDetalleSeguro;
+	public Tab gettabDetalleSeguro() {
+		return tabDetalleSeguro;
+	}
+	@FXML
+	private Label lbBanco;
+	@FXML
+	private Label lbNumeroCuenta;
 	
 	public String particular = "PARTICULAR";
 	public String publico = "PÚBLICO";
@@ -246,11 +263,27 @@ public class FXMLParentLayoutController implements Initializable {
 
 	}
 
-	public void initData(TableInfo tableInfo) throws SQLException {
+	public void initData(String poliza) throws SQLException {
 		Statement stmt = null;
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		IbInsurance seguro = MasterValueUtil.getInsurance(poliza);
+		List<IbInsuranceDetail> lid = null;
+		TypedQuery<IbInsuranceDetail> query2 = em.createNamedQuery("IbInsuranceDetail.findBySeguro",
+				IbInsuranceDetail.class);
+		query2.setParameter("idseguro",seguro.getIdibInsurance());
+		lid = query2.getResultList();
+		if (null != lid && lid.size() > 0) {
+			
+			tabDetalleSeguro.setDisable(false);
+		}
+		em.close();
 		try {
 			JDBCConnection con = new JDBCConnection();
-			String query = "select CONCAT(c.nombre, ' ', c.Apellidos) As Nombre, t.descripcion as tipoUsuario , t.cod_tipo as codigo,  i.numero_poliza,compania,fecha_inicio,fecha_fin, (select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,prima_neta,fecha_entrada_vigor, (select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision, (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo,   (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo,  (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago,   (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura, marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula, pma_kgs,remolque,accesorios   FROM ib_insurance i LEFT OUTER JOIN ib_insurance_detail d ON d.id_seguro  = i.idib_insurance, ib_customer c, ib_customer_relation r, ib_customer_type t   where i.numero_poliza='" + tableInfo.getNumeroPoliza() + "'and  c.idib_customer = r.id_cliente and i.idib_insurance = r.id_seguro   and t.idib_customer_type = r.id_tipo order by t.cod_tipo";
+			
+			String query = "select CONCAT(c.nombre, ' ', c.Apellidos) As Nombre, t.descripcion as tipoUsuario , t.cod_tipo as codigo,  i.numero_poliza,compania,fecha_inicio,fecha_fin, (select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,(select descripcion from ib_master_values mv where ab.banco = mv.valor) as banco , CONCAT(ab.entidad, '    ', ab.oficina,'    ', ab.dc,'    ', ab.numero_cuenta) As cuenta_bancaria,prima_neta,fecha_entrada_vigor, (select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision, (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo,   (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo,  (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago,   (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura, marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula, pma_kgs,remolque,accesorios   FROM ib_insurance i LEFT OUTER JOIN ib_insurance_detail d ON d.id_seguro  = i.idib_insurance, ib_customer_relation r, ib_customer_type t ,ib_customer c,ib_account_bank AB where i.numero_poliza='" + poliza + "' and  c.idib_customer = r.id_cliente and i.idib_insurance = r.id_seguro and t.idib_customer_type = r.id_tipo AND AB.iDIb_account_bank = C.ib_cuenta order by t.cod_tipo";
 			
 			stmt = con.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -301,6 +334,8 @@ public class FXMLParentLayoutController implements Initializable {
 					lbTipoVehiculo.setText(rs.getString("tipo_vehiculo"));
 					lbCobertura.setText(rs.getString("cobertura"));
 					lbPMA.setText(rs.getString("pma_kgs"));
+					lbBanco.setText(rs.getString("banco"));
+					lbNumeroCuenta.setText(rs.getString("cuenta_bancaria"));
 				}
 				cont++;
 			}

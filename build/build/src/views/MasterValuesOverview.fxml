@@ -25,6 +25,7 @@
                   <Button fx:id="btnAlta" layoutX="371.0" layoutY="201.0" mnemonicParsing="false" onAction="#handleAlta" text="Alta" />
                   <Label layoutX="14.0" layoutY="160.0" text="Siguiente código:" />
                   <TextField fx:id="tfSiguienteCodigo" editable="false" layoutX="140.0" layoutY="155.0" prefHeight="31.0" prefWidth="277.0" />
+                  <Button fx:id="btnCerrar" layoutX="352.0" layoutY="432.0" mnemonicParsing="false" onAction="#handleCerrar" text="Cerrar" />
                </children>
             </AnchorPane>
         </items>

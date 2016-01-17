@@ -137,7 +137,7 @@ public class InsureDetailOverviewController {
 			if (tfPMA.getText().isEmpty() || DateUtil.isNumeric(tfPMA.getText())) {
 
 				if (!cbCobertura.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-					IbMasterValue imv = util.masterValueUtil
+					IbMasterValue imv = util.MasterValueUtil
 							.getMasterValueByValor(cbCobertura.getSelectionModel().getSelectedItem().toString());
 					cobertura = imv.getValor();
 				}
@@ -169,7 +169,7 @@ public class InsureDetailOverviewController {
 				String tipoVehiculo = "";
 				// INDTV00
 				if (!cbVehiculo.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-					IbMasterValue imv = util.masterValueUtil
+					IbMasterValue imv = util.MasterValueUtil
 							.getMasterValueByValor(cbVehiculo.getSelectionModel().getSelectedItem().toString());
 					tipoVehiculo = imv.getValor();
 				}

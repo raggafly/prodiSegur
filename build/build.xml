@@ -103,12 +103,12 @@
 		<mkdir dir="project" />
 		<copy todir="project">
 			<fileset dir="C:\Users\RUBEN\git\prodiSegur">
-				<include name="src/**" />
+				<include name="image/**" />
 			</fileset>
 		</copy>
 		<copy todir="project">
 			<fileset dir="C:\Users\RUBEN\git\prodiSegur">
-				<include name="image/**" />
+				<include name="src/**" />
 			</fileset>
 		</copy>
 	
@@ -223,7 +223,7 @@
 			<manifest>
 				<attribute name="Implementation-Vendor" value="Shark Soft."/>
 				<attribute name="Implementation-Title" value="GestInsu"/>
-				<attribute name="Implementation-Version" value="1.0"/>
+				<attribute name="Implementation-Version" value="1.0.0"/>
 				<attribute name="SplashScreen-Image" value="Library_Folder.png"/>
 				<attribute name="JavaFX-Feature-Proxy" value="None"/>
 			</manifest>

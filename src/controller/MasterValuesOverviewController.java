@@ -2,6 +2,7 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 
@@ -146,16 +147,7 @@ public class MasterValuesOverviewController {
 	// Event Listener on Button[#btnAlta].onAction
 	@FXML
 	public void handleCerrar(ActionEvent event) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InsureOverview.fxml"));
-		try {
-			Parent root = loader.load();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		InsureDetailOverviewController insu = loader.getController();
-		insu.initData(this.icVO);
-		
+		((Node)(event.getSource())).getScene().getWindow().hide();		
 	}
 
 }
