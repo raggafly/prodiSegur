@@ -431,7 +431,8 @@ public class InsureMenuOverviewController {
 								controller.initData(getInsurance(tableInfo.getNumeroPoliza()),
 										getCustomer(tableInfo.getDni()));
 
-								stage.show();
+								stage.showAndWait();
+								buscar();
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

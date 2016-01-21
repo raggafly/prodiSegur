@@ -8,6 +8,20 @@ public class TableInfo {
 	String dni;
 	String telefono;
 	String tipo;
+	String primaNeta;
+	String compania;
+	public String getPrimaNeta() {
+		return primaNeta;
+	}
+	public void setPrimaNeta(String primaNeta) {
+		this.primaNeta = primaNeta;
+	}
+	public String getCompania() {
+		return compania;
+	}
+	public void setCompania(String compania) {
+		this.compania = compania;
+	}
 	public String getTipo() {
 		return tipo;
 	}

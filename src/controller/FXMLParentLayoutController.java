@@ -283,12 +283,14 @@ public class FXMLParentLayoutController implements Initializable {
 		try {
 			JDBCConnection con = new JDBCConnection();
 			
-			String query = "select CONCAT(c.nombre, ' ', c.Apellidos) As Nombre, t.descripcion as tipoUsuario , t.cod_tipo as codigo,  i.numero_poliza,compania,fecha_inicio,fecha_fin, (select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,(select descripcion from ib_master_values mv where ab.banco = mv.valor) as banco , CONCAT(ab.entidad, '    ', ab.oficina,'    ', ab.dc,'    ', ab.numero_cuenta) As cuenta_bancaria,prima_neta,fecha_entrada_vigor, (select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision, (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo,   (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo,  (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago,   (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura, marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula, pma_kgs,remolque,accesorios   FROM ib_insurance i LEFT OUTER JOIN ib_insurance_detail d ON d.id_seguro  = i.idib_insurance, ib_customer_relation r, ib_customer_type t ,ib_customer c,ib_account_bank AB where i.numero_poliza='" + poliza + "' and  c.idib_customer = r.id_cliente and i.idib_insurance = r.id_seguro and t.idib_customer_type = r.id_tipo AND AB.iDIb_account_bank = C.ib_cuenta order by t.cod_tipo";
+			String query = "select i.idib_insurance as idSeguro,CONCAT(c.nombre, ' ', c.Apellidos) As Nombre, t.descripcion as tipoUsuario , t.cod_tipo as codigo,  i.numero_poliza,(select descripcion from ib_master_values mv where compania = mv.valor) as compania,fecha_inicio,fecha_fin, (select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,(select descripcion from ib_master_values mv where ab.banco = mv.valor) as banco , CONCAT(ab.entidad, '    ', ab.oficina,'    ', ab.dc,'    ', ab.numero_cuenta) As cuenta_bancaria,prima_neta,fecha_entrada_vigor, (select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision, (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo,   (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo,  (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago,   (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura, marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula, pma_kgs,remolque,accesorios   FROM ib_insurance i LEFT OUTER JOIN ib_insurance_detail d ON d.id_seguro  = i.idib_insurance, ib_customer_relation r, ib_customer_type t ,ib_customer c,ib_account_bank AB where i.numero_poliza='" + poliza + "' and  c.idib_customer = r.id_cliente and i.idib_insurance = r.id_seguro and t.idib_customer_type = r.id_tipo AND AB.iDIb_account_bank = C.ib_cuenta order by t.cod_tipo";
 			
 			stmt = con.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			int cont = 0;
+			String idSeguro ="";
 			while (rs.next()) {
+				
 				if (MasterTypes.TOMADOR.equals(rs.getString("codigo"))) {
 					lbEnumTittularSeguro.setText(rs.getString("tipoUsuario")+":");
 					lbTitularSeguro.setText(rs.getString("nombre"));
@@ -337,7 +339,17 @@ public class FXMLParentLayoutController implements Initializable {
 					lbBanco.setText(rs.getString("banco"));
 					lbNumeroCuenta.setText(rs.getString("cuenta_bancaria"));
 				}
+				idSeguro = rs.getString("idSeguro");
 				cont++;
+			}
+			if(!idSeguro.isEmpty() && !idSeguro.equals("0")){
+				String queryConductor = "select CONCAT(c.nombre, ' ', c.Apellidos) As Nombre from ib_customer c, ib_customer_relation r where r.id_cliente = c.idib_customer and r.id_seguro ="+idSeguro+ " and r.id_tipo ="+12;
+				stmt = con.getConnection().createStatement();
+				ResultSet rsConductor = stmt.executeQuery(queryConductor);
+				
+				while (rsConductor.next()) {
+					lbConductor.setText(rsConductor.getString("Nombre"));
+				}
 			}
 		} catch (SQLException e) {
 			// JDBCTutorialUtilities.printSQLException(e);

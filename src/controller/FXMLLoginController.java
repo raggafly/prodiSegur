@@ -95,6 +95,10 @@ public class FXMLLoginController {
 	@FXML
 	private TableColumn<TableInfo, String> columnaTipoRiesgo;
 	@FXML
+	private TableColumn<TableInfo, String> columnaPrimaNeta;
+	@FXML
+	private TableColumn<TableInfo, String> columnaCompania;
+	@FXML
 	private TableView tablaBusqueda;
 	@FXML
 	private MenuItem mClienteGestion;
@@ -284,6 +288,8 @@ public class FXMLLoginController {
 		columnaTipoRiesgo = new TableColumn("Tipo Riesgo");
 		columnaEstado = new TableColumn("Estado");
 		columnaTipo = new TableColumn("Tipo");
+		columnaPrimaNeta = new TableColumn("Prima Neta");
+		columnaCompania = new TableColumn("Companía");
 
 		columnaNombre.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("nombre"));
 		columnaApellidos.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("apellidos"));
@@ -293,6 +299,8 @@ public class FXMLLoginController {
 		columnaTipoRiesgo.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("tipoRiesgo"));
 		columnaEstado.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("estado"));
 		columnaTipo.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("tipo"));
+		columnaPrimaNeta.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("primaNeta"));
+		columnaCompania.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("compania"));
 
 		tb.setItems(listaObservable);
 		tb.getColumns().addAll(columnaPoliza);
@@ -303,6 +311,8 @@ public class FXMLLoginController {
 		tb.getColumns().addAll(columnaTipoRiesgo);
 		tb.getColumns().addAll(columnaEstado);
 		tb.getColumns().addAll(columnaTipo);
+		tb.getColumns().addAll(columnaPrimaNeta);
+		tb.getColumns().addAll(columnaCompania);
 
 	}
 
@@ -324,7 +334,7 @@ public class FXMLLoginController {
 		ComboBox cbTipoUsuario = (ComboBox<String>) ((Node) (event.getSource())).getScene().lookup("#cbTipoUsuario");
 		TableInfo ti;
 		Statement stmt = null;
-		String query = "select DISTINCT ins.numero_poliza,cu.nombre,cu.apellidos,cu.dni_cif,cu.telefono,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.tipo_riesgo = MV2.VALOR) AS tipo_riesgo,(SELECT MV3.DESCRIPCION FROM ib_master_values mv3 WHERE ins.estado = MV3.VALOR) as estado,(select ty.descripcion from ib_customer_type ty where re.id_tipo = ty.idib_customer_type)as tipo "
+		String query = "select DISTINCT ins.numero_poliza,cu.nombre,cu.apellidos,cu.dni_cif,cu.telefono,ins.prima_neta as prima_neta,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.compania = MV2.VALOR) AS compania,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.tipo_riesgo = MV2.VALOR) AS tipo_riesgo,(SELECT MV3.DESCRIPCION FROM ib_master_values mv3 WHERE ins.estado = MV3.VALOR) as estado,(select ty.descripcion from ib_customer_type ty where re.id_tipo = ty.idib_customer_type)as tipo "
 				+ " from ib_customer_type type,ib_customer cu, ib_insurance ins, ib_customer_relation re, ib_master_values mv "
 				+ " where " + "cu.idib_customer = re.id_cliente  "
 				+ " and re.id_tipo = type.idib_customer_type and re.id_seguro = ins.idib_insurance ";
@@ -376,6 +386,8 @@ public class FXMLLoginController {
 				ti.setTipoRiesgo(rs.getString("tipo_riesgo"));
 				ti.setEstado(rs.getString("estado"));
 				ti.setTipo(rs.getString("tipo"));
+				ti.setPrimaNeta(rs.getString("prima_Neta"));
+				ti.setCompania(rs.getString("compania"));
 				lti.add(ti);
 			}
 		} catch (SQLException e) {
