@@ -71,6 +71,11 @@
 		</copy>
 		<copy todir="externalLibs">
 			<fileset dir="C:\Users\RUBEN\git\prodiSegur\lib">
+				<filename name="itextpdf-5.5.8.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\RUBEN\git\prodiSegur\lib">
 				<filename name="hibernate-commons-annotations-5.0.1.Final.jar"/>
 			</fileset>
 		</copy>
@@ -130,6 +135,7 @@
 				<include name="hibernate-entitymanager-4.3.7.Final.jar"/>
 				<include name="ojdbc7.jar"/>
 				<include name="javassist-3.18.1-GA.jar"/>
+				<include name="itextpdf-5.5.8.jar"/>
 				<include name="jandex-2.0.0.Final.jar"/>
 				<include name="SimpleDialogFX-2.2.0.jar"/>
 				<include name="jboss-logging-annotations-1.2.0.Beta1.jar"/>

@@ -53,6 +53,8 @@ import javafx.scene.control.DatePicker;
 
 public class InsuranceManagementMenuOverviewController {
 	@FXML
+	private TextField tfFranquicia;
+	@FXML
 	private Tab tabDatosSeguro;
 	@FXML
 	private Label lbTitular;
@@ -119,6 +121,18 @@ public class InsuranceManagementMenuOverviewController {
 	private ComboBox cbBanco;
 	private IbCustomer customer;
 
+	
+	@FXML
+	public void handleChangeCobertura(ActionEvent event) {
+		String cob = cbCobertura.getSelectionModel().getSelectedItem().toString();
+		IbMasterValue ib = MasterValueUtil.getMasterValueByValorAndTipo(cob, MasterTypes.TYPE_COBERTURA);
+		if (MasterTypes.CODIGO_TERCEROS_TODO_RIESGO_FRANQUICIA.equals(ib.getValor())) {
+			tfFranquicia.setEditable(true);
+		} else {
+			tfFranquicia.setText("");
+			tfFranquicia.setEditable(false);
+		}
+	}
 	// Event Listener on Button[#btnAnadirTipoVehiculo].onAction
 	@FXML
 	public void handleAnadirTipVehiculo(ActionEvent event) {
@@ -367,6 +381,20 @@ public class InsuranceManagementMenuOverviewController {
 		} else {
 			message = "\n PMA es un número no válido.";
 		}
+		
+		double franquicia = 0D;
+		String sFranquicia = "";
+		if (null != tfFranquicia.getText() || !tfFranquicia.getText().isEmpty()) {
+			sFranquicia = tfFranquicia.getText();
+		} 
+		
+		if (DateUtil.isNumeric(sFranquicia)) {
+			franquicia = Double.parseDouble(sFranquicia);
+			detalleSeguro.setFranquicia(franquicia);
+		} else {
+			message = "\n Franquicia es un número no válido.";
+		}
+		
 		detalleSeguro.setAccesorios(tfAccesorios.getText());
 		detalleSeguro.setRemolque(tfRemolque.getText());
 
@@ -387,8 +415,14 @@ public class InsuranceManagementMenuOverviewController {
 		em = emf.createEntityManager();
 		this.seguro = insurance;
 		this.customer = customer;
-
-		lbTitular.setText(customer.getNombre() + " " + customer.getApellidos());
+		
+		String apellidos = "";
+		
+		if (null != customer.getApellidos() && !customer.getApellidos().isEmpty()){
+			apellidos = customer.getApellidos();
+		}
+		
+		lbTitular.setText(customer.getNombre() + " " + apellidos);
 		lbPoliza.setText(insurance.getNumeroPoliza());
 
 		// combo compania
@@ -450,7 +484,13 @@ public class InsuranceManagementMenuOverviewController {
 			cbCobertura.setItems(listaObservableFormaPago);
 			String vCobertura = MasterValueUtil.getMasterFindDescriptionByValor(ind.getCobertura());
 			cbCobertura.setValue(vCobertura);
-
+			String cob = cbCobertura.getSelectionModel().getSelectedItem().toString();
+			IbMasterValue ib = MasterValueUtil.getMasterValueByValorAndTipo(cob, MasterTypes.TYPE_COBERTURA);
+			if (MasterTypes.CODIGO_TERCEROS_TODO_RIESGO_FRANQUICIA.equals(ib.getValor())) {
+				tfFranquicia.setText(String.valueOf(ind.getFranquicia()));
+				tfFranquicia.setEditable(true);
+			}
+			
 			// combo tipo de vehiculo
 			query = em.createNamedQuery("IbMasterValue.findByType", String.class);
 			query.setParameter("type", MasterTypes.TYPE_VEHICULO);

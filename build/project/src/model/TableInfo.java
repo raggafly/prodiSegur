@@ -1,6 +1,7 @@
 package model;
 
 public class TableInfo {
+	String orden;
 	String nombre;
 	String apellidos;
 	String numeroPoliza;
@@ -8,6 +9,27 @@ public class TableInfo {
 	String dni;
 	String telefono;
 	String tipo;
+	String primaNeta;
+	String compania;
+	
+	public String getOrden() {
+		return orden;
+	}
+	public void setOrden(String orden) {
+		this.orden = orden;
+	}
+	public String getPrimaNeta() {
+		return primaNeta;
+	}
+	public void setPrimaNeta(String primaNeta) {
+		this.primaNeta = primaNeta;
+	}
+	public String getCompania() {
+		return compania;
+	}
+	public void setCompania(String compania) {
+		this.compania = compania;
+	}
 	public String getTipo() {
 		return tipo;
 	}

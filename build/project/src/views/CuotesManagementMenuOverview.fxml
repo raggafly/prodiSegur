@@ -7,7 +7,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="648.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CuotesManagementMenuOverviewController">
    <children>
-      <GridPane layoutX="40.0" layoutY="26.0" prefHeight="90.0" prefWidth="331.0">
+      <GridPane layoutX="40.0" layoutY="26.0" prefHeight="114.0" prefWidth="341.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="132.0" minWidth="10.0" prefWidth="57.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.0" minWidth="10.0" prefWidth="202.0" />
@@ -16,13 +16,16 @@
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="24.0" minHeight="8.0" prefHeight="8.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="37.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label prefHeight="21.0" prefWidth="53.0" text="Poliza:" />
             <TextField fx:id="tfPoliza" GridPane.columnIndex="1" />
-            <Button fx:id="btBuscar" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#handleBuscar" text="Buscar" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Button fx:id="btBuscar" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#handleBuscar" text="Buscar" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <TextField fx:id="tfOrden" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label prefHeight="21.0" prefWidth="53.0" text="Oden:" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <TableView fx:id="tbCuotes" editable="true" layoutX="155.0" layoutY="164.0" prefHeight="422.0" prefWidth="652.0">

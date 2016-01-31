@@ -218,7 +218,7 @@ public class InsureOverviewController {
 
 									if (!cbDuracion.getSelectionModel().getSelectedItem().toString().isEmpty()) {
 										IbMasterValue imv = util.MasterValueUtil
-												.getMasterValueByValorAndTipo(formaDePago, MasterTypes.TYPE_DURACION);
+												.getMasterValueByValorAndTipo(duracion, MasterTypes.TYPE_DURACION);
 										duracion = imv.getValor();
 									}
 									datosSeguro.setDuracion(duracion);
@@ -268,7 +268,7 @@ public class InsureOverviewController {
 										root = (Parent) loader.load();
 										stage.setTitle("Detalle Seguro Vehículo.");
 										stage.initModality(Modality.APPLICATION_MODAL);
-										stage.setScene(new Scene(root, 563, 485));
+										stage.setScene(new Scene(root, 563, 540));
 										stage.setScene(stage.getScene());
 										InsureDetailOverviewController controller = (InsureDetailOverviewController) loader
 												.getController();

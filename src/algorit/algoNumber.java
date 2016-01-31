@@ -53,7 +53,9 @@ public class algoNumber {
 			sumTotales += ci.getTotalCuota();
 		}
 
-		if(sumTotales==total){
+		double sumTotal = (double) Math.round(sumTotales * 100) / 100;
+		
+		if(sumTotal==total){
 			isCorrect=true;
 		}
 		

@@ -72,12 +72,15 @@ import model.IbInsurance;
 import model.IbInsuranceDetail;
 import model.MasterTypes;
 import model.TableInfo;
+import util.DateUtil;
 import util.JDBCConnection;
 import util.MasterValueUtil;
 
 public class FXMLLoginController {
 	@FXML
 	private Text actiontarget;
+	@FXML
+	private TableColumn<TableInfo, String> columnaIdOrden;
 	@FXML
 	private TableColumn<TableInfo, String> columnaPoliza;
 	@FXML
@@ -256,7 +259,7 @@ public class FXMLLoginController {
 			if (result.isPresent()) {
 				stage.setTitle("Alta de un seguro de tipo : " + result.get());
 				stage.initModality(Modality.APPLICATION_MODAL);
-				stage.setScene(new Scene(root, 800, 600));
+				stage.setScene(new Scene(root, 810, 730));
 				stage.setScene(stage.getScene());
 
 				PersonOverviewController controller = (PersonOverviewController) loader.getController();
@@ -280,6 +283,7 @@ public class FXMLLoginController {
 
 		ObservableList<TableInfo> listaObservable = FXCollections.observableArrayList(list);
 
+		columnaIdOrden = new TableColumn("Nº Orden");
 		columnaPoliza = new TableColumn("Nº Poliza");
 		columnaNombre = new TableColumn("Nombre");
 		columnaApellidos = new TableColumn("Apellidos");
@@ -291,6 +295,7 @@ public class FXMLLoginController {
 		columnaPrimaNeta = new TableColumn("Prima Neta");
 		columnaCompania = new TableColumn("Companía");
 
+		columnaIdOrden.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("orden"));
 		columnaNombre.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("nombre"));
 		columnaApellidos.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("apellidos"));
 		columnaDniCif.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("dni"));
@@ -303,6 +308,7 @@ public class FXMLLoginController {
 		columnaCompania.setCellValueFactory(new PropertyValueFactory<TableInfo, String>("compania"));
 
 		tb.setItems(listaObservable);
+		tb.getColumns().addAll(columnaIdOrden);
 		tb.getColumns().addAll(columnaPoliza);
 		tb.getColumns().addAll(columnaNombre);
 		tb.getColumns().addAll(columnaApellidos);
@@ -321,6 +327,7 @@ public class FXMLLoginController {
 	}
 
 	public List<TableInfo> extractInfTableView(java.sql.Connection connection, ActionEvent event) throws SQLException {
+		TextField tfOrden = (TextField) ((Node) (event.getSource())).getScene().lookup("#tfOrden");
 		TextField tfDni = (TextField) ((Node) (event.getSource())).getScene().lookup("#tfdni");
 		TextField tfPoliza = (TextField) ((Node) (event.getSource())).getScene().lookup("#tfPoliza");
 		TextField tfTelefono = (TextField) ((Node) (event.getSource())).getScene().lookup("#tfTelefono");
@@ -334,11 +341,15 @@ public class FXMLLoginController {
 		ComboBox cbTipoUsuario = (ComboBox<String>) ((Node) (event.getSource())).getScene().lookup("#cbTipoUsuario");
 		TableInfo ti;
 		Statement stmt = null;
-		String query = "select DISTINCT ins.numero_poliza,cu.nombre,cu.apellidos,cu.dni_cif,cu.telefono,ins.prima_neta as prima_neta,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.compania = MV2.VALOR) AS compania,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.tipo_riesgo = MV2.VALOR) AS tipo_riesgo,(SELECT MV3.DESCRIPCION FROM ib_master_values mv3 WHERE ins.estado = MV3.VALOR) as estado,(select ty.descripcion from ib_customer_type ty where re.id_tipo = ty.idib_customer_type)as tipo "
+		String query = "select DISTINCT ins.numero_poliza,ins.idib_insurance as orden,cu.nombre,cu.apellidos,cu.dni_cif,cu.telefono,ins.prima_neta as prima_neta,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.compania = MV2.VALOR) AS compania,(SELECT MV2.DESCRIPCION FROM ib_master_values mv2 WHERE ins.tipo_riesgo = MV2.VALOR) AS tipo_riesgo,(SELECT MV3.DESCRIPCION FROM ib_master_values mv3 WHERE ins.estado = MV3.VALOR) as estado,(select ty.descripcion from ib_customer_type ty where re.id_tipo = ty.idib_customer_type)as tipo "
 				+ " from ib_customer_type type,ib_customer cu, ib_insurance ins, ib_customer_relation re, ib_master_values mv "
 				+ " where " + "cu.idib_customer = re.id_cliente  "
 				+ " and re.id_tipo = type.idib_customer_type and re.id_seguro = ins.idib_insurance ";
 
+		
+		if (null != tfOrden.getText() && !tfOrden.getText().isEmpty() && DateUtil.isNumericInteger(tfOrden.getText())) {
+			query += (" and ins.idib_insurance = " + tfOrden.getText());
+		}
 		if (null != tfDni.getText() && !tfDni.getText().isEmpty()) {
 			query += (" and cu.dni_cif = '" + tfDni.getText() + "'");
 		}
@@ -378,6 +389,7 @@ public class FXMLLoginController {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				ti = new TableInfo();
+				ti.setOrden(rs.getString("orden"));
 				ti.setNumeroPoliza(rs.getString("numero_poliza"));
 				ti.setNombre(rs.getString("nombre"));
 				ti.setApellidos(rs.getString("apellidos"));
@@ -431,7 +443,7 @@ public class FXMLLoginController {
 			Stage stage = new Stage();
 			stage.setTitle("Gestion de Seguros.");
 			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setScene(new Scene(root, 1300, 420));
+			stage.setScene(new Scene(root, 1363, 420));
 			stage.setScene(stage.getScene());
 			// InsureMenuOverviewController controller =
 			// (InsureMenuOverviewController) loader.getController();
@@ -451,7 +463,7 @@ public class FXMLLoginController {
 		try {
 			root = (Parent) loader.load();
 			Stage stage = new Stage();
-			stage.setTitle("Gestión de pagos de Cuotas.");
+			stage.setTitle("Gestión de pagos de Cuotas");
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setScene(new Scene(root, 887, 648));
 			stage.setScene(stage.getScene());
@@ -480,7 +492,7 @@ public class FXMLLoginController {
 			Stage stage = new Stage();
 			stage.setTitle("Gestión Cliente-Poliza");
 			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setScene(new Scene(root, 941, 775));
+			stage.setScene(new Scene(root, 941, 833));
 			stage.setScene(stage.getScene());
 			// InsureMenuOverviewController controller =
 			// (InsureMenuOverviewController) loader.getController();

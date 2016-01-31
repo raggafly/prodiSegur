@@ -54,6 +54,8 @@ public class InsureMenuOverviewController {
 	@FXML
 	private TextField tfPoliza;
 	@FXML
+	private TextField tfOrden;
+	@FXML
 	private TextField tfDNITitular;
 	@FXML
 	private Button btBuscar;
@@ -61,6 +63,8 @@ public class InsureMenuOverviewController {
 	private TextField tfApellidos;
 	@FXML
 	private TableView<TableInfoInsures> tbInsures;
+	@FXML
+	private TableColumn ColumnOrden;
 	@FXML
 	private TableColumn ColumnNumeroPoliza;
 	@FXML
@@ -95,13 +99,17 @@ public class InsureMenuOverviewController {
 		Statement stmt = null;
 		JDBCConnection con = new JDBCConnection();
 		TableInfoInsures tiInsure = new TableInfoInsures();
-		String query = "select cus.nombre, cus.apellidos,numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,(select descripcion from ib_master_values mv where ins.compania = mv.valor) as compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =10  ";
+		String query = "select idib_insurance as orden,cus.nombre, cus.apellidos,numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,(select descripcion from ib_master_values mv where ins.compania = mv.valor) as compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =10  ";
 		if (null != tfDNITitular.getText() && !tfDNITitular.getText().isEmpty()) {
 			query += (" and cus.dni_cif = '" + tfDNITitular.getText() + "'");
 		}
 
 		if (null != tfPoliza.getText() && !tfPoliza.getText().isEmpty()) {
 			query += (" and ins.numero_poliza = '" + tfPoliza.getText() + "'");
+		}
+		
+		if (null != tfOrden.getText() && !tfOrden.getText().isEmpty()) {
+			query += (" and ins.idib_insurance = '" + tfOrden.getText() + "'");
 		}
 
 		if (null != tfApellidos.getText() && !tfApellidos.getText().isEmpty()) {
@@ -113,6 +121,7 @@ public class InsureMenuOverviewController {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				tiInsure = new TableInfoInsures();
+				tiInsure.setOrden(rs.getString("orden"));
 				tiInsure.setNumeroPoliza(rs.getString("numero_poliza"));
 				tiInsure.setDni(rs.getString("dni_cif"));
 				tiInsure.setTipo(rs.getString("tipo_riesgo"));
@@ -141,7 +150,7 @@ public class InsureMenuOverviewController {
 
 		ObservableList<TableInfoInsures> obsInfoInsures = FXCollections.observableArrayList(lti);
 		// tbInsures.setItems(obsInfoInsures);
-
+		ColumnOrden.setCellValueFactory(new PropertyValueFactory<TableInfoInsures, String>("orden"));
 		ColumnNumeroPoliza.setCellValueFactory(new PropertyValueFactory<TableInfoInsures, String>("numeroPoliza"));
 		ColumnDNITitular.setCellValueFactory(new PropertyValueFactory<TableInfoInsures, String>("dni"));
 		ColumnTipo.setCellValueFactory(new PropertyValueFactory<TableInfoInsures, String>("tipo"));
@@ -198,6 +207,7 @@ public class InsureMenuOverviewController {
 				});
 		tbInsures.getColumns().clear();
 		tbInsures.setItems(obsInfoInsures);
+		tbInsures.getColumns().addAll(ColumnOrden);
 		tbInsures.getColumns().addAll(ColumnNumeroPoliza);
 		tbInsures.getColumns().addAll(ColumnDNITitular);
 		tbInsures.getColumns().addAll(ColumnTipo);
@@ -425,7 +435,7 @@ public class InsureMenuOverviewController {
 								InsuranceManagementMenuOverviewController controller = loader
 										.<InsuranceManagementMenuOverviewController> getController();
 								stage.initModality(Modality.APPLICATION_MODAL);
-								stage.setScene(new Scene(root, 600, 511));
+								stage.setScene(new Scene(root, 600, 543));
 
 								stage.setScene(stage.getScene());
 								controller.initData(getInsurance(tableInfo.getNumeroPoliza()),

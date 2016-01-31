@@ -39,14 +39,15 @@ import model.IbMasterValue;
 import model.MasterTypes;
 import util.DateUtil;
 import util.InsureCompleteVO;
+import util.MasterValueUtil;
 
 public class InsureDetailOverviewController {
 	private InsureCompleteVO icVO = null;
-	
+
 	@FXML
-	private Button btnAnadirTipoVehiculo;	
+	private Button btnAnadirTipoVehiculo;
 	@FXML
-	private Button btnAnadirCobertura;	
+	private Button btnAnadirCobertura;
 	@FXML
 	private CheckBox chkPublico;
 	@FXML
@@ -56,6 +57,8 @@ public class InsureDetailOverviewController {
 		return cbVehiculo;
 	}
 
+	@FXML
+	private TextField tfFranquicia;
 	@FXML
 	private TextField tfMarca;
 	@FXML
@@ -85,6 +88,7 @@ public class InsureDetailOverviewController {
 	public ComboBox getcbCobertura() {
 		return cbCobertura;
 	}
+
 	@FXML
 	public void handleAnadirCobertura(ActionEvent event) {
 		Parent root;
@@ -105,7 +109,19 @@ public class InsureDetailOverviewController {
 		}
 
 	}
-	
+
+	@FXML
+	public void handleChangeCobertura(ActionEvent event) {
+		String cob = cbCobertura.getSelectionModel().getSelectedItem().toString();
+		IbMasterValue ib = MasterValueUtil.getMasterValueByValorAndTipo(cob, MasterTypes.TYPE_COBERTURA);
+		if (MasterTypes.CODIGO_TERCEROS_TODO_RIESGO_FRANQUICIA.equals(ib.getValor())) {
+			tfFranquicia.setEditable(true);
+		} else {
+			tfFranquicia.setText("");
+			tfFranquicia.setEditable(false);
+		}
+	}
+
 	@FXML
 	public void handleAnadirTipVehiculo(ActionEvent event) {
 		Parent root;
@@ -118,95 +134,114 @@ public class InsureDetailOverviewController {
 			MasterValuesOverviewController controller = loader.<MasterValuesOverviewController> getController();
 			stage.setScene(new Scene(root, 750, 480));
 			stage.setScene(stage.getScene());
-			controller.initData(MasterTypes.TYPE_VEHICULO,icVO);
+			controller.initData(MasterTypes.TYPE_VEHICULO, icVO);
 			stage.show();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	@FXML
 	public void handleSiguiente(ActionEvent event) {
 		String cobertura = "";
-
+		double franquicia = 0D;
+		String cob = cbCobertura.getSelectionModel().getSelectedItem().toString();
+		IbMasterValue ib = MasterValueUtil.getMasterValueByValorAndTipo(cob, MasterTypes.TYPE_COBERTURA);
+		
 		if (null != cbCobertura.getSelectionModel().getSelectedItem()
 				&& null != cbVehiculo.getSelectionModel().getSelectedItem() && null != dpFechaMatricula.getValue()
 				&& !tfMarca.getText().isEmpty() && !tfModelo.getText().isEmpty() && !tfMatricula.getText().isEmpty()) {
+			if (tfFranquicia.getText().isEmpty() || DateUtil.isNumeric(tfFranquicia.getText())) {
 
-			if (tfPMA.getText().isEmpty() || DateUtil.isNumeric(tfPMA.getText())) {
+				if (tfPMA.getText().isEmpty() || DateUtil.isNumeric(tfPMA.getText())) {
 
-				if (!cbCobertura.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-					IbMasterValue imv = util.MasterValueUtil
-							.getMasterValueByValor(cbCobertura.getSelectionModel().getSelectedItem().toString());
-					cobertura = imv.getValor();
+					if (!cbCobertura.getSelectionModel().getSelectedItem().toString().isEmpty()) {
+						IbMasterValue imv = util.MasterValueUtil
+								.getMasterValueByValor(cbCobertura.getSelectionModel().getSelectedItem().toString());
+						cobertura = imv.getValor();
+					}
+
+					IbInsuranceDetail detail = new IbInsuranceDetail();
+					detail.setAccesorios(tfAccesorios.getText());
+					detail.setCc(tfCilindrada.getText());
+					detail.setCobertura(cobertura);
+
+					detail.setCv(tfCaballos.getText());
+
+					Date fechaPrimeraMatricula = Date
+							.from(dpFechaMatricula.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+					long time = fechaPrimeraMatricula.getTime();
+					detail.setFechaPrimeraMatricula(new Timestamp(time));
+					detail.setMarca(tfMarca.getText());
+					detail.setModelo(tfModelo.getText());
+					detail.setMatricula(tfMatricula.getText());
+					byte particular = 0;
+					if (chkPublico.isSelected()) {
+						particular = 1;
+					}
+					detail.setParticularPublico(particular);
+					int pma = 0;
+					if (null != tfPMA.getText() && !tfPMA.getText().isEmpty()) {
+						pma = Integer.parseInt(tfPMA.getText());
+					}
+					detail.setPmaKgs(pma);
+					String tipoVehiculo = "";
+					// INDTV00
+					if (!cbVehiculo.getSelectionModel().getSelectedItem().toString().isEmpty()) {
+						IbMasterValue imv = util.MasterValueUtil
+								.getMasterValueByValor(cbVehiculo.getSelectionModel().getSelectedItem().toString());
+						tipoVehiculo = imv.getValor();
+					}
+					detail.setTipoVehiculo(tipoVehiculo);
+					detail.setRemolque(tfRemolque.getText());
+
+					if (MasterTypes.CODIGO_TERCEROS_TODO_RIESGO_FRANQUICIA.equals(ib.getValor())) {
+						franquicia = Double.parseDouble(tfFranquicia.getText());
+					} else {
+						franquicia = 0D;
+					}
+					detail.setFranquicia(franquicia);
+					// icVO.getDatosSeguro().setIbInsuranceDetail(detail);
+					icVO.setDatosDetalleSeguro(detail);
+
+					Parent root;
+					Stage stage = new Stage();
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/BankAccountOverview.fxml"));
+					try {
+						root = (Parent) loader.load();
+						stage.setTitle("Datos Cuenta Bancaria.");
+						stage.initModality(Modality.APPLICATION_MODAL);
+						stage.setScene(new Scene(root, 550, 370));
+						stage.setScene(stage.getScene());
+						BankAccountOverviewController controller = (BankAccountOverviewController) loader
+								.getController();
+						controller.initData(icVO);
+						stage.show();
+						((Node) (event.getSource())).getScene().getWindow().hide();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					Dialog dialog = new Dialog(DialogType.ERROR, "ERROR",
+							"PMA (peso máximo autorizado)no es un valor numérico.");
+					dialog.initModality(Modality.WINDOW_MODAL);
+					dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
+					dialog.showAndWait();
 				}
-
-				IbInsuranceDetail detail = new IbInsuranceDetail();
-				detail.setAccesorios(tfAccesorios.getText());
-				detail.setCc(tfCilindrada.getText());
-				detail.setCobertura(cobertura);
-
-				detail.setCv(tfCaballos.getText());
-
-				Date fechaPrimeraMatricula = Date
-						.from(dpFechaMatricula.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-				long time = fechaPrimeraMatricula.getTime();
-				detail.setFechaPrimeraMatricula(new Timestamp(time));
-				detail.setMarca(tfMarca.getText());
-				detail.setModelo(tfModelo.getText());
-				detail.setMatricula(tfMatricula.getText());
-				byte particular = 0;
-				if (chkPublico.isSelected()) {
-					particular = 1;
-				}
-				detail.setParticularPublico(particular);
-				int pma = 0;
-				if (null != tfPMA.getText() && !tfPMA.getText().isEmpty()) {
-					pma = Integer.parseInt(tfPMA.getText());
-				}
-				detail.setPmaKgs(pma);
-				String tipoVehiculo = "";
-				// INDTV00
-				if (!cbVehiculo.getSelectionModel().getSelectedItem().toString().isEmpty()) {
-					IbMasterValue imv = util.MasterValueUtil
-							.getMasterValueByValor(cbVehiculo.getSelectionModel().getSelectedItem().toString());
-					tipoVehiculo = imv.getValor();
-				}
-				detail.setTipoVehiculo(tipoVehiculo);
-				detail.setRemolque(tfRemolque.getText());
-				// icVO.getDatosSeguro().setIbInsuranceDetail(detail);
-				icVO.setDatosDetalleSeguro(detail);
-
-				Parent root;
-				Stage stage = new Stage();
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/BankAccountOverview.fxml"));
-				try {
-					root = (Parent) loader.load();
-					stage.setTitle("Datos Cuenta Bancaria.");
-					stage.initModality(Modality.APPLICATION_MODAL);
-					stage.setScene(new Scene(root, 550, 370));
-					stage.setScene(stage.getScene());
-					BankAccountOverviewController controller = (BankAccountOverviewController) loader.getController();
-					controller.initData(icVO);
-					stage.show();
-					((Node) (event.getSource())).getScene().getWindow().hide();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else {
+			}else{
 				Dialog dialog = new Dialog(DialogType.ERROR, "ERROR",
-						"PMA (peso máximo autorizado)no es un valor numérico.");
+						"El campo fraquicia no es un valor numérico.");
 				dialog.initModality(Modality.WINDOW_MODAL);
-				dialog.initOwner(((Node)event.getSource()).getScene().getWindow());
+				dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 				dialog.showAndWait();
 			}
 		} else {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
 					"Exiten algún dato que no está completo en el formulario.");
 			dialog.initModality(Modality.WINDOW_MODAL);
-			dialog.initOwner(((Node)event.getSource()).getScene().getWindow());
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
 

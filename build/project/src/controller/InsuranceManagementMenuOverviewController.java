@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.IbAccountBank;
+import model.IbCuotesInsure;
 import model.IbCustomer;
 import model.IbInsurance;
 import model.IbInsuranceDetail;
@@ -32,6 +33,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+import com.github.daytron.simpledialogfx.data.DialogResponse;
 import com.github.daytron.simpledialogfx.dialog.Dialog;
 import com.github.daytron.simpledialogfx.dialog.DialogType;
 
@@ -50,6 +52,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 
 public class InsuranceManagementMenuOverviewController {
+	@FXML
+	private TextField tfFranquicia;
 	@FXML
 	private Tab tabDatosSeguro;
 	@FXML
@@ -117,6 +121,18 @@ public class InsuranceManagementMenuOverviewController {
 	private ComboBox cbBanco;
 	private IbCustomer customer;
 
+	
+	@FXML
+	public void handleChangeCobertura(ActionEvent event) {
+		String cob = cbCobertura.getSelectionModel().getSelectedItem().toString();
+		IbMasterValue ib = MasterValueUtil.getMasterValueByValorAndTipo(cob, MasterTypes.TYPE_COBERTURA);
+		if (MasterTypes.CODIGO_TERCEROS_TODO_RIESGO_FRANQUICIA.equals(ib.getValor())) {
+			tfFranquicia.setEditable(true);
+		} else {
+			tfFranquicia.setText("");
+			tfFranquicia.setEditable(false);
+		}
+	}
 	// Event Listener on Button[#btnAnadirTipoVehiculo].onAction
 	@FXML
 	public void handleAnadirTipVehiculo(ActionEvent event) {
@@ -208,6 +224,7 @@ public class InsuranceManagementMenuOverviewController {
 		String message = actualizarInsurance();
 		message = actualizarBank();
 
+		message = comprobarEstado();
 		if (!tabDetalleSeguro.isDisable()) {
 			message += actualizarInsuranceDetail();
 		}
@@ -231,6 +248,36 @@ public class InsuranceManagementMenuOverviewController {
 			dialog.showAndWait();
 		}
 		em.getTransaction().commit();
+	}
+
+	private String comprobarEstado() {
+		String message = "";
+		EntityManagerFactory emf;
+		EntityManager em;
+		Byte pagado = 1;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		TypedQuery<IbCuotesInsure> query = em.createNamedQuery("IbCuotesInsure.findPayCoutes", IbCuotesInsure.class);
+		query.setParameter("seguro", MasterValueUtil.getInsurance(lbPoliza.getText()));
+		query.setParameter("pagado", pagado);
+		List<IbCuotesInsure> listCuotesPagadas = query.getResultList();
+		IbInsurance insu = MasterValueUtil.getInsurance(lbPoliza.getText());
+		String estado = cbEstado.getSelectionModel().getSelectedItem().toString();
+
+		if (listCuotesPagadas.size() == 0 && seguro.getEstado().equals(MasterTypes.DESCRIPTION_ESTADO_VIGENTE) && estado.equals(MasterTypes.DESCRIPTION_BAJA)) {
+			insu = MasterValueUtil.getInsurance(lbPoliza.getText());
+			insu.setEstado(MasterTypes.DESCRIPTION_ESTADO_BAJA);
+
+		} else {
+			message = "El seguro tiene cuotas pagadas. No puede dar de baja.";
+
+		}
+
+		if (estado.equals(MasterTypes.DESCRIPTION_VIGENTE)) {
+			insu.setEstado(MasterTypes.DESCRIPTION_ESTADO_VIGENTE);
+			message = "";
+		}
+		return message;
 	}
 
 	private String actualizarBank() {
@@ -334,6 +381,20 @@ public class InsuranceManagementMenuOverviewController {
 		} else {
 			message = "\n PMA es un número no válido.";
 		}
+		
+		double franquicia = 0D;
+		String sFranquicia = "";
+		if (null != tfFranquicia.getText() || !tfFranquicia.getText().isEmpty()) {
+			sFranquicia = tfFranquicia.getText();
+		} 
+		
+		if (DateUtil.isNumeric(sFranquicia)) {
+			franquicia = Double.parseDouble(sFranquicia);
+			detalleSeguro.setFranquicia(franquicia);
+		} else {
+			message = "\n Franquicia es un número no válido.";
+		}
+		
 		detalleSeguro.setAccesorios(tfAccesorios.getText());
 		detalleSeguro.setRemolque(tfRemolque.getText());
 
@@ -354,8 +415,14 @@ public class InsuranceManagementMenuOverviewController {
 		em = emf.createEntityManager();
 		this.seguro = insurance;
 		this.customer = customer;
-
-		lbTitular.setText(customer.getNombre() + " " + customer.getApellidos());
+		
+		String apellidos = "";
+		
+		if (null != customer.getApellidos() && !customer.getApellidos().isEmpty()){
+			apellidos = customer.getApellidos();
+		}
+		
+		lbTitular.setText(customer.getNombre() + " " + apellidos);
 		lbPoliza.setText(insurance.getNumeroPoliza());
 
 		// combo compania
@@ -417,7 +484,13 @@ public class InsuranceManagementMenuOverviewController {
 			cbCobertura.setItems(listaObservableFormaPago);
 			String vCobertura = MasterValueUtil.getMasterFindDescriptionByValor(ind.getCobertura());
 			cbCobertura.setValue(vCobertura);
-
+			String cob = cbCobertura.getSelectionModel().getSelectedItem().toString();
+			IbMasterValue ib = MasterValueUtil.getMasterValueByValorAndTipo(cob, MasterTypes.TYPE_COBERTURA);
+			if (MasterTypes.CODIGO_TERCEROS_TODO_RIESGO_FRANQUICIA.equals(ib.getValor())) {
+				tfFranquicia.setText(String.valueOf(ind.getFranquicia()));
+				tfFranquicia.setEditable(true);
+			}
+			
 			// combo tipo de vehiculo
 			query = em.createNamedQuery("IbMasterValue.findByType", String.class);
 			query.setParameter("type", MasterTypes.TYPE_VEHICULO);

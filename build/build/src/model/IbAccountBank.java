@@ -37,8 +37,8 @@ public class IbAccountBank implements Serializable {
 	private String oficina;
 
 	//bi-directional one-to-one association to IbCustomer
-	@OneToOne
-	@JoinColumn(name="idib_account_bank",insertable =  false, updatable = false)
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="idib_account_bank")
 	private IbCustomer ibCustomer;
 
 	//bi-directional many-to-one association to IbCustomer

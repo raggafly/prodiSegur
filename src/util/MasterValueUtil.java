@@ -8,6 +8,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+
 import model.IbCustomer;
 import model.IbCustomerRelation;
 import model.IbInsurance;
@@ -146,6 +147,15 @@ public class MasterValueUtil {
 		}
 		em.close();
 		return cus;
+	}
+
+	public static IbInsurance getInsuranceById(String idInsurance) {
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		IbInsurance insurance = em.find(IbInsurance.class, Integer.parseInt(idInsurance));
+		return insurance;
 	}
 	
 }

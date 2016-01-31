@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLParentLayoutController">
+<AnchorPane prefHeight="459.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLParentLayoutController">
    <children>
       <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -12,20 +12,31 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <GridPane layoutX="23.0" layoutY="21.0" prefHeight="211.0" prefWidth="600.0">
+                        <GridPane layoutX="23.0" layoutY="21.0" prefHeight="285.0" prefWidth="566.0">
                            <children>
-                              <Label fx:id="lbEnumTittularSeguro" text="TITULAR SEGURO:" />
-                              <Label id="lbTitularSeguro" fx:id="lbTitularSeguro" text="N/A" GridPane.columnIndex="1" />
-                              <Label fx:id="lbEnumPropietario" text="TOMADOR:" GridPane.rowIndex="1" />
-                              <Label fx:id="lbEnumConductor" text="CONDUCTOR:" GridPane.rowIndex="2" />
-                              <Label id="lbPropietario" fx:id="lbPropietario" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label id="lbConductor" fx:id="lbConductor" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label fx:id="lbEnumTittularSeguro" text="PROPIETARIO:" GridPane.rowIndex="3" />
+                              <Label id="lbTitularSeguro" fx:id="lbPropietario" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label fx:id="lbEnumPropietario" text="TOMADOR:" />
+                              <Label fx:id="lbEnumConductor" text="CONDUCTOR:" GridPane.rowIndex="6" />
+                              <Label id="lbPropietario" fx:id="lbTomador" text="N/A" GridPane.columnIndex="1" />
+                              <Label id="lbConductor" fx:id="lbConductor" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label text="DNI/CIF:" GridPane.rowIndex="1" />
+                              <Label fx:id="lbTomadorDNI" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label text="DNI/CIF:" GridPane.rowIndex="4" />
+                              <Label text="DNI/CIF:" GridPane.rowIndex="7" />
+                              <Label fx:id="lbPropietarioDNI" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label fx:id="lbConductorDNI" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                            </children>
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="121.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="10.0" prefWidth="479.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="129.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="10.0" prefWidth="432.0" />
                            </columnConstraints>
                            <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -93,38 +104,41 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <GridPane layoutX="23.0" layoutY="21.0" prefHeight="281.0" prefWidth="600.0">
+                        <GridPane layoutX="23.0" layoutY="21.0" prefHeight="319.0" prefWidth="567.0">
                            <children>
                               <Label text="Tipo Vehículo:" />
                               <Label id="lbTipoVehiculo" fx:id="lbTipoVehiculo" text="N/A" GridPane.columnIndex="1" />
                               <Label text="Marca:" GridPane.rowIndex="1" />
                               <Label text="Modelo:" GridPane.rowIndex="2" />
-                              <Label text="C.C:" GridPane.rowIndex="5" />
-                              <Label layoutX="22.0048828125" layoutY="150.0" prefHeight="21.0" prefWidth="146.0" text="Particular/Público:" GridPane.rowIndex="7" />
+                              <Label text="C.C:" GridPane.rowIndex="6" />
+                              <Label layoutX="22.0048828125" layoutY="150.0" prefHeight="21.0" prefWidth="146.0" text="Particular/Público:" GridPane.rowIndex="8" />
                               <Label id="lbMarca" fx:id="lbMarca" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label id="lbModelo" fx:id="lbModelo" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label id="lbCC" fx:id="lbCC" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label id="lbParticularPublico" fx:id="lbParticularPublico" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <Label id="lbCC" fx:id="lbCC" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label id="lbParticularPublico" fx:id="lbParticularPublico" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                               <Label prefHeight="21.0" prefWidth="89.0" text="Matrícula:" GridPane.rowIndex="3" />
                               <Label id="lbMatricula" fx:id="lbMatricula" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label layoutX="10.0" layoutY="166.0" prefHeight="21.0" prefWidth="146.0" text="C.V:" GridPane.rowIndex="6" />
-                              <Label id="lbCV" fx:id="lbCV" layoutX="166.0" layoutY="166.0" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Label prefHeight="21.0" prefWidth="174.0" text="Fecha Primera Matrícula:" GridPane.rowIndex="8" />
-                              <Label id="lbFechaPrimeraMatricula" fx:id="lbFechaPrimeraMatricula" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="PMA:" GridPane.rowIndex="9" />
-                              <Label id="lbPMA" fx:id="lbPMA" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="Remolque:" GridPane.rowIndex="10" />
-                              <Label id="lbRemolque" fx:id="lbRemolque" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Label layoutX="10.0" layoutY="166.0" prefHeight="21.0" prefWidth="146.0" text="C.V:" GridPane.rowIndex="7" />
+                              <Label id="lbCV" fx:id="lbCV" layoutX="166.0" layoutY="166.0" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <Label prefHeight="21.0" prefWidth="174.0" text="Fecha Primera Matrícula:" GridPane.rowIndex="9" />
+                              <Label id="lbFechaPrimeraMatricula" fx:id="lbFechaPrimeraMatricula" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="PMA:" GridPane.rowIndex="10" />
+                              <Label id="lbPMA" fx:id="lbPMA" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="Remolque:" GridPane.rowIndex="11" />
+                              <Label id="lbRemolque" fx:id="lbRemolque" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                               <Label prefHeight="21.0" prefWidth="89.0" text="Cobertura:" GridPane.rowIndex="4" />
                               <Label id="lbCobertura" fx:id="lbCobertura" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label id="lbAccesorios" fx:id="lbAccesorios" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="Accesorios:" GridPane.rowIndex="11" />
+                              <Label id="lbAccesorios" fx:id="lbAccesorios" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="Accesorios:" GridPane.rowIndex="12" />
+                              <Label text="Franquicia:" GridPane.rowIndex="5" />
+                              <Label fx:id="lbFranquicia" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                            </children>
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="185.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="10.0" prefWidth="415.0" />
                            </columnConstraints>
                            <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -169,5 +183,6 @@
             </Tab>
         </tabs>
       </TabPane>
+      <Button fx:id="btPDF" layoutX="441.0" layoutY="414.0" mnemonicParsing="false" onAction="#handlePDF" text="DOC. IMPRESION" />
    </children>
 </AnchorPane>

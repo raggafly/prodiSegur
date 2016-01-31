@@ -3,6 +3,7 @@ package model;
 import java.util.Date;
 
 public class TableInfoInsures {
+	String orden;
 	String numeroPoliza;
 	String dni;
 	String tipo;
@@ -15,6 +16,12 @@ public class TableInfoInsures {
 	String estado;
 	String nombre;
 	
+	public String getOrden() {
+		return orden;
+	}
+	public void setOrden(String orden) {
+		this.orden = orden;
+	}
 	public String getNombre() {
 		return nombre;
 	}

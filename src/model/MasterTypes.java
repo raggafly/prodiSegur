@@ -32,4 +32,12 @@ public static final String DESCRIPTION_VIGENTE = "VIGENTE";
 public static final String DESCRIPTION_BAJA = "BAJA";
 public static final String DESCRIPTION_FINALIZADO = "FINALIZADO";
 
+public static final String CODIGO_TODO_RIESGO = "INDCO01";
+public static final String CODIGO_TERCEROS = "INDCO02";
+public static final String CODIGO_TERCEROS_COMBINADO = "INDCO03";
+public static final String CODIGO_TERCEROS_LUNAS = "INDCO04";
+public static final String CODIGO_TERCEROS_ROBO_INCENDIO_LUNAS = "INDCO05";
+public static final String CODIGO_TERCEROS_COMBINADO_PERDIDA_TOTAL = "INDCO06";
+public static final String CODIGO_TERCEROS_TODO_RIESGO_FRANQUICIA = "INDCO07";
+
 }

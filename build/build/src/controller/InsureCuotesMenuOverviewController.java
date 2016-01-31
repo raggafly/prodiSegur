@@ -14,7 +14,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
-import com.github.daytron.simpledialogfx.data.DialogResponse;
+import org.hibernate.Query;
+
 import com.github.daytron.simpledialogfx.dialog.Dialog;
 import com.github.daytron.simpledialogfx.dialog.DialogType;
 
@@ -214,7 +215,8 @@ public class InsureCuotesMenuOverviewController {
 		this.cliente = cliente;
 		this.seguro = seguro;
 		getlbCliente().setText(cliente.getNombre() + " " + cliente.getApellidos());
-		getlbCompania().setText(seguro.getCompania());
+		String compania = MasterValueUtil.getMasterFindDescriptionByValor(seguro.getCompania());
+		getlbCompania().setText(compania);
 		getlbPoliza().setText(seguro.getNumeroPoliza());
 		String formaPago = MasterValueUtil.getMasterFindDescriptionByValor(seguro.getFormaPago());
 
@@ -534,10 +536,13 @@ public class InsureCuotesMenuOverviewController {
 					for (int i = 0; i < listOfficialCuotes.size(); i++) {
 						em.getTransaction().begin();
 						ci = listOfficialCuotes.get(i);
-						em.remove(ci);
+						ci.setIbInsurance(datosSeguro);
+//						em.remove(ci);
+						javax.persistence.Query query = em.createNativeQuery("DELETE FROM ib_cuotes_insure WHERE idib_cuotes_insure = " + ci.getIdibCuotesInsure());
+						query.executeUpdate();
+//						em.flush();
 						em.getTransaction().commit();
 					}
-
 					// añadimos nuevas cuotas
 					for (int i = 0; i < listCuotesInsure.size(); i++) {
 						em.getTransaction().begin();

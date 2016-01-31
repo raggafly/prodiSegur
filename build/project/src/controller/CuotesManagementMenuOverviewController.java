@@ -14,6 +14,7 @@ import model.IbCuotesTime;
 import model.IbInsurance;
 import model.MasterTypes;
 import util.DateUtil;
+import util.MasterValueUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -50,6 +51,8 @@ import javafx.scene.control.TableColumn;
 public class CuotesManagementMenuOverviewController {
 	@FXML
 	private TextField tfPoliza;
+	@FXML
+	private TextField tfOrden;
 	@FXML
 	private Button btBuscar;
 	@FXML
@@ -91,6 +94,12 @@ public class CuotesManagementMenuOverviewController {
 
 		if (null != tfPoliza && !tfPoliza.getText().isEmpty()) {
 			datosSeguro = getInsurance(tfPoliza.getText());
+		} else {
+			datosSeguro = null;
+		}
+
+		if (null != tfOrden && !tfOrden.getText().isEmpty() && DateUtil.isNumericInteger(tfOrden.getText())) {
+			datosSeguro = MasterValueUtil.getInsuranceById(tfOrden.getText());
 		} else {
 			datosSeguro = null;
 		}

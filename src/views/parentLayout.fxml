@@ -67,16 +67,16 @@
         </rowConstraints>
          <children>
             <Button fx:id="bt_buscar" mnemonicParsing="false" onAction="#actionBuscar" text="Buscar" GridPane.columnIndex="8" GridPane.rowIndex="3" />
-            <Label text="DNI/CIF:" />
-            <TextField id="tfdni" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="1" />
-            <Label text="POLIZA:" GridPane.rowIndex="1" />
-            <TextField id="tfPoliza" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Nº ORDEN:" />
+            <TextField id="tfOrden" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="1" />
+            <Label text="DNI/CIF:" GridPane.rowIndex="1" />
+            <TextField id="tfdni" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="NOMBRE:" GridPane.columnIndex="3" />
             <TextField id="tfNombre" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="4" />
             <Label text="APELLIDOS:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <TextField id="tfApellidos" prefHeight="31.0" prefWidth="565.0" scaleShape="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label text="TELEFONO:" GridPane.rowIndex="2" />
-            <TextField id="tfTelefono" prefHeight="31.0" prefWidth="428.0" scaleShape="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="POLIZA:" GridPane.rowIndex="2" />
+            <TextField id="tfPoliza" prefHeight="31.0" prefWidth="428.0" scaleShape="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="ESTADO:" visible="false" GridPane.columnIndex="6" GridPane.rowIndex="2" />
             <ComboBox id="cbTipoSeguro" prefHeight="31.0" prefWidth="291.0" visible="false" GridPane.columnIndex="7" GridPane.rowIndex="2" />
             <ComboBox id="cbTipoUsuario" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" />
@@ -88,6 +88,8 @@
             </Button>
             <ComboBox id="cbTipoRiesgo" fx:id="cbTipoRiesgo" prefHeight="31.0" prefWidth="291.0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
             <Label text="TIPO DE RIESGO:" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <TextField id="tfTelefono" prefHeight="31.0" prefWidth="428.0" scaleShape="false" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <Label text="TELEFONO:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
          </children>
          <padding>
             <Insets left="15.0" right="15.0" />

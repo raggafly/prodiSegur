@@ -25,6 +25,8 @@ public class IbInsuranceDetail implements Serializable {
 	@Column(name="idib_insurance_detail")
 	private int idibInsuranceDetail;
 
+	private double franquicia;
+
 	private String accesorios;
 
 	private String cc;
@@ -181,6 +183,14 @@ public class IbInsuranceDetail implements Serializable {
 
 	public void setIbInsurance(IbInsurance ibInsurance) {
 		this.ibInsurance = ibInsurance;
+	}
+	
+	public double getFranquicia() {
+		return franquicia;
+	}
+
+	public void setFranquicia(double franquicia) {
+		this.franquicia = franquicia;
 	}
 
 }

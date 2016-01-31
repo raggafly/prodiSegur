@@ -32,6 +32,9 @@
 
 package controller;
 
+import java.awt.Toolkit;
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -46,6 +49,9 @@ public class FXMLLogin extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+//    	File f = new File("image.png");
+//    	Image ix = new Image(f.toURI().toString());
+//    	stage.getIcons().add(ix);
         Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
         
         stage.setTitle("Login");

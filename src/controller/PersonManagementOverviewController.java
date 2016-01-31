@@ -110,6 +110,13 @@ public class PersonManagementOverviewController {
 
 	Stage primaryStage;
 
+	@FXML
+	private Label lbTelefono;
+	@FXML
+	private Label lbEmail;
+	@FXML
+	private Label tfFechaCarnet;
+	
 	InsureCompleteVO icVO = new InsureCompleteVO();
 	int contTiposClientes = 2;
 	private ObservableList<IbCustomer> datosCliente = FXCollections.observableArrayList();
@@ -124,17 +131,41 @@ public class PersonManagementOverviewController {
 
 	@FXML
 	private TextField tfNumeroPoliza;
+	@FXML
+	private TextField tfNumeroOrden;
 
 	List<CustomersTypes> listaCustomerComplete = new ArrayList<CustomersTypes>();
 
 	@FXML
 	public void handleBuscar(ActionEvent event) {
-		IbInsurance seguro = MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
-		IbCustomer cus = MasterValueUtil.getRelationCustomerInsurance(seguro);
 
-		icVO.setDatosCliente(cus);
-		// loadData();
-		cargarPersonTable();
+		if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty() && null != tfNumeroOrden.getText()
+				&& !tfNumeroOrden.getText().isEmpty()) {
+			String errorMessage = "Sólo se puede filtrar por un campo.";
+			Dialog dialog = new Dialog(DialogType.ERROR, "INFORMACIÓN", errorMessage);
+			dialog.initModality(Modality.WINDOW_MODAL);
+			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
+			dialog.showAndWait();
+		} else {
+			IbCustomer cus = new IbCustomer();
+			IbInsurance seguro = new IbInsurance();
+			if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty()) {
+				seguro = MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
+				cus = MasterValueUtil.getRelationCustomerInsurance(seguro);
+				icVO.setDatosCliente(cus);
+				// loadData();
+				cargarPersonTable();
+			}
+			if (null != tfNumeroOrden.getText() && !tfNumeroOrden.getText().isEmpty()
+					&& DateUtil.isNumericInteger(tfNumeroOrden.getText())) {
+				seguro = MasterValueUtil.getInsuranceById(tfNumeroOrden.getText());
+				cus = MasterValueUtil.getRelationCustomerInsurance(seguro);
+
+			}
+			icVO.setDatosCliente(cus);
+			// loadData();
+			cargarPersonTable();
+		}
 	}
 
 	private void cargarPersonTable() {
@@ -145,7 +176,16 @@ public class PersonManagementOverviewController {
 		em = emf.createEntityManager();
 		TypedQuery<IbCustomerRelation> query = em.createNamedQuery("IbCustomerRelation.findSeguro",
 				IbCustomerRelation.class);
-		query.setParameter("idseguro", MasterValueUtil.getInsurance(tfNumeroPoliza.getText()));
+		IbInsurance seguro = null;
+		if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty()) {
+			seguro = MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
+			query.setParameter("idseguro", MasterValueUtil.getInsurance(tfNumeroPoliza.getText()));
+		}else{
+			if (DateUtil.isNumericInteger(tfNumeroOrden.getText())){
+			seguro = MasterValueUtil.getInsuranceById(tfNumeroOrden.getText());
+			}
+		}
+		query.setParameter("idseguro", seguro);
 		List<IbCustomerRelation> listInsuranceRelation = query.getResultList();
 
 		TableInfoRelation tempPersonRelation = new TableInfoRelation();
@@ -169,18 +209,29 @@ public class PersonManagementOverviewController {
 
 		personRelationTable.setItems(datosClienteRelation);
 		personRelationTable.refresh();
-		
+
+		List<IbMasterValue> listTipoDescripcionRiesgo = null;
+//		seguro = null;
+//		if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty()) {
+//			seguro =MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
+//		} else{		
+//			
+//			seguro =MasterValueUtil.getInsuranceById(tfNumeroOrden.getText());			
+//		}
+		if(seguro != null){
 		TypedQuery<IbMasterValue> queryByValue = em.createNamedQuery("IbMasterValue.findByObjectValue",
 				IbMasterValue.class);
-		queryByValue.setParameter("valor", MasterValueUtil.getInsurance(tfNumeroPoliza.getText()).getTipoRiesgo());
-		List<IbMasterValue> listTipoDescripcionRiesgo = queryByValue.getResultList();
-		if (null != listTipoDescripcionRiesgo.get(0)
-				&& listTipoDescripcionRiesgo.get(0).getDescripcion2().equals("CONDUCTOR")) {
-			contTiposClientes =3;
-		}else{
-			 cbConductor.setDisable(true);
+		queryByValue.setParameter("valor", seguro.getTipoRiesgo());
+		listTipoDescripcionRiesgo = queryByValue.getResultList();
 		}
 		
+		if (null != listTipoDescripcionRiesgo && null != listTipoDescripcionRiesgo.get(0)
+				&& listTipoDescripcionRiesgo.get(0).getDescripcion2().equals("CONDUCTOR")) {
+			contTiposClientes = 3;
+		} else {
+			cbConductor.setDisable(true);
+		}
+
 		em.close();
 
 	}
@@ -288,12 +339,12 @@ public class PersonManagementOverviewController {
 			em = emf.createEntityManager();
 			TypedQuery<IbCustomerRelation> query = em.createNamedQuery("IbCustomerRelation.findSeguro",
 					IbCustomerRelation.class);
-			query.setParameter("idseguro",seguro);
+			query.setParameter("idseguro", seguro);
 			List<IbCustomerRelation> listInsuranceRelation = query.getResultList();
 			IbCustomer cus = new IbCustomer();
 			TableInfoRelation ti = new TableInfoRelation();
 			List<IbCustomerRelation> listIbCustomerRelations = new ArrayList<IbCustomerRelation>();
-			boolean change =false;
+			boolean change = false;
 			for (int i = 0; i < obsPerson.size(); i++) {
 				ti = obsPerson.get(i);
 				TypedQuery<IbCustomerType> queryType = em.createNamedQuery("IbCustomerType.findByDescription",
@@ -309,28 +360,37 @@ public class PersonManagementOverviewController {
 						if (cus.getIdibCustomer() != cr.getIbCustomer().getIdibCustomer()) {
 							change = true;
 							cr.setIbCustomer(MasterValueUtil.getCustomer(cus.getDniCif()));
-//							listIbCustomerRelations.add(cr);
+							// listIbCustomerRelations.add(cr);
 							em.getTransaction().begin();
 							em.merge(cr);
-//							javax.persistence.Query queryUp = em.createNativeQuery("UPDATE Ib_Customer_Relation SET ID_CLIENTE ="+cus.getIdibCustomer()+" WHERE ID_SEGURO ="+cr.getIbInsurance().getIdibInsurance()+ " AND ID_TIPO ="+cr.getIbCustomerType().getIdibCustomerType());
-//							queryUp.executeUpdate();
+							// javax.persistence.Query queryUp =
+							// em.createNativeQuery("UPDATE Ib_Customer_Relation
+							// SET ID_CLIENTE ="+cus.getIdibCustomer()+" WHERE
+							// ID_SEGURO
+							// ="+cr.getIbInsurance().getIdibInsurance()+ " AND
+							// ID_TIPO
+							// ="+cr.getIbCustomerType().getIdibCustomerType());
+							// queryUp.executeUpdate();
 							em.getTransaction().commit();
 							messageInfo = "Se ha a actualizado la relación de clientes.";
 						}
-//						else{
-//							listIbCustomerRelations.add(cr);
-//						}
+						// else{
+						// listIbCustomerRelations.add(cr);
+						// }
 					}
 				}
 			}
-//			em.getTransaction().begin();
-//			seguro.setIbCustomerRelations(listIbCustomerRelations);
-//			em.merge(seguro);
-////			javax.persistence.Query queryUp = em.createNativeQuery("UPDATE Ib_Customer_Relation SET ID_CLIENTE ="+cus.getIdibCustomer()+" WHERE ID_SEGURO ="+cr.getIbInsurance().getIdibInsurance()+ " AND ID_TIPO ="+cr.getIbCustomerType().getIdibCustomerType());
-////			queryUp.executeUpdate();
-//			em.getTransaction().commit();
-		}else{
-			messageInfo ="Falta algún tipo por incluir en la relación.";
+			// em.getTransaction().begin();
+			// seguro.setIbCustomerRelations(listIbCustomerRelations);
+			// em.merge(seguro);
+			//// javax.persistence.Query queryUp = em.createNativeQuery("UPDATE
+			// Ib_Customer_Relation SET ID_CLIENTE ="+cus.getIdibCustomer()+"
+			// WHERE ID_SEGURO ="+cr.getIbInsurance().getIdibInsurance()+ " AND
+			// ID_TIPO ="+cr.getIbCustomerType().getIdibCustomerType());
+			//// queryUp.executeUpdate();
+			// em.getTransaction().commit();
+		} else {
+			messageInfo = "Falta algún tipo por incluir en la relación.";
 		}
 		if (!messageInfo.isEmpty()) {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN", messageInfo);
@@ -560,7 +620,9 @@ public class PersonManagementOverviewController {
 				birthdayLabel.setText("");
 			}
 			DNILabel.setText(cliente.getDniCif());
-
+			tfFechaCarnet.setText(DateUtil.formatUtilDate(cliente.getFechaCarnet()));
+			lbTelefono.setText(cliente.getTelefono());
+			lbEmail.setText(cliente.getEmail());
 		} else {
 			// Person is null, remove all the text.
 			firstNameLabel.setText("");
@@ -570,6 +632,9 @@ public class PersonManagementOverviewController {
 			cityLabel.setText("");
 			birthdayLabel.setText("");
 			DNILabel.setText("");
+			lbTelefono.setText("");
+			lbEmail.setText("");
+			tfFechaCarnet.setText("");
 		}
 	}
 

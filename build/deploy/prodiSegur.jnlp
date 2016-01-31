@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="prodiSegur.jar" size="241412" download="eager" />
+    <jar href="prodiSegur.jar" size="968963" download="eager" />
     <jar href="libs\SimpleDialogFX-2.2.0.jar" size="28545" download="eager" />
     <jar href="libs\antlr-2.7.7.jar" size="445288" download="eager" />
     <jar href="libs\com.sun.tools.xjc_2.2.0.jar" size="3101294" download="eager" />
@@ -22,6 +22,7 @@
     <jar href="libs\hibernate-core-5.0.5.Final.jar" size="5570751" download="eager" />
     <jar href="libs\hibernate-entitymanager-4.3.7.Final.jar" size="647506" download="eager" />
     <jar href="libs\hibernate-jpa-2.1-api-1.0.0.Final.jar" size="113371" download="eager" />
+    <jar href="libs\itextpdf-5.5.8.jar" size="2284013" download="eager" />
     <jar href="libs\jandex-1.1.0.Final.jar" size="76551" download="eager" />
     <jar href="libs\jandex-2.0.0.Final.jar" size="187752" download="eager" />
     <jar href="libs\javassist-3.18.1-GA.jar" size="714194" download="eager" />

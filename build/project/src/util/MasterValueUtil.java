@@ -8,9 +8,12 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+
 import model.IbCustomer;
+import model.IbCustomerRelation;
 import model.IbInsurance;
 import model.IbMasterValue;
+import model.TableInfoRelation;
 
 public class MasterValueUtil {
 
@@ -121,6 +124,38 @@ public class MasterValueUtil {
 			cus = listCustomer.get(0);
 		}
 		return cus;
+	}
+	
+	public static IbCustomer getRelationCustomerInsurance(IbInsurance seguro) {
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		TypedQuery<IbCustomerRelation> query = em.createNamedQuery("IbCustomerRelation.findSeguro", IbCustomerRelation.class);
+		query.setParameter("idseguro", seguro);
+		List<IbCustomerRelation> listInsurance = query.getResultList();
+		IbCustomerRelation insuRelation = null;
+		
+		IbCustomer cus = null;
+		for (int i = 0; i < listInsurance.size(); i++) {
+
+			if (listInsurance.get(i).getIbCustomerType().getDescripcion().equals("PROPIETARIO")) {
+				cus = listInsurance.get(i).getIbCustomer();
+				
+				
+			}
+		}
+		em.close();
+		return cus;
+	}
+
+	public static IbInsurance getInsuranceById(String idInsurance) {
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		IbInsurance insurance = em.find(IbInsurance.class, Integer.parseInt(idInsurance));
+		return insurance;
 	}
 	
 }

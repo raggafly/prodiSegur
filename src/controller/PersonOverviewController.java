@@ -141,7 +141,12 @@ public class PersonOverviewController {
 	private Button btBorrar;
 	@FXML
 	private Button btSiguiente;
-
+	@FXML
+	private Label lbTelefono;
+	@FXML
+	private Label lbEmail;
+	@FXML
+	private Label tfFechaCarnet;
 	// Reference to the main application.
 
 	public String tipoSeguro;
@@ -258,6 +263,9 @@ public class PersonOverviewController {
 			}
 			DNILabel.setText(cliente.getDniCif());
 
+			tfFechaCarnet.setText(DateUtil.formatUtilDate(cliente.getFechaCarnet()));
+			lbTelefono.setText(cliente.getTelefono());
+			lbEmail.setText(cliente.getEmail());
 		} else {
 			// Person is null, remove all the text.
 			firstNameLabel.setText("");
@@ -267,6 +275,9 @@ public class PersonOverviewController {
 			cityLabel.setText("");
 			birthdayLabel.setText("");
 			DNILabel.setText("");
+			lbTelefono.setText("");
+			lbEmail.setText("");
+			tfFechaCarnet.setText("");
 		}
 	}
 
