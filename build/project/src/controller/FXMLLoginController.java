@@ -142,7 +142,7 @@ public class FXMLLoginController {
 
 			Stage stage = new Stage();
 			stage.setTitle("Pantalla Principal");
-			stage.setScene(new Scene(root, 1500, 800));
+			stage.setScene(new Scene(root, 1400, 800));
 
 			stage.show();
 			ComboBox cbTipoSeguro = (ComboBox) ((Node) (stage.getScene().lookup("#cbTipoSeguro")));
@@ -422,7 +422,7 @@ public class FXMLLoginController {
 			Stage stage = new Stage();
 			stage.setTitle("Gestion de clientes.");
 			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setScene(new Scene(root, 800, 600));
+			stage.setScene(new Scene(root, 941, 773));
 			stage.setScene(stage.getScene());
 			PersonOverviewController controller = (PersonOverviewController) loader.getController();
 			controller.initData(null, false, false);
@@ -492,7 +492,7 @@ public class FXMLLoginController {
 			Stage stage = new Stage();
 			stage.setTitle("Gestión Cliente-Poliza");
 			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setScene(new Scene(root, 941, 833));
+			stage.setScene(new Scene(root, 941, 773));
 			stage.setScene(stage.getScene());
 			// InsureMenuOverviewController controller =
 			// (InsureMenuOverviewController) loader.getController();

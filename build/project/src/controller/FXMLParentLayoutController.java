@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -342,9 +345,9 @@ public class FXMLParentLayoutController implements Initializable {
 					lbModelo.setText(rs.getString("modelo"));
 					lbCC.setText(rs.getString("cc"));
 					lbMatricula.setText(rs.getString("matricula"));
-					lbFechaInicio.setText(String.valueOf(rs.getDate("fecha_inicio")));
-					lbFechaFin.setText(String.valueOf(rs.getDate("fecha_fin")));
-					lbFechaEntradaVigor.setText(String.valueOf(rs.getDate("fecha_entrada_vigor")));
+					lbFechaInicio.setText(DateUtil.formatUtilDate(rs.getDate("fecha_inicio")));
+					lbFechaFin.setText(String.valueOf(DateUtil.formatUtilDate(rs.getDate("fecha_fin"))));
+					lbFechaEntradaVigor.setText(DateUtil.formatUtilDate(rs.getDate("fecha_entrada_vigor")));
 					lbDuracion.setText(rs.getString("duracion"));
 					if (rs.getInt("particular_publico") == 0) {
 						lbParticularPublico.setText(particular);
@@ -362,7 +365,7 @@ public class FXMLParentLayoutController implements Initializable {
 					lbTipoRiesgo.setText(rs.getString("tipo_riesgo"));
 					lbFormaPago.setText(rs.getString("forma_pago"));
 					lbCV.setText(rs.getString("CV"));
-					lbFechaPrimeraMatricula.setText(String.valueOf(rs.getDate("fecha_primera_matricula")));
+					lbFechaPrimeraMatricula.setText(DateUtil.formatUtilDate(rs.getDate("fecha_primera_matricula")));
 					lbPMA.setText(rs.getString("pma_kgs"));
 					lbRemolque.setText(rs.getString("remolque"));
 					lbTipoVehiculo.setText(rs.getString("tipo_vehiculo"));
@@ -407,6 +410,9 @@ public class FXMLParentLayoutController implements Initializable {
 	@FXML
 	public void handlePDF(ActionEvent event) throws DocumentException, IOException {
 		IbCustomer cusTomador = MasterValueUtil.getCustomer(lbTomadorDNI.getText());
+		Date fechaDate = new Date();
+		SimpleDateFormat formateador = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+		String fecha = formateador.format(fechaDate);
 		try {
 		if (!tabDetalleSeguro.isDisabled()) {
 			PdfReader reader = new PdfReader("image/auto.pdf");
@@ -508,7 +514,8 @@ public class FXMLParentLayoutController implements Initializable {
 			form.setField("CODIGO_DOMICILIACION", cuenta.substring(0, 4));
 			form.setField("OFICINA", cuenta.substring(4, 8));
 			form.setField("DC", cuenta.substring(8, 10));
-			form.setField("N_CUENTA", cuenta.substring(10, 20));
+			form.setField("N_CUENTA", cuenta.substring(10, 20));			
+			form.setField("FECHA", fecha);
 
 			stamper.close();
 
@@ -528,11 +535,11 @@ public class FXMLParentLayoutController implements Initializable {
 				stamper= new PdfStamper(reader, fos);
 				AcroFields form = stamper.getAcroFields();
 
-				AcroFields acroFields = reader.getAcroFields();
 				form.setField("nombre", lbTomador.getText());
 				form.setField("direccion", cusTomador.getDireccion());
 				form.setField("municipio", cusTomador.getPoblacion());
-				form.setField("cp", cusTomador.getCodPostal());
+				form.setField("cp", cusTomador.getCodPostal());				
+				form.setField("fecha", fecha);
 				stamper.close();
 
 				if (Desktop.isDesktopSupported()) {
