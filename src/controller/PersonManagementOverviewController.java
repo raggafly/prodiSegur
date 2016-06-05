@@ -116,7 +116,7 @@ public class PersonManagementOverviewController {
 	private Label lbEmail;
 	@FXML
 	private Label tfFechaCarnet;
-	
+
 	InsureCompleteVO icVO = new InsureCompleteVO();
 	int contTiposClientes = 2;
 	private ObservableList<IbCustomer> datosCliente = FXCollections.observableArrayList();
@@ -135,13 +135,14 @@ public class PersonManagementOverviewController {
 	private TextField tfNumeroOrden;
 
 	List<CustomersTypes> listaCustomerComplete = new ArrayList<CustomersTypes>();
-
 	@FXML
 	public void handleBuscar(ActionEvent event) {
 
-		if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty() && null != tfNumeroOrden.getText()
-				&& !tfNumeroOrden.getText().isEmpty()) {
-			String errorMessage = "Sólo se puede filtrar por un campo.";
+		if ((null == tfNumeroPoliza.getText() && null == tfNumeroOrden.getText())||
+		(tfNumeroPoliza.getText().isEmpty() && tfNumeroOrden.getText().isEmpty())) {
+//		if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty() && null != tfNumeroOrden.getText()
+//				&& !tfNumeroOrden.getText().isEmpty()) {
+			String errorMessage = "Debes de filtrar por número de orden o póliza.";
 			Dialog dialog = new Dialog(DialogType.ERROR, "INFORMACIÓN", errorMessage);
 			dialog.initModality(Modality.WINDOW_MODAL);
 			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
@@ -180,9 +181,10 @@ public class PersonManagementOverviewController {
 		if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty()) {
 			seguro = MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
 			query.setParameter("idseguro", MasterValueUtil.getInsurance(tfNumeroPoliza.getText()));
-		}else{
-			if (DateUtil.isNumericInteger(tfNumeroOrden.getText())){
-			seguro = MasterValueUtil.getInsuranceById(tfNumeroOrden.getText());
+		} else {
+			if (DateUtil.isNumericInteger(tfNumeroOrden.getText())) {
+				seguro = MasterValueUtil.getInsuranceById(tfNumeroOrden.getText());
+				tfNumeroPoliza.setText(seguro.getNumeroPoliza());
 			}
 		}
 		query.setParameter("idseguro", seguro);
@@ -211,20 +213,21 @@ public class PersonManagementOverviewController {
 		personRelationTable.refresh();
 
 		List<IbMasterValue> listTipoDescripcionRiesgo = null;
-//		seguro = null;
-//		if (null != tfNumeroPoliza.getText() && !tfNumeroPoliza.getText().isEmpty()) {
-//			seguro =MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
-//		} else{		
-//			
-//			seguro =MasterValueUtil.getInsuranceById(tfNumeroOrden.getText());			
-//		}
-		if(seguro != null){
-		TypedQuery<IbMasterValue> queryByValue = em.createNamedQuery("IbMasterValue.findByObjectValue",
-				IbMasterValue.class);
-		queryByValue.setParameter("valor", seguro.getTipoRiesgo());
-		listTipoDescripcionRiesgo = queryByValue.getResultList();
+		// seguro = null;
+		// if (null != tfNumeroPoliza.getText() &&
+		// !tfNumeroPoliza.getText().isEmpty()) {
+		// seguro =MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
+		// } else{
+		//
+		// seguro =MasterValueUtil.getInsuranceById(tfNumeroOrden.getText());
+		// }
+		if (seguro != null) {
+			TypedQuery<IbMasterValue> queryByValue = em.createNamedQuery("IbMasterValue.findByObjectValue",
+					IbMasterValue.class);
+			queryByValue.setParameter("valor", seguro.getTipoRiesgo());
+			listTipoDescripcionRiesgo = queryByValue.getResultList();
 		}
-		
+
 		if (null != listTipoDescripcionRiesgo && null != listTipoDescripcionRiesgo.get(0)
 				&& listTipoDescripcionRiesgo.get(0).getDescripcion2().equals("CONDUCTOR")) {
 			contTiposClientes = 3;
@@ -330,7 +333,8 @@ public class PersonManagementOverviewController {
 	public void handleActualizar(ActionEvent event) {
 		String messageInfo = "No se han detectado cambios para actualizar la poliza.";
 
-		if (personRelationTable.getItems().size() == contTiposClientes) {
+		// if (personRelationTable.getItems().size() == contTiposClientes) {
+		if (getIsSelectedPropietarioYTomador()) {
 			IbInsurance seguro = MasterValueUtil.getInsurance(tfNumeroPoliza.getText());
 			ObservableList<TableInfoRelation> obsPerson = personRelationTable.getItems();
 			EntityManagerFactory emf;
@@ -342,9 +346,9 @@ public class PersonManagementOverviewController {
 			query.setParameter("idseguro", seguro);
 			List<IbCustomerRelation> listInsuranceRelation = query.getResultList();
 			IbCustomer cus = new IbCustomer();
-			TableInfoRelation ti = new TableInfoRelation();
 			List<IbCustomerRelation> listIbCustomerRelations = new ArrayList<IbCustomerRelation>();
 			boolean change = false;
+			TableInfoRelation ti = new TableInfoRelation();
 			for (int i = 0; i < obsPerson.size(); i++) {
 				ti = obsPerson.get(i);
 				TypedQuery<IbCustomerType> queryType = em.createNamedQuery("IbCustomerType.findByDescription",
@@ -363,34 +367,50 @@ public class PersonManagementOverviewController {
 							// listIbCustomerRelations.add(cr);
 							em.getTransaction().begin();
 							em.merge(cr);
-							// javax.persistence.Query queryUp =
-							// em.createNativeQuery("UPDATE Ib_Customer_Relation
-							// SET ID_CLIENTE ="+cus.getIdibCustomer()+" WHERE
-							// ID_SEGURO
-							// ="+cr.getIbInsurance().getIdibInsurance()+ " AND
-							// ID_TIPO
-							// ="+cr.getIbCustomerType().getIdibCustomerType());
-							// queryUp.executeUpdate();
 							em.getTransaction().commit();
 							messageInfo = "Se ha a actualizado la relación de clientes.";
 						}
-						// else{
-						// listIbCustomerRelations.add(cr);
-						// }
+					}
+				}
+				if (!change) {
+					// cr = listInsuranceRelation.get(0);
+					cr.setIbInsurance(listInsuranceRelation.get(0).getIbInsurance());
+					cr.setIbCustomer(MasterValueUtil.getCustomer(cus.getDniCif()));
+					cr.setIbCustomerType(listType.get(0));
+					em.getTransaction().begin();
+					em.persist(cr);
+					em.getTransaction().commit();
+
+				}
+			}
+			// si la lista que está en la tabla es menor que la lista que esta
+			// en BBDD
+			if (obsPerson.size() < listInsuranceRelation.size()) {
+				IbCustomerRelation cr = new IbCustomerRelation();
+				for (int j = 0; j < listInsuranceRelation.size(); j++) {
+					cr = listInsuranceRelation.get(j);
+					for (int i = 0; i < obsPerson.size(); i++) {
+						ti = obsPerson.get(i);
+						TypedQuery<IbCustomerType> queryType = em.createNamedQuery("IbCustomerType.findByDescription",
+								IbCustomerType.class);
+						queryType.setParameter("desc", ti.getTipo());
+						List<IbCustomerType> listType = queryType.getResultList();
+						int tipo = listType.get(0).getIdibCustomerType();
+						cus = MasterValueUtil.getCustomer(ti.getDni());
+						if (cr.getIbCustomerType().getIdibCustomerType() == tipo) {
+							change = true;
+							messageInfo = "Se ha a actualizado la relación de clientes. Se han borrado los clientes relacionados.";
+						}
+					}
+					if(!change){
+						em.getTransaction().begin();
+						em.remove(cr);
+						em.getTransaction().commit();
 					}
 				}
 			}
-			// em.getTransaction().begin();
-			// seguro.setIbCustomerRelations(listIbCustomerRelations);
-			// em.merge(seguro);
-			//// javax.persistence.Query queryUp = em.createNativeQuery("UPDATE
-			// Ib_Customer_Relation SET ID_CLIENTE ="+cus.getIdibCustomer()+"
-			// WHERE ID_SEGURO ="+cr.getIbInsurance().getIdibInsurance()+ " AND
-			// ID_TIPO ="+cr.getIbCustomerType().getIdibCustomerType());
-			//// queryUp.executeUpdate();
-			// em.getTransaction().commit();
 		} else {
-			messageInfo = "Falta algún tipo por incluir en la relación.";
+			messageInfo = "Falta por incluir el TOMADOR de la poliza.";
 		}
 		if (!messageInfo.isEmpty()) {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN", messageInfo);
@@ -398,6 +418,75 @@ public class PersonManagementOverviewController {
 			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
+//		if(){
+//			
+//		}
+	}
+
+	private List<IbCustomerRelation> getRelation() {
+		// TODO Auto-generated method stub
+		List<IbCustomerRelation> licr = new ArrayList<IbCustomerRelation>();
+
+		List<CustomersTypes> listct = icVO.getListaCustomersType();
+		for (int i = 0; i < listct.size(); i++) {
+			IbCustomerRelation icr = new IbCustomerRelation();
+			IbCustomerType ctype = new IbCustomerType();
+			icr.setIbInsurance(icVO.getDatosSeguro());
+			icr.setIbCustomer(listct.get(i).getIbCustomer());
+			ctype = getCodeByDescription(listct.get(i).getTipo());
+
+			icr.setIbCustomerType(ctype);
+			if (icr != null) {
+				licr.add(icr);
+			}
+		}
+		return licr;
+	}
+
+	private IbCustomerType getCodeByDescription(String desc) {
+		// TODO Auto-generated method stub
+		int code = 0;
+		EntityManagerFactory emf;
+		EntityManager em;
+		emf = Persistence.createEntityManagerFactory("prodiSegur");
+		em = emf.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		if (desc.equals("TITULAR")) {
+			desc = "PROPIETARIO";
+		}
+		TypedQuery<IbCustomerType> query = em.createNamedQuery("IbCustomerType.findByDescription",
+				IbCustomerType.class);
+		query.setParameter("desc", desc);
+		List<IbCustomerType> listRelation = query.getResultList();
+		IbCustomerType icb = null;
+		if (listRelation.size() > 0) {
+			icb = listRelation.get(0);
+			// code = icb.getIdibCustomerRelation();
+		}
+		return icb;
+	}
+
+	private boolean getIsSelectedPropietarioYTomador() {
+		// TODO Auto-generated method stub
+		boolean isProp = false;
+		boolean isTomador = false;
+
+		boolean isPropAndTomador = false;
+
+		Iterator itr = personRelationTable.getItems().iterator();
+		while (itr.hasNext()) {
+			TableInfoRelation element = (TableInfoRelation) itr.next();
+			if (element.getTipo().equals("PROPIETARIO")) {
+				isProp = true;
+			}
+			if (element.getTipo().equals("TOMADOR")) {
+				isTomador = true;
+			}
+		}
+		if (isTomador) {
+			isPropAndTomador = true;
+		}
+		return isPropAndTomador;
 	}
 
 	// Event Listener on Button[#btAnadir].onAction
@@ -468,7 +557,7 @@ public class PersonManagementOverviewController {
 							}
 							listaCustomerComplete.add(ctypes);
 
-							if (pair.getKey().toString().equals("TITULAR")) {
+							if (pair.getKey().toString().equals("TOMADOR")) {
 								icVO.setDatosCliente(icu);
 							}
 
@@ -646,9 +735,10 @@ public class PersonManagementOverviewController {
 
 		String lowerCaseFilterString = filterString.toLowerCase();
 
-		if (person.getNombre().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
+		if (person.getNombre() != null && person.getNombre().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
 			return true;
-		} else if (person.getApellidos().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
+		} else if (null != person.getApellidos()
+				&& person.getApellidos().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
 			return true;
 		}
 

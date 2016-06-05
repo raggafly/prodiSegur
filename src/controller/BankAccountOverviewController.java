@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import com.github.daytron.simpledialogfx.dialog.Dialog;
 import com.github.daytron.simpledialogfx.dialog.DialogType;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -71,37 +72,50 @@ public class BankAccountOverviewController {
 	private boolean saveBank = true;
 
 	// Event Listener on TextField[#tfEntidad].onKeyPressed
-	private int maxLengthEntidad = 3;
-	private int maxLengthDC = 1;
+	private int maxLengthEntidad = 4;
+	private int maxLengthOficina = 3;
+	private int maxLengthDC = 2;
 
+	public void addTextLimiter(final TextField tf, final int maxLength, final TextField tfNext) {
+	
+	    tf.textProperty().addListener(new ChangeListener(tf, maxLength) {
+	        @Override
+	        public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+	            if (tf.getText().length() > maxLength) {
+	                String s = tf.getText().substring(0, maxLength);
+	                tf.setText(s);
+	                tfNext.requestFocus();
+	            }
+	        }
+	    });
+	
+	}
+	
 	@FXML
 	public void keyPressedEntidad(KeyEvent event) {
-		tfEntidad.textProperty().addListener(new ChangeListener(tfEntidad, 4));
-		if (tfEntidad.getText().length() > maxLengthEntidad) {
-			tfOficina.requestFocus();
-
-		}
-
+	   addTextLimiter(tfEntidad, maxLengthEntidad, tfOficina);
 	}
 
 	// Event Listener on TextField[#tfOficina].onKeyPressed
 	@FXML
 	public void keyPressedOficina(KeyEvent event) {
-		tfOficina.textProperty().addListener(new ChangeListener(tfOficina, 4));
-		if (tfOficina.getText().length() > maxLengthEntidad) {
-			tfDC.requestFocus();
-
-		}
+		addTextLimiter(tfOficina, maxLengthEntidad, tfDC);
+//      forma vieja		
+//		tfOficina.textProperty().addListener(new ChangeListener(tfOficina, 4));
+//		if (tfOficina.getText().length() > maxLengthOficina) {
+//			tfDC.requestFocus();
+//
+//		}
 	}
 
 	// Event Listener on TextField[#tfDC].onKeyPressed
 	@FXML
 	public void keyPressedDC(KeyEvent event) {
-
-		tfDC.textProperty().addListener(new ChangeListener(tfDC, 2));
-		if (tfDC.getText().length() > maxLengthDC) {
-			tfCuenta.requestFocus();
-		}
+		addTextLimiter(tfDC, maxLengthDC, tfCuenta);
+//		tfDC.textProperty().addListener(new ChangeListener(tfDC, 2));
+//		if (tfDC.getText().length() > maxLengthDC) {
+//			tfCuenta.requestFocus();
+//		}
 	}
 
 	// Event Listener on TextField[#tfCuenta].onKeyPressed
@@ -282,23 +296,6 @@ public class BankAccountOverviewController {
 	private List<IbCustomerRelation> getRelation() {
 		// TODO Auto-generated method stub
 		List<IbCustomerRelation> licr = new ArrayList<IbCustomerRelation>();
-		// lo viejo
-		// Iterator itr = icVO.getDatosClienteRelation().iterator();
-		// while (itr.hasNext()) {
-		// IbCustomerRelation icr = new IbCustomerRelation();
-		// TableInfoRelation element = (TableInfoRelation) itr.next();
-		// IbCustomerType ctype = new IbCustomerType();
-		//
-		// icr.setIbInsurance(icVO.getDatosSeguro());
-		// icr.setIbCustomer(icVO.getDatosCliente());
-		// ctype = getCodeByDescription(element.getTipo());
-		// icr.setIbCustomerType1(ctype);
-		//
-		// if (icr != null) {
-		// licr.add(icr);
-		// }
-		// }
-		// fin de lo viejo
 
 		List<CustomersTypes> listct = icVO.getListaCustomersType();
 		for (int i = 0; i < listct.size(); i++) {

@@ -119,12 +119,12 @@ public class FXMLParentLayoutController implements Initializable {
 		return lbCompania;
 	}
 
-	@FXML
-	private Label lbFechaInicio;
+//	@FXML
+//	private Label lbFechaInicio;
 
-	public Label getlbFechaInicio() {
-		return lbFechaInicio;
-	}
+//	public Label getlbFechaInicio() {
+//		return lbFechaInicio;
+//	}
 
 	@FXML
 	private Label lbDuracion;
@@ -313,7 +313,7 @@ public class FXMLParentLayoutController implements Initializable {
 		try {
 			JDBCConnection con = new JDBCConnection();
 
-			String query = "select i.idib_insurance as idSeguro,c.DNI_CIF AS DNI,c.nombre As Nombre, c.Apellidos As apellidos, t.descripcion as tipoUsuario , t.cod_tipo as codigo,  i.numero_poliza,(select descripcion from ib_master_values mv where compania = mv.valor) as compania,fecha_inicio,fecha_fin, (select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,(select descripcion from ib_master_values mv where ab.banco = mv.valor) as banco , CONCAT(ab.entidad, '    ', ab.oficina,'    ', ab.dc,'    ', ab.numero_cuenta) As cuenta_bancaria,prima_neta,fecha_entrada_vigor, (select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision, (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo,   (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo,  (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago,   (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura, marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula, pma_kgs,remolque,accesorios,franquicia   FROM ib_customer c left OUTER JOIN ib_account_bank ab ON AB.iDIb_account_bank = C.ib_cuenta,ib_insurance i LEFT OUTER JOIN ib_insurance_detail d ON d.id_seguro  = i.idib_insurance, ib_customer_relation r, ib_customer_type t where i.numero_poliza='"
+			String query = "select i.idib_insurance as idSeguro,c.DNI_CIF AS DNI,c.nombre As Nombre, c.Apellidos As apellidos, t.descripcion as tipoUsuario , t.cod_tipo as codigo,  i.numero_poliza,(select descripcion from ib_master_values mv where compania = mv.valor) as compania,fecha_inicio,fecha_fin_entrada_vigor, (select descripcion from ib_master_values mv where duracion = mv.valor) as duracion ,(select descripcion from ib_master_values mv where ab.banco = mv.valor) as banco , CONCAT(ab.entidad, '    ', ab.oficina,'    ', ab.dc,'    ', ab.numero_cuenta) As cuenta_bancaria,prima_neta,fecha_entrada_vigor, (select descripcion from ib_master_values mv where estado = mv.valor) as estado,liquidez,comision, (select descripcion from ib_master_values mv where tipo_riesgo = mv.valor) as tipo_riesgo,   (select descripcion from ib_master_values mv where tipo_vehiculo = mv.valor) as tipo_vehiculo,  (select descripcion from ib_master_values mv where forma_pago = mv.valor) as forma_pago,   (select descripcion from ib_master_values mv where cobertura = mv.valor) as cobertura, marca,modelo,matricula,cc,cv,particular_publico,fecha_primera_matricula, pma_kgs,remolque,accesorios,franquicia   FROM ib_customer c left OUTER JOIN ib_account_bank ab ON AB.iDIb_account_bank = C.ib_cuenta,ib_insurance i LEFT OUTER JOIN ib_insurance_detail d ON d.id_seguro  = i.idib_insurance, ib_customer_relation r, ib_customer_type t where i.numero_poliza='"
 					+ poliza
 					+ "' and  c.idib_customer = r.id_cliente and i.idib_insurance = r.id_seguro and t.idib_customer_type = r.id_tipo order by t.cod_tipo";
 
@@ -345,8 +345,8 @@ public class FXMLParentLayoutController implements Initializable {
 					lbModelo.setText(rs.getString("modelo"));
 					lbCC.setText(rs.getString("cc"));
 					lbMatricula.setText(rs.getString("matricula"));
-					lbFechaInicio.setText(DateUtil.formatUtilDate(rs.getDate("fecha_inicio")));
-					lbFechaFin.setText(String.valueOf(DateUtil.formatUtilDate(rs.getDate("fecha_fin"))));
+//					lbFechaInicio.setText(DateUtil.formatUtilDate(rs.getDate("fecha_inicio")));
+					lbFechaFin.setText(String.valueOf(DateUtil.formatUtilDate(rs.getDate("fecha_fin_entrada_vigor"))));
 					lbFechaEntradaVigor.setText(DateUtil.formatUtilDate(rs.getDate("fecha_entrada_vigor")));
 					lbDuracion.setText(rs.getString("duracion"));
 					if (rs.getInt("particular_publico") == 0) {
@@ -433,6 +433,7 @@ public class FXMLParentLayoutController implements Initializable {
 
 			// DATOS PROPIETARIO
 			cusTomador = MasterValueUtil.getCustomer(lbPropietarioDNI.getText());
+			if(cusTomador!=null){
 			form.setField("NOMBRE Y APELLIDOS_2", lbPropietario.getText());
 			form.setField("DNINIF_2", lbPropietarioDNI.getText());
 			form.setField("DIRECCION_2", cusTomador.getDireccion());
@@ -442,9 +443,10 @@ public class FXMLParentLayoutController implements Initializable {
 			form.setField("FECHA NACIMIENTO_2", DateUtil.formatUtilDate(cusTomador.getFechaNacimiento()));
 			form.setField("TELEFONO_2", cusTomador.getTelefono());
 			form.setField("FECHA CARNET_2", DateUtil.formatUtilDate(cusTomador.getFechaCarnet()));
-
+			}
 			// DATOS CONDUCTOR
 			cusTomador = MasterValueUtil.getCustomer(lbConductorDNI.getText());
+			if(cusTomador!=null){
 			form.setField("NOMBRE Y APELLIDOS_3", lbConductor.getText());
 			form.setField("DNINIF_3", lbConductorDNI.getText());
 			form.setField("DIRECCION_3", cusTomador.getDireccion());
@@ -454,7 +456,7 @@ public class FXMLParentLayoutController implements Initializable {
 			form.setField("FECHA NACIMIENTO_3", DateUtil.formatUtilDate(cusTomador.getFechaNacimiento()));
 			form.setField("TELEFONO_3", cusTomador.getTelefono());
 			form.setField("FECHA CARNET_3", DateUtil.formatUtilDate(cusTomador.getFechaCarnet()));
-
+			}
 			form.setField("CC", lbCC.getText());
 			form.setField("CV", lbCV.getText());
 			form.setField("MARCAMODELO", lbMarca.getText() + " " + lbModelo.getText());

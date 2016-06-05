@@ -67,6 +67,8 @@ public class InsuranceManagementMenuOverviewController {
 	@FXML
 	private TextField tfLiquidez;
 	@FXML
+	private TextField tfPrimaNeta;
+	@FXML
 	private ComboBox cbCompania;
 	@FXML
 	private ComboBox cbEstado;
@@ -305,8 +307,10 @@ public class InsuranceManagementMenuOverviewController {
 		String message = "";
 		double comision = 0D;
 		double liquidez = 0D;
+		double primaNeta = 0D;
 		String sComision = "";
 		String sLiquidez = "";
+		String sPrimaNeta = "";
 
 		if (null == tfComision.getText() || tfComision.getText().isEmpty()) {
 			sComision = "0.0";
@@ -326,12 +330,25 @@ public class InsuranceManagementMenuOverviewController {
 		} else {
 			sLiquidez = tfLiquidez.getText();
 		}
+		
+		if (null == tfPrimaNeta.getText() || tfPrimaNeta.getText().isEmpty()) {
+			sPrimaNeta = "0.0";
+		} else {
+			sPrimaNeta = tfPrimaNeta.getText();
+		}
 
 		if (DateUtil.isNumeric(sLiquidez)) {
 			liquidez = Double.parseDouble(sLiquidez);
 			seguro.setLiquidez(liquidez);
 		} else {
 			message = "\n Liquidez es un número no válido.";
+		}
+		
+		if (DateUtil.isNumeric(sPrimaNeta)) {
+			primaNeta = Double.parseDouble(sPrimaNeta);
+			seguro.setPrimaNeta(primaNeta);
+		} else {
+			message = "\n Prima Neta es un número no válido.";
 		}
 
 		String tipoRiesgo = cbTipoRiesgo.getSelectionModel().getSelectedItem().toString();
@@ -384,9 +401,11 @@ public class InsuranceManagementMenuOverviewController {
 		
 		double franquicia = 0D;
 		String sFranquicia = "";
-		if (null != tfFranquicia.getText() || !tfFranquicia.getText().isEmpty()) {
+		if (null != tfFranquicia.getText() && !tfFranquicia.getText().isEmpty()) {
 			sFranquicia = tfFranquicia.getText();
-		} 
+		} else{
+			sFranquicia = String.valueOf(franquicia);
+		}
 		
 		if (DateUtil.isNumeric(sFranquicia)) {
 			franquicia = Double.parseDouble(sFranquicia);
@@ -461,6 +480,7 @@ public class InsuranceManagementMenuOverviewController {
 		String vEstado = MasterValueUtil.getMasterFindDescriptionByValor(insurance.getEstado());
 		cbEstado.setValue(vEstado);
 
+		tfPrimaNeta.setText(String.valueOf(insurance.getPrimaNeta()));
 		tfLiquidez.setText(String.valueOf(insurance.getLiquidez()));
 		tfComision.setText(String.valueOf(insurance.getComision()));
 

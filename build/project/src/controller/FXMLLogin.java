@@ -52,10 +52,13 @@ public class FXMLLogin extends Application {
 //    	File f = new File("image.png");
 //    	Image ix = new Image(f.toURI().toString());
 //    	stage.getIcons().add(ix);
+    	stage.setOnCloseRequest(e -> {
+			System.exit(-1);
+		});
         Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
         
         stage.setTitle("Login");
-        stage.setScene(new Scene(root, 300, 275));
+        stage.setScene(new Scene(root, 446, 275));
         stage.show();
     }
 }

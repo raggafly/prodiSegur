@@ -468,7 +468,7 @@ public class PersonManagementOverviewController {
 							}
 							listaCustomerComplete.add(ctypes);
 
-							if (pair.getKey().toString().equals("TITULAR")) {
+							if (pair.getKey().toString().equals("TOMADOR")) {
 								icVO.setDatosCliente(icu);
 							}
 

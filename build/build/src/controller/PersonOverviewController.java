@@ -128,7 +128,7 @@ public class PersonOverviewController {
 	@FXML
 	private Label birthdayLabel;
 	@FXML
-	private Label DNILabel;	
+	private Label DNILabel;
 	@FXML
 	private Button btAnadir;
 	@FXML
@@ -152,8 +152,6 @@ public class PersonOverviewController {
 	public String tipoSeguro;
 
 	List<CustomersTypes> listaCustomerComplete = new ArrayList<CustomersTypes>();
-	
-	
 
 	/**
 	 * The constructor. The constructor is called before the initialize()
@@ -344,10 +342,10 @@ public class PersonOverviewController {
 		IbCustomer tempPerson = new IbCustomer();
 
 		boolean okClicked = showPersonEditDialog(tempPerson, false);
-//		if (okClicked) {
-//			getPersonData().add(icVO.getDatosCliente());
-//			personTable.setItems(getPersonData());
-//		}
+		// if (okClicked) {
+		// getPersonData().add(icVO.getDatosCliente());
+		// personTable.setItems(getPersonData());
+		// }
 		// initData(tipoSeguro);
 	}
 
@@ -423,7 +421,11 @@ public class PersonOverviewController {
 
 	@FXML
 	private void handleSiguiente(ActionEvent event) {
-		if (personRelationTable.getItems().size() == contTiposClientes) {
+		icVO.setTipoSeguro(tipoSeguro);
+		icVO.setDatosClienteRelation(datosClienteRelation);
+		icVO.setListaCustomersType(listaCustomerComplete);
+		//personRelationTable.getItems().size() == contTiposClientes || personRelationTable.getItems().size() == contTiposClientes+1) && 
+		if (getIsSelectedPropietarioYTomador()) {
 			Parent root;
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InsureOverview.fxml"));
 
@@ -432,28 +434,24 @@ public class PersonOverviewController {
 				Stage stage = new Stage();
 
 				stage.setTitle("Alta nueva Poliza.");
-		        stage.initModality(Modality.APPLICATION_MODAL);
-				stage.setScene(new Scene(root, 1157, 823));
+				stage.initModality(Modality.APPLICATION_MODAL);
+				stage.setScene(new Scene(root, 1157, 755));
 				stage.setScene(stage.getScene());
 				InsureOverviewController controller = (InsureOverviewController) loader.getController();
-
-				icVO.setTipoSeguro(tipoSeguro);
-				icVO.setDatosClienteRelation(datosClienteRelation);
-				icVO.setListaCustomersType(listaCustomerComplete);
 
 				Iterator itr = icVO.getDatosClienteRelation().iterator();
 				String dni = "";
 				while (itr.hasNext()) {
 					TableInfoRelation element = (TableInfoRelation) itr.next();
-					if (element.getTipo().equals("PROPIETARIO")) {
-						
+					if (element.getTipo().equals("TOMADOR")) {
+
 						dni = element.getDni();
 						IbCustomer cus = MasterValueUtil.getCustomer(dni);
 						icVO.setDatosCliente(cus);
-						
+
 					}
 				}
-				
+
 				controller.initData(icVO);
 				stage.show();
 				((Node) (event.getSource())).getScene().getWindow().hide();
@@ -463,12 +461,35 @@ public class PersonOverviewController {
 			}
 		} else {
 			Dialog dialog = new Dialog(DialogType.INFORMATION, "INFORMACIÓN",
-					"Para pasar al siguiente paso se deben añadir los datos necesarios en la tabla relación cliente.");
+					"Para pasar al siguiente paso se deben añadir los datos necesarios en la tabla relación cliente. Puede ser que falte el TOMADOR.");
 			dialog.initModality(Modality.WINDOW_MODAL);
 			dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
 			dialog.showAndWait();
 		}
 
+	}
+
+	private boolean getIsSelectedPropietarioYTomador() {
+		// TODO Auto-generated method stub
+		boolean isProp = false;
+		boolean isTomador = false;
+
+		boolean isPropAndTomador = false;
+
+		Iterator itr = icVO.getDatosClienteRelation().iterator();
+		while (itr.hasNext()) {
+			TableInfoRelation element = (TableInfoRelation) itr.next();
+			if (element.getTipo().equals("PROPIETARIO")) {
+				isProp = true;
+			}
+			if (element.getTipo().equals("TOMADOR")) {
+				isTomador = true;
+			}
+		}
+		if (isTomador) {
+			isPropAndTomador = true;
+		}
+		return isPropAndTomador;
 	}
 
 	@FXML
@@ -512,7 +533,7 @@ public class PersonOverviewController {
 		}
 		if (!contieneTipo) {
 			int countItems = datosClienteRelation.size();
-			if (countItems < contTiposClientes && cont + countItems <= contTiposClientes) {
+			if ((countItems < contTiposClientes && cont + countItems <= contTiposClientes) || cont + countItems <= 3) {
 
 				TableInfoRelation tempPersonRelation = new TableInfoRelation();
 				Iterator it = checksTipos.entrySet().iterator();
@@ -538,7 +559,7 @@ public class PersonOverviewController {
 							}
 							listaCustomerComplete.add(ctypes);
 
-							if (pair.getKey().toString().equals("TITULAR")) {
+							if (pair.getKey().toString().equals("TOMADOR")) {
 								icVO.setDatosCliente(icu);
 							}
 
@@ -585,10 +606,10 @@ public class PersonOverviewController {
 
 	public void initData(String tipoSeguro, boolean isConductor, boolean isHandleAlta) {
 		// TODO Auto-generated method stub
+		contTiposClientes = 2;
 		if (isHandleAlta) {
 			this.tipoSeguro = tipoSeguro;
 			if (!isConductor) {
-				contTiposClientes = 2;
 				cbConductor.setVisible(false);
 			}
 		} else {

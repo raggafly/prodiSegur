@@ -58,6 +58,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -70,6 +71,7 @@ import javafx.stage.Stage;
 import model.IbCustomer;
 import model.IbInsurance;
 import model.IbInsuranceDetail;
+import model.IbUsuario;
 import model.MasterTypes;
 import model.TableInfo;
 import util.DateUtil;
@@ -115,17 +117,49 @@ public class FXMLLoginController {
 	private MenuItem mAyudaDocumentacion;
 	@FXML
 	private ComboBox cbTipoRiesgo;
+	@FXML
+	private TextField tfUsuario;
+	@FXML
+	private PasswordField tfPassword;
 
+	
+	@FXML
+	protected void handleUsuario(ActionEvent event) {
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(
+					getClass().getResource("/views/UserMaintenancerOverview.fxml"));
+			root = (Parent) loader.load();
+			 UserMaintenancerOverviewController controller = loader
+					.<UserMaintenancerOverviewController> getController();
+			Stage stage = new Stage();
+			stage.setTitle("Gestión de usuarios");
+			stage.setScene(new Scene(root, 475, 400));
+			controller.initData();
+			
+			stage.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 	@FXML
 	protected void handleSubmitButtonAction(ActionEvent event) {
 		actiontarget.setText("Sign in button pressed");
-
+		Stage stage = new Stage();
 		Parent root;
 		try {
 			EntityManagerFactory emf;
 			EntityManager em;
 			emf = Persistence.createEntityManagerFactory("prodiSegur");
 			em = emf.createEntityManager();
+			TypedQuery<IbUsuario> queryLogin = em.createNamedQuery("IbUsuario.findByLogin", IbUsuario.class);
+			queryLogin.setParameter("usuario", tfUsuario.getText());
+			queryLogin.setParameter("password", tfPassword.getText());
+			List<IbUsuario> listUser = queryLogin.getResultList();
+			
+			if(null != listUser && listUser.size()>0 && listUser.get(0).getLogin().equals(tfUsuario.getText())){
 			TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByType", String.class);
 			TypedQuery<String> queryCustomerType = em.createNamedQuery("IbCustomerType.findByType", String.class);
 			query.setParameter("type", "INEST00");
@@ -140,7 +174,7 @@ public class FXMLLoginController {
 
 			root = FXMLLoader.load(getClass().getResource("/views/parentLayout.fxml"));
 
-			Stage stage = new Stage();
+			
 			stage.setTitle("Pantalla Principal");
 			stage.setScene(new Scene(root, 1400, 800));
 
@@ -156,16 +190,20 @@ public class FXMLLoginController {
 			cbTipoUsuario.setItems(listaObservableTipoUsuario);
 			cbTipoRiesgo.setItems(listaObservableTipoRiesgo);
 
+			((Node) (event.getSource())).getScene().getWindow().hide();
+			}else{
+				actiontarget.setText("Usuario o contraseña no válidos");
+			}
+
+
 			stage.setOnCloseRequest(e -> {
 				System.exit(-1);
 			});
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		((Node) (event.getSource())).getScene().getWindow().hide();
 	}
 
 	@FXML

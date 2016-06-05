@@ -55,34 +55,31 @@
                               <Label text="Numero poliza:" />
                               <Label id="lbNumeroPoliza" fx:id="lbNumeroPoliza" text="N/A" GridPane.columnIndex="1" />
                               <Label text="Compañia:" GridPane.rowIndex="1" />
-                              <Label text="Fecha Inicio:" GridPane.rowIndex="2" />
                               <Label text="Duracion:" GridPane.rowIndex="4" />
-                              <Label layoutX="22.0048828125" layoutY="150.0" prefHeight="21.0" prefWidth="146.0" text="Fecha Entrada Vigor:" GridPane.rowIndex="6" />
+                              <Label layoutX="22.0048828125" layoutY="150.0" prefHeight="21.0" prefWidth="146.0" text="Fecha Entrada Vigor:" GridPane.rowIndex="2" />
                               <Label id="lbCompania" fx:id="lbCompania" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label id="lbFechaInicio" fx:id="lbFechaInicio" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label id="lbDuracion" fx:id="lbDuracion" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label id="lbFechaEntradaVigor" fx:id="lbFechaEntradaVigor" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Label prefHeight="21.0" prefWidth="89.0" text="Fecha Fin:" GridPane.rowIndex="3" />
+                              <Label id="lbFechaEntradaVigor" fx:id="lbFechaEntradaVigor" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label prefHeight="21.0" prefWidth="140.0" text="Fecha Vencimiento:" GridPane.rowIndex="3" />
                               <Label id="lbFechaFin" fx:id="lbFechaFin" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Label layoutX="10.0" layoutY="166.0" prefHeight="21.0" prefWidth="146.0" text="Prima neta:" GridPane.rowIndex="5" />
                               <Label id="lbPrimaNeta" fx:id="lbPrimaNeta" layoutX="166.0" layoutY="166.0" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="Estado:" GridPane.rowIndex="7" />
-                              <Label id="lbEstado" fx:id="lbEstado" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="Liquidez:" GridPane.rowIndex="8" />
-                              <Label id="lbLiquidez" fx:id="lbLiquidez" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="Comisión:" GridPane.rowIndex="9" />
-                              <Label id="lbComision" fx:id="lbComision" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="Tipo Riesgo:" GridPane.rowIndex="10" />
-                              <Label id="lbTipoRiesgo" fx:id="lbTipoRiesgo" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <Label prefHeight="21.0" prefWidth="146.0" text="Forma de pago:" GridPane.rowIndex="11" />
-                              <Label id="lbFormaPago" fx:id="lbFormaPago" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="Estado:" GridPane.rowIndex="6" />
+                              <Label id="lbEstado" fx:id="lbEstado" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="Liquidez:" GridPane.rowIndex="7" />
+                              <Label id="lbLiquidez" fx:id="lbLiquidez" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="Comisión:" GridPane.rowIndex="8" />
+                              <Label id="lbComision" fx:id="lbComision" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="Tipo Riesgo:" GridPane.rowIndex="9" />
+                              <Label id="lbTipoRiesgo" fx:id="lbTipoRiesgo" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <Label prefHeight="21.0" prefWidth="146.0" text="Forma de pago:" GridPane.rowIndex="10" />
+                              <Label id="lbFormaPago" fx:id="lbFormaPago" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                            </children>
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="156.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="10.0" prefWidth="444.0" />
                            </columnConstraints>
                            <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

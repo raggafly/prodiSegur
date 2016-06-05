@@ -11,9 +11,9 @@
         <tabs>
           <Tab fx:id="tabDatosSeguro" text="Datos Seguro">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="447.0" prefWidth="600.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="437.0" prefWidth="600.0">
                      <children>
-                        <GridPane layoutX="24.0" layoutY="22.0" prefHeight="244.0" prefWidth="392.0">
+                        <GridPane layoutX="24.0" layoutY="9.0" prefHeight="403.0" prefWidth="389.0">
                            <children>
                               <Label text="Titular:" />
                               <Label fx:id="lbTitular" text="titular" textFill="#1e00ff" GridPane.columnIndex="1">
@@ -26,26 +26,38 @@
                               <Label text="Tipo de Riesgo:" GridPane.rowIndex="2" />
                               <ComboBox fx:id="cbTipoRiesgo" prefHeight="31.0" prefWidth="297.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label text="Companía:" GridPane.rowIndex="3" />
-                              <Label text="Liquidez:" GridPane.rowIndex="4" />
-                              <Label text="Comisión:" GridPane.rowIndex="5" />
-                              <TextField fx:id="tfComision" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <TextField fx:id="tfLiquidez" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label text="Liquidez:" GridPane.rowIndex="5" />
+                              <Label text="Comisión:" GridPane.rowIndex="6" />
+                              <TextField fx:id="tfComision" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <TextField fx:id="tfLiquidez" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                               <ComboBox fx:id="cbCompania" prefHeight="31.0" prefWidth="306.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label text="Estado:" GridPane.rowIndex="6" />
-                              <ComboBox fx:id="cbEstado" prefHeight="31.0" prefWidth="319.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label text="Estado:" GridPane.rowIndex="10" />
+                              <ComboBox fx:id="cbEstado" prefHeight="12.0" prefWidth="247.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Label text="Prima Neta:" GridPane.rowIndex="4" />
+                              <TextField fx:id="tfPrimaNeta" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label text="Fecha Efecto:" GridPane.rowIndex="7" />
+                              <Label text="Fecha Entrada Vigor:" GridPane.rowIndex="8" />
+                              <Label text="Fecha Vencimiento:" GridPane.rowIndex="9" />
+                              <DatePicker fx:id="dpFechaEfecto" editable="false" prefHeight="31.0" prefWidth="265.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <DatePicker fx:id="dpFechaEntradaVigor" editable="false" prefHeight="31.0" prefWidth="262.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <DatePicker fx:id="dpFechaVencimiento" editable="false" prefHeight="31.0" prefWidth="257.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                            </children>
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.0" minWidth="10.0" prefWidth="121.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="440.0" minWidth="10.0" prefWidth="271.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.0" minWidth="10.0" prefWidth="141.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="440.0" minWidth="10.0" prefWidth="247.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="37.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="44.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="53.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="88.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                         </GridPane>
                      </children>

@@ -24,6 +24,8 @@ import util.MasterValueUtil;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -66,6 +68,8 @@ public class InsuranceManagementMenuOverviewController {
 	private TextField tfComision;
 	@FXML
 	private TextField tfLiquidez;
+	@FXML
+	private TextField tfPrimaNeta;
 	@FXML
 	private ComboBox cbCompania;
 	@FXML
@@ -119,8 +123,14 @@ public class InsuranceManagementMenuOverviewController {
 	private TextField tfCuenta;
 	@FXML
 	private ComboBox cbBanco;
+	@FXML
 	private IbCustomer customer;
-
+	@FXML
+	private DatePicker dpFechaEfecto;
+	@FXML
+	private DatePicker dpFechaEntradaVigor;
+	@FXML
+	private DatePicker dpFechaVencimiento;
 	
 	@FXML
 	public void handleChangeCobertura(ActionEvent event) {
@@ -305,8 +315,10 @@ public class InsuranceManagementMenuOverviewController {
 		String message = "";
 		double comision = 0D;
 		double liquidez = 0D;
+		double primaNeta = 0D;
 		String sComision = "";
 		String sLiquidez = "";
+		String sPrimaNeta = "";
 
 		if (null == tfComision.getText() || tfComision.getText().isEmpty()) {
 			sComision = "0.0";
@@ -326,12 +338,35 @@ public class InsuranceManagementMenuOverviewController {
 		} else {
 			sLiquidez = tfLiquidez.getText();
 		}
-
+		
+		if (null == tfPrimaNeta.getText() || tfPrimaNeta.getText().isEmpty()) {
+			sPrimaNeta = "0.0";
+		} else {
+			sPrimaNeta = tfPrimaNeta.getText();
+		}
+		
+		
+		
+		seguro.setFechaEfecto(DateUtil.LocalDateToDate(dpFechaEfecto.getValue()));
+		
+		seguro.setFechaEntradaVigor(DateUtil.LocalDateToDate(dpFechaEntradaVigor.getValue()));
+		
+		seguro.setFechaFinEntradaVigor(DateUtil.LocalDateToDate(dpFechaVencimiento.getValue()));
+		
+		
+		
 		if (DateUtil.isNumeric(sLiquidez)) {
 			liquidez = Double.parseDouble(sLiquidez);
 			seguro.setLiquidez(liquidez);
 		} else {
 			message = "\n Liquidez es un número no válido.";
+		}
+		
+		if (DateUtil.isNumeric(sPrimaNeta)) {
+			primaNeta = Double.parseDouble(sPrimaNeta);
+			seguro.setPrimaNeta(primaNeta);
+		} else {
+			message = "\n Prima Neta es un número no válido.";
 		}
 
 		String tipoRiesgo = cbTipoRiesgo.getSelectionModel().getSelectedItem().toString();
@@ -384,9 +419,11 @@ public class InsuranceManagementMenuOverviewController {
 		
 		double franquicia = 0D;
 		String sFranquicia = "";
-		if (null != tfFranquicia.getText() || !tfFranquicia.getText().isEmpty()) {
+		if (null != tfFranquicia.getText() && !tfFranquicia.getText().isEmpty()) {
 			sFranquicia = tfFranquicia.getText();
-		} 
+		} else{
+			sFranquicia = String.valueOf(franquicia);
+		}
 		
 		if (DateUtil.isNumeric(sFranquicia)) {
 			franquicia = Double.parseDouble(sFranquicia);
@@ -460,10 +497,28 @@ public class InsuranceManagementMenuOverviewController {
 		cbEstado.setItems(listaObservableEstado);
 		String vEstado = MasterValueUtil.getMasterFindDescriptionByValor(insurance.getEstado());
 		cbEstado.setValue(vEstado);
-
+		Date input = new Date();
+		LocalDate date = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		tfPrimaNeta.setText(String.valueOf(insurance.getPrimaNeta()));
 		tfLiquidez.setText(String.valueOf(insurance.getLiquidez()));
 		tfComision.setText(String.valueOf(insurance.getComision()));
-
+		if(insurance.getFechaEfecto()!= null){
+			dpFechaEfecto.setValue(DateUtil.dateToLocalDate(insurance.getFechaEfecto()));
+		}else{
+			dpFechaEfecto.setValue(date);
+		}
+		
+		if(insurance.getFechaEntradaVigor()!=null){
+			dpFechaEntradaVigor.setValue(DateUtil.dateToLocalDate(insurance.getFechaEntradaVigor()));
+		}else{
+			dpFechaEntradaVigor.setValue(date);
+		}
+		
+		if(insurance.getFechaFinEntradaVigor()!=null){
+			dpFechaVencimiento.setValue(DateUtil.dateToLocalDate(insurance.getFechaFinEntradaVigor()));
+		}else{
+			dpFechaVencimiento.setValue(date);
+		}
 		// obtenemos el detalle
 
 		List<IbInsuranceDetail> lid = null;
