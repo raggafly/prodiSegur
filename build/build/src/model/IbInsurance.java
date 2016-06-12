@@ -30,6 +30,10 @@ public class IbInsurance implements Serializable {
 	private String compania;
 
 	private String estado;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="fecha_efecto")
+	private Date fechaEfecto;
 
 	private String duracion;
 
@@ -113,6 +117,14 @@ public class IbInsurance implements Serializable {
 
 	public void setEstado(String estado) {
 		this.estado = estado;
+	}
+	
+	public Date getFechaEfecto() {
+		return this.fechaEfecto;
+	}
+
+	public void setFechaEfecto(Date fechaEfecto) {
+		this.fechaEfecto = fechaEfecto;
 	}
 
 	public Date getFechaEntradaVigor() {

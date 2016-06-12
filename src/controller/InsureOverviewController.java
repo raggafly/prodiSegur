@@ -52,6 +52,7 @@ import model.MasterTypes;
 import model.TableInfoRelation;
 import util.CalculateCuotes;
 import util.DateUtil;
+import util.EntityManagerUtil;
 import util.InsureCompleteVO;
 import util.MasterValueUtil;
 
@@ -144,7 +145,14 @@ public class InsureOverviewController {
 			stage.setScene(new Scene(root, 750, 480));
 			stage.setScene(stage.getScene());
 			controller.initData(MasterTypes.TYPE_COMPANIA, icVO);
-			stage.show();
+			stage.initModality(Modality.WINDOW_MODAL);
+			stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+			stage.showAndWait();
+			TypedQuery<String> queryCompania = EntityManagerUtil.getEntityManager().createNamedQuery("IbMasterValue.findByType", String.class);
+			queryCompania.setParameter("type", "INTCS00");
+			List<String> listCompania = queryCompania.getResultList();
+			ObservableList<String> listaObsevableCompania = FXCollections.observableArrayList(listCompania);
+			getcbCompania().setItems(listaObsevableCompania);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -38,6 +38,7 @@ import model.IbInsuranceDetail;
 import model.IbMasterValue;
 import model.MasterTypes;
 import util.DateUtil;
+import util.EntityManagerUtil;
 import util.InsureCompleteVO;
 import util.MasterValueUtil;
 
@@ -102,7 +103,15 @@ public class InsureDetailOverviewController {
 			stage.setScene(new Scene(root, 750, 480));
 			stage.setScene(stage.getScene());
 			controller.initData(MasterTypes.TYPE_COBERTURA, icVO);
-			stage.show();
+			stage.initModality(Modality.WINDOW_MODAL);
+			stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+			stage.showAndWait();
+			EntityManager em = EntityManagerUtil.getEntityManager();
+			TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByType", String.class);
+			query.setParameter("type", MasterTypes.TYPE_COBERTURA);
+			List<String> listCobertura = query.getResultList();
+			ObservableList<String> listaObservableCobertura = FXCollections.observableArrayList(listCobertura);
+			getcbCobertura().setItems(listaObservableCobertura);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,7 +144,15 @@ public class InsureDetailOverviewController {
 			stage.setScene(new Scene(root, 750, 480));
 			stage.setScene(stage.getScene());
 			controller.initData(MasterTypes.TYPE_VEHICULO, icVO);
-			stage.show();
+			stage.initModality(Modality.WINDOW_MODAL);
+			stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+			stage.showAndWait();
+			EntityManager em = EntityManagerUtil.getEntityManager();
+			TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByType", String.class);
+			query.setParameter("type", MasterTypes.TYPE_VEHICULO);
+			List<String> listTipoVehiculo = query.getResultList();
+			ObservableList<String> listaObservableTipoVehiculo = FXCollections.observableArrayList(listTipoVehiculo);
+			getcbVehiculo().setItems(listaObservableTipoVehiculo);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -250,22 +267,19 @@ public class InsureDetailOverviewController {
 	public void initData(InsureCompleteVO icVO) {
 		this.icVO = icVO;
 		// lbVehiculo.setText(icVO.getTipoSeguro());
-		EntityManagerFactory emf;
-		EntityManager em;
-		emf = Persistence.createEntityManagerFactory("prodiSegur");
-		em = emf.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
+		EntityManager em = EntityManagerUtil.getEntityManager();
 		TypedQuery<String> query = em.createNamedQuery("IbMasterValue.findByType", String.class);
-		query.setParameter("type", "INDCO00");
+		query.setParameter("type", MasterTypes.TYPE_COBERTURA);
 		List<String> listCobertura = query.getResultList();
 		ObservableList<String> listaObservableCobertura = FXCollections.observableArrayList(listCobertura);
 		getcbCobertura().setItems(listaObservableCobertura);
 
 		query = em.createNamedQuery("IbMasterValue.findByType", String.class);
-		query.setParameter("type", "INDTV00");
+		query.setParameter("type", MasterTypes.TYPE_VEHICULO);
 		List<String> listTipoVehiculo = query.getResultList();
 		ObservableList<String> listaObservableTipoVehiculo = FXCollections.observableArrayList(listTipoVehiculo);
 		getcbVehiculo().setItems(listaObservableTipoVehiculo);
+		
 		Date input = new Date();
 		LocalDate date = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		getdpFechaMatricula().setValue(date);

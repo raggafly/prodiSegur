@@ -76,9 +76,7 @@ public class InsureMenuOverviewController {
 	@FXML
 	private TableColumn ColumnFechaVigor;
 	@FXML
-	private TableColumn ColumnFechaInicioPago;
-	@FXML
-	private TableColumn ColumnFechaFinPago;
+	private TableColumn ColumnFechaEfecto;
 	@FXML
 	private TableColumn ColumnFechaFinVigor;
 	@FXML
@@ -99,7 +97,7 @@ public class InsureMenuOverviewController {
 		Statement stmt = null;
 		JDBCConnection con = new JDBCConnection();
 		TableInfoInsures tiInsure = new TableInfoInsures();
-		String query = "select idib_insurance as orden,cus.nombre, cus.apellidos,numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,(select descripcion from ib_master_values mv where ins.compania = mv.valor) as compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =10  ";
+		String query = "select idib_insurance as orden,cus.nombre, cus.apellidos,numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,(select descripcion from ib_master_values mv where ins.compania = mv.valor) as compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_efecto,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =11  ";
 		if (null != tfDNITitular.getText() && !tfDNITitular.getText().isEmpty()) {
 			query += (" and cus.dni_cif = '" + tfDNITitular.getText() + "'");
 		}
@@ -130,8 +128,7 @@ public class InsureMenuOverviewController {
 				tiInsure.setEstado(rs.getString("estado"));
 				tiInsure.setFechaVigor(rs.getDate("fecha_entrada_vigor"));
 				tiInsure.setFechaFinVigor(rs.getDate("fecha_fin_entrada_vigor"));
-				tiInsure.setFechaInicioPago(rs.getDate("fecha_inicio"));
-				tiInsure.setFechaFinPago(rs.getDate("fecha_fin"));
+				tiInsure.setFechaEfecto(rs.getDate("fecha_efecto"));
 				tiInsure.setNombre(rs.getString("nombre") + " " + rs.getString("apellidos"));
 				lti.add(tiInsure);
 			}
@@ -181,26 +178,14 @@ public class InsureMenuOverviewController {
 						return property;
 					}
 				});
-		ColumnFechaInicioPago.setCellValueFactory(
+		ColumnFechaEfecto.setCellValueFactory(
 				new Callback<TableColumn.CellDataFeatures<TableInfoInsures, String>, ObservableValue<String>>() {
 					@Override
 					public ObservableValue<String> call(TableColumn.CellDataFeatures<TableInfoInsures, String> info) {
 						SimpleStringProperty property = new SimpleStringProperty();
-						if (null != info.getValue().getFechaInicioPago()) {
+						if (null != info.getValue().getFechaEfecto()) {
 							DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-							property.setValue(dateFormat.format(info.getValue().getFechaInicioPago()));
-						}
-						return property;
-					}
-				});
-		ColumnFechaFinPago.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<TableInfoInsures, String>, ObservableValue<String>>() {
-					@Override
-					public ObservableValue<String> call(TableColumn.CellDataFeatures<TableInfoInsures, String> info) {
-						SimpleStringProperty property = new SimpleStringProperty();
-						if (null != info.getValue().getFechaFinPago()) {
-							DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-							property.setValue(dateFormat.format(info.getValue().getFechaFinPago()));
+							property.setValue(dateFormat.format(info.getValue().getFechaEfecto()));
 						}
 						return property;
 					}
@@ -216,8 +201,7 @@ public class InsureMenuOverviewController {
 		tbInsures.getColumns().addAll(ColumnPrimaNeta);
 		tbInsures.getColumns().addAll(ColumnFechaVigor);
 		tbInsures.getColumns().addAll(ColumnFechaFinVigor);
-		tbInsures.getColumns().addAll(ColumnFechaInicioPago);
-		tbInsures.getColumns().addAll(ColumnFechaFinPago);
+		tbInsures.getColumns().addAll(ColumnFechaEfecto);
 	}
 
 	// Event Listener on Button[#btVerCuotas].onAction

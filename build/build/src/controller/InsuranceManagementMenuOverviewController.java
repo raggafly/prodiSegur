@@ -24,6 +24,8 @@ import util.MasterValueUtil;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -121,8 +123,14 @@ public class InsuranceManagementMenuOverviewController {
 	private TextField tfCuenta;
 	@FXML
 	private ComboBox cbBanco;
+	@FXML
 	private IbCustomer customer;
-
+	@FXML
+	private DatePicker dpFechaEfecto;
+	@FXML
+	private DatePicker dpFechaEntradaVigor;
+	@FXML
+	private DatePicker dpFechaVencimiento;
 	
 	@FXML
 	public void handleChangeCobertura(ActionEvent event) {
@@ -336,7 +344,17 @@ public class InsuranceManagementMenuOverviewController {
 		} else {
 			sPrimaNeta = tfPrimaNeta.getText();
 		}
-
+		
+		
+		
+		seguro.setFechaEfecto(DateUtil.LocalDateToDate(dpFechaEfecto.getValue()));
+		
+		seguro.setFechaEntradaVigor(DateUtil.LocalDateToDate(dpFechaEntradaVigor.getValue()));
+		
+		seguro.setFechaFinEntradaVigor(DateUtil.LocalDateToDate(dpFechaVencimiento.getValue()));
+		
+		
+		
 		if (DateUtil.isNumeric(sLiquidez)) {
 			liquidez = Double.parseDouble(sLiquidez);
 			seguro.setLiquidez(liquidez);
@@ -479,11 +497,28 @@ public class InsuranceManagementMenuOverviewController {
 		cbEstado.setItems(listaObservableEstado);
 		String vEstado = MasterValueUtil.getMasterFindDescriptionByValor(insurance.getEstado());
 		cbEstado.setValue(vEstado);
-
+		Date input = new Date();
+		LocalDate date = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		tfPrimaNeta.setText(String.valueOf(insurance.getPrimaNeta()));
 		tfLiquidez.setText(String.valueOf(insurance.getLiquidez()));
 		tfComision.setText(String.valueOf(insurance.getComision()));
-
+		if(insurance.getFechaEfecto()!= null){
+			dpFechaEfecto.setValue(DateUtil.dateToLocalDate(insurance.getFechaEfecto()));
+		}else{
+			dpFechaEfecto.setValue(date);
+		}
+		
+		if(insurance.getFechaEntradaVigor()!=null){
+			dpFechaEntradaVigor.setValue(DateUtil.dateToLocalDate(insurance.getFechaEntradaVigor()));
+		}else{
+			dpFechaEntradaVigor.setValue(date);
+		}
+		
+		if(insurance.getFechaFinEntradaVigor()!=null){
+			dpFechaVencimiento.setValue(DateUtil.dateToLocalDate(insurance.getFechaFinEntradaVigor()));
+		}else{
+			dpFechaVencimiento.setValue(date);
+		}
 		// obtenemos el detalle
 
 		List<IbInsuranceDetail> lid = null;

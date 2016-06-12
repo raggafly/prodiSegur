@@ -97,7 +97,7 @@ public class InsureMenuOverviewController {
 		Statement stmt = null;
 		JDBCConnection con = new JDBCConnection();
 		TableInfoInsures tiInsure = new TableInfoInsures();
-		String query = "select idib_insurance as orden,cus.nombre, cus.apellidos,numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,(select descripcion from ib_master_values mv where ins.compania = mv.valor) as compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_efecto,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =10  ";
+		String query = "select idib_insurance as orden,cus.nombre, cus.apellidos,numero_poliza,dni_cif,(select descripcion from ib_master_values mv where ins.tipo_riesgo = mv.valor) as tipo_riesgo,(select descripcion from ib_master_values mv where ins.compania = mv.valor) as compania,(select descripcion from ib_master_values mv where ins.estado = mv.valor) as estado,prima_neta,fecha_entrada_vigor,fecha_fin_entrada_vigor,fecha_efecto,fecha_inicio,fecha_fin from ib_insurance ins, ib_customer cus, ib_customer_relation rel where rel.id_cliente = cus.idib_customer and rel.id_seguro = ins.idib_insurance and cus.idib_customer = rel.id_cliente and rel.id_tipo =11  ";
 		if (null != tfDNITitular.getText() && !tfDNITitular.getText().isEmpty()) {
 			query += (" and cus.dni_cif = '" + tfDNITitular.getText() + "'");
 		}

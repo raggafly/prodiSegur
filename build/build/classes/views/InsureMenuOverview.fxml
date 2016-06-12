@@ -47,10 +47,9 @@
             <TableColumn fx:id="ColumnEstado" prefWidth="107.0" text="ESTADO" />
             <TableColumn fx:id="ColumnCompania" prefWidth="110.0" text="COMPANIA" />
             <TableColumn fx:id="ColumnPrimaNeta" prefWidth="99.0" text="PRIMA NETA" />
-            <TableColumn fx:id="ColumnFechaVigor" prefWidth="108.0" text="FECHA VIGOR" />
-            <TableColumn fx:id="ColumnFechaFinVigor" prefWidth="168.0" text="FECHA VENCIMIENTO" />
-            <TableColumn fx:id="ColumnFechaInicioPago" prefWidth="169.0" text="FECHA INICIO PAGO" />
-            <TableColumn fx:id="ColumnFechaFinPago" prefWidth="132.0" text="FECHA FIN PAGO" />
+            <TableColumn fx:id="ColumnFechaVigor" prefWidth="155.0" text="FECHA VIGOR" />
+            <TableColumn fx:id="ColumnFechaFinVigor" prefWidth="193.0" text="FECHA VENCIMIENTO" />
+            <TableColumn fx:id="ColumnFechaEfecto" prefWidth="228.0" text="FECHA EFECTO" />
         </columns>
       </TableView>
       <Button fx:id="btVerCuotas" layoutX="1249.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleVerCuotas" text="Ver Cuotas" />

@@ -225,12 +225,14 @@ public class PersonOverviewController {
 
 		String lowerCaseFilterString = filterString.toLowerCase();
 
-		if (person.getNombre().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
+		// if () {
+		if (person.getNombre() != null && person.getNombre().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
 			return true;
-		} else if (person.getApellidos().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
+		} else if (null != person.getApellidos()
+				&& person.getApellidos().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
 			return true;
 		}
-
+		// }
 		return false; // Does not match
 	}
 
@@ -424,7 +426,8 @@ public class PersonOverviewController {
 		icVO.setTipoSeguro(tipoSeguro);
 		icVO.setDatosClienteRelation(datosClienteRelation);
 		icVO.setListaCustomersType(listaCustomerComplete);
-		//personRelationTable.getItems().size() == contTiposClientes || personRelationTable.getItems().size() == contTiposClientes+1) && 
+		// personRelationTable.getItems().size() == contTiposClientes ||
+		// personRelationTable.getItems().size() == contTiposClientes+1) &&
 		if (getIsSelectedPropietarioYTomador()) {
 			Parent root;
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InsureOverview.fxml"));
@@ -435,7 +438,7 @@ public class PersonOverviewController {
 
 				stage.setTitle("Alta nueva Poliza.");
 				stage.initModality(Modality.APPLICATION_MODAL);
-				stage.setScene(new Scene(root, 1157, 755));
+				stage.setScene(new Scene(root, 1157, 685));
 				stage.setScene(stage.getScene());
 				InsureOverviewController controller = (InsureOverviewController) loader.getController();
 
@@ -469,7 +472,7 @@ public class PersonOverviewController {
 
 	}
 
-	private boolean getIsSelectedPropietarioYTomador() {
+	public boolean getIsSelectedPropietarioYTomador() {
 		// TODO Auto-generated method stub
 		boolean isProp = false;
 		boolean isTomador = false;

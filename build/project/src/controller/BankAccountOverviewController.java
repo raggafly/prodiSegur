@@ -296,23 +296,6 @@ public class BankAccountOverviewController {
 	private List<IbCustomerRelation> getRelation() {
 		// TODO Auto-generated method stub
 		List<IbCustomerRelation> licr = new ArrayList<IbCustomerRelation>();
-		// lo viejo
-		// Iterator itr = icVO.getDatosClienteRelation().iterator();
-		// while (itr.hasNext()) {
-		// IbCustomerRelation icr = new IbCustomerRelation();
-		// TableInfoRelation element = (TableInfoRelation) itr.next();
-		// IbCustomerType ctype = new IbCustomerType();
-		//
-		// icr.setIbInsurance(icVO.getDatosSeguro());
-		// icr.setIbCustomer(icVO.getDatosCliente());
-		// ctype = getCodeByDescription(element.getTipo());
-		// icr.setIbCustomerType1(ctype);
-		//
-		// if (icr != null) {
-		// licr.add(icr);
-		// }
-		// }
-		// fin de lo viejo
 
 		List<CustomersTypes> listct = icVO.getListaCustomersType();
 		for (int i = 0; i < listct.size(); i++) {

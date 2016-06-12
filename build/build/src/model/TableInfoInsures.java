@@ -11,8 +11,7 @@ public class TableInfoInsures {
 	Double primaNeta;
 	Date fechaVigor;
 	Date fechaFinVigor;
-	Date fechaInicioPago;
-	Date fechaFinPago;
+	Date fechaEfecto;
 	String estado;
 	String nombre;
 	
@@ -70,17 +69,11 @@ public class TableInfoInsures {
 	public void setFechaFinVigor(Date fechaFinVigor) {
 		this.fechaFinVigor = fechaFinVigor;
 	}
-	public Date getFechaInicioPago() {
-		return fechaInicioPago;
+	public Date getFechaEfecto() {
+		return fechaEfecto;
 	}
-	public void setFechaInicioPago(Date fechaInicioPago) {
-		this.fechaInicioPago = fechaInicioPago;
-	}
-	public Date getFechaFinPago() {
-		return fechaFinPago;
-	}
-	public void setFechaFinPago(Date fechaFinPago) {
-		this.fechaFinPago = fechaFinPago;
+	public void setFechaEfecto(Date fechaEfecto) {
+		this.fechaEfecto = fechaEfecto;
 	}
 	public String getEstado() {
 		return estado;
